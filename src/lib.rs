@@ -1,5 +1,6 @@
 pub mod app;
 pub mod controllers;
+pub(crate) mod ddk;
 pub mod initializers;
 pub mod mailers;
 pub mod models;

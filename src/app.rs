@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+use axum::{Extension, Router as AxumRouter};
 use loco_rs::{
     app::{AppContext, Hooks, Initializer},
     bgworker::{BackgroundWorker, Queue},
@@ -11,7 +12,7 @@ use loco_rs::{
     Result,
 };
 use migration::Migrator;
-use std::path::Path;
+use std::{path::Path, sync::Arc};
 
 #[allow(unused_imports)]
 use crate::{
@@ -53,6 +54,20 @@ impl Hooks for App {
         AppRoutes::with_default_routes() // controller routes below
             .add_route(controllers::auth::routes())
     }
+
+    async fn after_routes(router: AxumRouter, _ctx: &AppContext) -> Result<AxumRouter> {
+        let ddk = Arc::new(crate::ddk::SonsOfLiberty::new().await);
+        let ddk_task = ddk.clone();
+        tokio::spawn(async move {
+            if let Err(e) = ddk_task.dlcdevkit.start() {
+                tracing::error!("Error starting DDK: {:?}", e);
+            }
+        });
+        Ok(router.layer(Extension(ddk)))
+    }
+
+    async fn on_shutdown(ctx: &AppContext) {}
+
     async fn connect_workers(ctx: &AppContext, queue: &Queue) -> Result<()> {
         queue.register(DownloadWorker::build(ctx)).await?;
         Ok(())
