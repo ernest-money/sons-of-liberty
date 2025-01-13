@@ -1,3 +1,5 @@
+use bitcoin::bip32::Xpriv;
+use bitcoin::io::Write;
 use bitcoin::key::rand::Fill;
 use bitcoin::Network;
 use ddk::builder::Builder;
@@ -5,6 +7,8 @@ use ddk::oracle::kormir::KormirOracleClient;
 use ddk::storage::sled::SledStorage;
 use ddk::transport::lightning::LightningTransport;
 use ddk::DlcDevKit;
+use std::fs::File;
+use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
 type SonsOfLiberyDdk = DlcDevKit<LightningTransport, SledStorage, KormirOracleClient>;
@@ -16,19 +20,19 @@ pub struct SonsOfLiberty {
 
 impl SonsOfLiberty {
     pub async fn new() -> Self {
-        let mut seed_bytes = [0u8; 32];
-        seed_bytes
-            .try_fill(&mut bitcoin::key::rand::thread_rng())
-            .unwrap();
-
         let liberty_dir = homedir::my_home()
             .unwrap()
             .unwrap()
             .join(".sons-of-liberty");
 
-        let storage = Arc::new(SledStorage::new(liberty_dir.join("db").to_str().unwrap()).unwrap());
+        let seed_bytes = xprv_from_path(&liberty_dir, Network::Regtest);
 
-        let transport = Arc::new(LightningTransport::new(&seed_bytes, 1776).unwrap());
+        let storage =
+            Arc::new(SledStorage::new(liberty_dir.join("db.sled").to_str().unwrap()).unwrap());
+
+        let transport = Arc::new(
+            LightningTransport::new(&seed_bytes.private_key.secret_bytes(), 1776).unwrap(),
+        );
         let oracle = Arc::new(
             KormirOracleClient::new("https://kormir.dlcdevkit.com")
                 .await
@@ -40,7 +44,7 @@ impl SonsOfLiberty {
                 .set_esplora_host("http://localhost:30000".to_string())
                 .set_network(Network::Signet)
                 .set_name("sons-of-liberty")
-                .set_seed_bytes(seed_bytes)
+                .set_seed_bytes(seed_bytes.private_key.secret_bytes())
                 .set_storage(storage.clone())
                 .set_transport(transport.clone())
                 .set_oracle(oracle.clone())
@@ -50,4 +54,28 @@ impl SonsOfLiberty {
         );
         Self { dlcdevkit }
     }
+}
+
+/// Helper function that reads `[bitcoin::bip32::Xpriv]` bytes from a file.
+/// If the file does not exist then it will create a file `seed.ddk` in the specified path.
+pub fn xprv_from_path(path: &PathBuf, network: Network) -> Xpriv {
+    let seed_path = path.join("seed.ddk");
+    let seed = if Path::new(&seed_path).exists() {
+        let seed = std::fs::read(&seed_path).unwrap();
+        let mut key = [0; 32];
+        key.copy_from_slice(&seed);
+        Xpriv::new_master(network, &seed).unwrap()
+    } else {
+        let mut file = File::create(&seed_path).unwrap();
+        let mut entropy = [0u8; 32];
+        entropy
+            .try_fill(&mut bitcoin::key::rand::thread_rng())
+            .unwrap();
+        // let _mnemonic = Mnemonic::from_entropy(&entropy)?;
+        let xprv = Xpriv::new_master(network, &entropy).unwrap();
+        file.write_all(&entropy).unwrap();
+        xprv
+    };
+
+    seed
 }
