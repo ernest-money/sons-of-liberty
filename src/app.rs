@@ -52,6 +52,7 @@ impl Hooks for App {
 
     fn routes(_ctx: &AppContext) -> AppRoutes {
         AppRoutes::with_default_routes() // controller routes below
+            .add_route(controllers::info::routes())
             .add_route(controllers::balance::routes())
             .add_route(controllers::auth::routes())
     }
@@ -59,11 +60,11 @@ impl Hooks for App {
     async fn after_routes(router: AxumRouter, _ctx: &AppContext) -> Result<AxumRouter> {
         let ddk = Arc::new(crate::ddk::SonsOfLiberty::new().await);
         let ddk_task = ddk.clone();
-        tokio::spawn(async move {
-            if let Err(e) = ddk_task.dlcdevkit.start() {
-                tracing::error!("Error starting DDK: {:?}", e);
-            }
-        });
+        // tokio::spawn(async move {
+        //     if let Err(e) = ddk_task.dlcdevkit.start() {
+        //         tracing::error!("Error starting DDK: {:?}", e);
+        //     }
+        // });
         Ok(router.layer(Extension(ddk)))
     }
 
