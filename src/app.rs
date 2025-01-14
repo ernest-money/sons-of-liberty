@@ -15,7 +15,7 @@ use migration::Migrator;
 use std::{path::Path, sync::Arc};
 use tokio::sync::OnceCell;
 
-use crate::sol::SonsOfLiberty;
+use crate::{common::settings::Settings, sol::SonsOfLiberty};
 #[allow(unused_imports)]
 use crate::{
     controllers, initializers, models::_entities::users, tasks, workers::downloader::DownloadWorker,
@@ -65,11 +65,24 @@ impl Hooks for App {
             .add_route(controllers::auth::routes())
     }
 
-    async fn after_routes(router: AxumRouter, _ctx: &AppContext) -> Result<AxumRouter> {
+    async fn after_routes(router: AxumRouter, ctx: &AppContext) -> Result<AxumRouter> {
+        let settings = match &ctx.config.settings {
+            Some(settings) => {
+                let settings = Settings::from_json(&settings)?;
+                tracing::info!("Settings: {:?}", settings);
+                settings
+            }
+            None => Settings::default(),
+        };
+
         let ddk = SONS_OF_LIBERTY
             .get_or_init(|| async {
                 tracing::warn!("Initializing DDK");
-                Arc::new(SonsOfLiberty::new().await)
+                Arc::new(
+                    SonsOfLiberty::new(settings)
+                        .await
+                        .expect("Failed to initialize DDK"),
+                )
             })
             .await;
 

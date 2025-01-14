@@ -1,4 +1,5 @@
 pub mod app;
+pub(crate) mod common;
 pub mod controllers;
 pub mod initializers;
 pub mod mailers;

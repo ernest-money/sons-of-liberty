@@ -97,3 +97,10 @@ auth:
     secret: UZLZh3Lb5R9MoRADZXF6
     # Token expiration time in seconds
     expiration: 604800 # 7 days
+    
+settings:
+  listening_port: 1776
+  kormir_host: "https://kormir.dlcdevkit.com"
+  esplora_host: "http://localhost:30000"
+  network: "regtest"
+  name: "sons-of-liberty"
