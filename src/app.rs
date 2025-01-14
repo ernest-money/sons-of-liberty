@@ -13,11 +13,15 @@ use loco_rs::{
 };
 use migration::Migrator;
 use std::{path::Path, sync::Arc};
+use tokio::sync::OnceCell;
 
+use crate::ddk::SonsOfLiberty;
 #[allow(unused_imports)]
 use crate::{
     controllers, initializers, models::_entities::users, tasks, workers::downloader::DownloadWorker,
 };
+
+static SONS_OF_LIBERTY: OnceCell<Arc<SonsOfLiberty>> = OnceCell::const_new();
 
 pub struct App;
 #[async_trait]
@@ -52,23 +56,35 @@ impl Hooks for App {
 
     fn routes(_ctx: &AppContext) -> AppRoutes {
         AppRoutes::with_default_routes() // controller routes below
+            .add_route(controllers::offers::routes())
             .add_route(controllers::info::routes())
             .add_route(controllers::balance::routes())
             .add_route(controllers::auth::routes())
     }
 
     async fn after_routes(router: AxumRouter, _ctx: &AppContext) -> Result<AxumRouter> {
-        let ddk = Arc::new(crate::ddk::SonsOfLiberty::new().await);
+        let ddk = SONS_OF_LIBERTY
+            .get_or_init(|| async {
+                tracing::warn!("Initializing DDK");
+                Arc::new(SonsOfLiberty::new().await)
+            })
+            .await;
+
         let ddk_task = ddk.clone();
-        // tokio::spawn(async move {
-        //     if let Err(e) = ddk_task.dlcdevkit.start() {
-        //         tracing::error!("Error starting DDK: {:?}", e);
-        //     }
-        // });
+        tokio::spawn(async move {
+            if let Err(e) = ddk_task.dlcdevkit.start() {
+                tracing::error!("Error starting DDK: {:?}", e);
+            }
+        });
         Ok(router.layer(Extension(ddk)))
     }
 
-    async fn on_shutdown(_ctx: &AppContext) {}
+    async fn on_shutdown(_ctx: &AppContext) {
+        if let Some(state) = SONS_OF_LIBERTY.get() {
+            tracing::info!("Stopping DDK");
+            state.dlcdevkit.stop().unwrap();
+        }
+    }
 
     async fn connect_workers(ctx: &AppContext, queue: &Queue) -> Result<()> {
         queue.register(DownloadWorker::build(ctx)).await?;
