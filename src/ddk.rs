@@ -7,7 +7,7 @@ use ddk::oracle::kormir::KormirOracleClient;
 use ddk::storage::sled::SledStorage;
 use ddk::transport::lightning::LightningTransport;
 use ddk::DlcDevKit;
-use std::fs::File;
+use std::fs::{create_dir_all, File};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
@@ -42,7 +42,7 @@ impl SonsOfLiberty {
         let dlcdevkit = Arc::new(
             Builder::new()
                 .set_esplora_host("http://localhost:30000".to_string())
-                .set_network(Network::Signet)
+                .set_network(Network::Regtest)
                 .set_name("sons-of-liberty")
                 .set_seed_bytes(seed_bytes.private_key.secret_bytes())
                 .set_storage(storage.clone())
@@ -59,6 +59,9 @@ impl SonsOfLiberty {
 /// Helper function that reads `[bitcoin::bip32::Xpriv]` bytes from a file.
 /// If the file does not exist then it will create a file `seed.ddk` in the specified path.
 pub fn xprv_from_path(path: &PathBuf, network: Network) -> Xpriv {
+    if !path.exists() {
+        create_dir_all(path).unwrap()
+    }
     let seed_path = path.join("seed.ddk");
     let seed = if Path::new(&seed_path).exists() {
         let seed = std::fs::read(&seed_path).unwrap();
