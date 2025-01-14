@@ -46,6 +46,7 @@ ddk = { version = "0.0.13", path = "../dlcdevkit/ddk", features = ["sled", "ligh
 ddk-manager = { version = "0.7.2", path = "../dlcdevkit/ddk-manager", features = ["use-serde"] }
 ddk-payouts = { version = "0.0.13", path = "../dlcdevkit/payouts" }
 homedir = "0.3.4"
+dlc-messages = { version = "0.7.1", features = ["use-serde"] }
 
 
 [[bin]]
