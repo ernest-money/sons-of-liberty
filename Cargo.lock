@@ -5232,6 +5232,7 @@ dependencies = [
  "ddk-payouts",
  "dlc-messages",
  "fluent-templates",
+ "hex",
  "homedir",
  "include_dir",
  "insta",

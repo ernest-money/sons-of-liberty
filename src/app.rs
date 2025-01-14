@@ -76,7 +76,7 @@ impl Hooks for App {
                 tracing::error!("Error starting DDK: {:?}", e);
             }
         });
-        Ok(router.layer(Extension(ddk)))
+        Ok(router.layer(Extension(ddk.clone())))
     }
 
     async fn on_shutdown(_ctx: &AppContext) {
