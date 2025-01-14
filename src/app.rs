@@ -15,7 +15,7 @@ use migration::Migrator;
 use std::{path::Path, sync::Arc};
 use tokio::sync::OnceCell;
 
-use crate::ddk::SonsOfLiberty;
+use crate::sol::SonsOfLiberty;
 #[allow(unused_imports)]
 use crate::{
     controllers, initializers, models::_entities::users, tasks, workers::downloader::DownloadWorker,
@@ -56,6 +56,7 @@ impl Hooks for App {
 
     fn routes(_ctx: &AppContext) -> AppRoutes {
         AppRoutes::with_default_routes() // controller routes below
+            .add_route(controllers::contracts::routes())
             .add_route(controllers::offers::routes())
             .add_route(controllers::info::routes())
             .add_route(controllers::balance::routes())

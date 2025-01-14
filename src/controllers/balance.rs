@@ -1,7 +1,7 @@
 #![allow(clippy::missing_errors_doc)]
 #![allow(clippy::unnecessary_struct_initialization)]
 #![allow(clippy::unused_async)]
-use crate::{ddk::SonsOfLiberty, models::users};
+use crate::{models::users, sol::SonsOfLiberty};
 use axum::{debug_handler, http::StatusCode, Extension};
 use loco_rs::{controller::ErrorDetail, prelude::*};
 use std::sync::Arc;

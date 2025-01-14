@@ -4,3 +4,4 @@ mod prepare_data;
 pub mod balance;
 pub mod info;
 pub mod offers;
+pub mod contracts;

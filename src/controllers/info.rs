@@ -7,7 +7,7 @@ use axum::{debug_handler, http::StatusCode, Extension};
 use ddk::Transport;
 use loco_rs::{controller::ErrorDetail, prelude::*};
 
-use crate::{ddk::SonsOfLiberty, models::users};
+use crate::{models::users, sol::SonsOfLiberty};
 
 #[debug_handler]
 pub async fn index(

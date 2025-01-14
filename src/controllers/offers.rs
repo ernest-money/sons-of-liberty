@@ -3,7 +3,7 @@
 #![allow(clippy::unused_async)]
 use std::{str::FromStr, sync::Arc};
 
-use crate::{ddk::SonsOfLiberty, models::users};
+use crate::{models::users, sol::SonsOfLiberty};
 use axum::{debug_handler, extract::Query, http::StatusCode, Extension};
 use bitcoin::secp256k1::PublicKey;
 use ddk_manager::{contract::contract_input::ContractInput, Storage};
