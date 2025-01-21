@@ -47,7 +47,7 @@ impl SonsOfLiberty {
                 .map_err(|e| loco_rs::Error::string(e.to_string().as_str()))?,
         );
         let oracle = Arc::new(
-            KormirOracleClient::new(&settings.kormir_host)
+            KormirOracleClient::new(&settings.kormir_host, None)
                 .await
                 .map_err(|e| loco_rs::Error::string(e.to_string().as_str()))?,
         );
