@@ -3,10 +3,10 @@
 #![allow(clippy::unused_async)]
 use std::{str::FromStr, sync::Arc};
 
-use crate::{models::users, sol::SonsOfLiberty};
+use crate::{common::dlcdevkit, models::users, sol::SonsOfLiberty};
 use axum::{debug_handler, extract::Query, http::StatusCode, Extension};
 use bitcoin::secp256k1::PublicKey;
-use ddk_manager::{contract::contract_input::ContractInput, Storage};
+use ddk_manager::contract::contract_input::ContractInput;
 use dlc_messages::{oracle_msgs::OracleAnnouncement, AcceptDlc};
 use loco_rs::{controller::ErrorDetail, prelude::*};
 use serde::{Deserialize, Serialize};
@@ -24,12 +24,8 @@ pub async fn index(
     State(ctx): State<AppContext>,
 ) -> Result<Response> {
     users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
-    let offers = ddk.dlcdevkit.storage.get_contract_offers().map_err(|e| {
-        Error::CustomError(
-            StatusCode::NOT_FOUND,
-            ErrorDetail::with_reason(e.to_string()),
-        )
-    })?;
+
+    let offers = dlcdevkit::get_offers(ddk)?;
 
     let offers = offers
         .into_iter()

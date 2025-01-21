@@ -1,9 +1,9 @@
 #![allow(clippy::missing_errors_doc)]
 #![allow(clippy::unnecessary_struct_initialization)]
 #![allow(clippy::unused_async)]
-use crate::{models::users, sol::SonsOfLiberty};
-use axum::{debug_handler, http::StatusCode, Extension};
-use loco_rs::{controller::ErrorDetail, prelude::*};
+use crate::{common::dlcdevkit, models::users, sol::SonsOfLiberty};
+use axum::{debug_handler, Extension};
+use loco_rs::prelude::*;
 use std::sync::Arc;
 
 #[debug_handler]
@@ -13,12 +13,7 @@ pub async fn index(
     State(ctx): State<AppContext>,
 ) -> Result<Response> {
     users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
-    let balance = ddk.dlcdevkit.balance().map_err(|e| {
-        Error::CustomError(
-            StatusCode::NOT_FOUND,
-            ErrorDetail::with_reason(e.to_string()),
-        )
-    })?;
+    let balance = dlcdevkit::get_balance(ddk)?;
     format::json(balance)
 }
 
