@@ -5,7 +5,7 @@ use loco_rs::prelude::*;
 
 use crate::sol::SonsOfLiberty;
 
-pub fn home(v: impl ViewRenderer, sol: Arc<SonsOfLiberty>) -> Result<impl IntoResponse> {
+pub fn home(v: impl ViewRenderer, sol: Arc<SonsOfLiberty>) -> Result<Response> {
     let balance = dlcdevkit::get_balance(sol)?;
     format::render().view(
         &v,
@@ -17,4 +17,12 @@ pub fn home(v: impl ViewRenderer, sol: Arc<SonsOfLiberty>) -> Result<impl IntoRe
             "pnl": balance.contract_pnl,
         }),
     )
+}
+
+pub fn contracts(v: impl ViewRenderer, _sol: Arc<SonsOfLiberty>) -> Result<Response> {
+    format::render().view(&v, "contracts.html", data!({}))
+}
+
+pub fn offers(v: impl ViewRenderer, _sol: Arc<SonsOfLiberty>) -> Result<Response> {
+    format::render().view(&v, "offers.html", data!({}))
 }

@@ -3,7 +3,6 @@ pub(crate) mod common;
 pub mod controllers;
 pub mod initializers;
 pub mod mailers;
-pub mod middlewares;
 pub mod models;
 pub(crate) mod sol;
 pub mod tasks;
