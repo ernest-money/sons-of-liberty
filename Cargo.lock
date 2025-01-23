@@ -6357,6 +6357,7 @@ dependencies = [
  "getrandom",
  "rand",
  "serde",
+ "wasm-bindgen",
 ]
 
 [[package]]
