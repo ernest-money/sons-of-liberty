@@ -2,14 +2,17 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { SolProvider } from './lib/hooks/useSol';
 import { AuthProvider, useAuth } from './lib/hooks/useAuth';
-import { Login } from './pages/Login';
-import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
 import { CreateContract } from './pages/CreateContract';
 import "./index.css"
 import { Layout } from './components/layout';
 import { ThemeProvider } from './components/theme-provider';
 import AuthPage from '@/app/auth/page';
+import { ActiveContracts } from '@/app/contracts/active';
+import { ClosedContracts } from '@/app/contracts/closed';
+import { OfferList } from '@/components/OfferList';
+import { Transactions } from '@/app/wallet/transactions';
+import { Utxos } from '@/app/wallet/utxos';
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
@@ -54,6 +57,11 @@ export const App: React.FC = () => {
               />
               <Route path="/" element={<Navigate to="/dashboard" />} />
               <Route path="/create-contract" element={<PrivateRoute><CreateContract /></PrivateRoute>} />
+              <Route path="/contracts/active" element={<PrivateRoute><ActiveContracts /></PrivateRoute>} />
+              <Route path="/contracts/closed" element={<PrivateRoute><ClosedContracts /></PrivateRoute>} />
+              <Route path="/offers" element={<PrivateRoute><OfferList /></PrivateRoute>} />
+              <Route path="/wallet/transactions" element={<PrivateRoute><Transactions /></PrivateRoute>} />
+              <Route path="/wallet/utxos" element={<PrivateRoute><Utxos /></PrivateRoute>} />
             </Routes>
           </AuthProvider>
         </SolProvider>

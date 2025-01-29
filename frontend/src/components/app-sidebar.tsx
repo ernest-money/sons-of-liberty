@@ -26,7 +26,7 @@ const data = {
         {
           title: "Home",
           url: "/dashboard",
-          isActive: true,
+          isActive: window.location.pathname === "/dashboard",
         }
       ]
     },
@@ -37,12 +37,12 @@ const data = {
         {
           title: "Active",
           url: "/contracts/active",
-          isActive: false,
+          isActive: window.location.pathname === "/contracts/active",
         },
         {
           title: "Closed",
           url: "/contracts/closed",
-          isActive: false,
+          isActive: window.location.pathname === "/contracts/closed",
         },
       ],
     },
@@ -53,8 +53,24 @@ const data = {
         {
           title: "Open Offers",
           url: "/offers",
-          isActive: false,
+          isActive: window.location.pathname === "/offers",
         }
+      ],
+    },
+    {
+      title: "Wallet",
+      url: "/wallet",
+      items: [
+        {
+          title: "Transactions",
+          url: "/wallet/transactions",
+          isActive: window.location.pathname === "/wallet/transactions",
+        },
+        {
+          title: "UTXOs",
+          url: "/wallet/utxos",
+          isActive: window.location.pathname === "/wallet/utxos",
+        },
       ],
     },
   ],

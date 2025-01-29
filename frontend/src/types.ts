@@ -6,6 +6,14 @@ export interface Balance {
   contract_pnl: number;
 }
 
+export const defaultBalance: Balance = {
+  confirmed: 0,
+  change_unconfirmed: 0,
+  foreign_unconfirmed: 0,
+  contract: 0,
+  contract_pnl: 0,
+};
+
 export interface Contract {
   state: string;
   contract_id: string;
