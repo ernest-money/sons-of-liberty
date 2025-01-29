@@ -8,20 +8,8 @@ import { TransactionList } from '../components/TransactionList';
 import { UtxoList } from '../components/UtxoList';
 
 export const Dashboard: React.FC = () => {
-  const { logout, user } = useAuth();
-
   return (
-    <div style={{ width: '50%', margin: 'auto' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <h1>Sons of Liberty Dashboard</h1>
-        <div>
-          <span>Welcome, {user?.email}</span>
-          <button onClick={logout} style={{ marginLeft: '1rem' }}>
-            Logout
-          </button>
-        </div>
-      </div>
-
+    <div style={{ marginTop: "6rem", marginLeft: '2rem' }}>
       <section>
         <h2>Balance</h2>
         <BalanceDisplay />
@@ -53,4 +41,4 @@ export const Dashboard: React.FC = () => {
       </section>
     </div>
   );
-}; 
+};

@@ -5,10 +5,13 @@ import { AuthProvider, useAuth } from './lib/hooks/useAuth';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
+import { CreateContract } from './pages/CreateContract';
+import "./index.css"
+import { Layout } from './components/Layout';
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated } = useAuth();
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" />;
+  return isAuthenticated ? <Layout>{children}</Layout> : <Navigate to="/login" />;
 };
 
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -47,6 +50,7 @@ export const App: React.FC = () => {
               }
             />
             <Route path="/" element={<Navigate to="/dashboard" />} />
+            <Route path="/create-contract" element={<PrivateRoute><CreateContract /></PrivateRoute>} />
           </Routes>
         </AuthProvider>
       </SolProvider>
