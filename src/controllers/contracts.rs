@@ -24,12 +24,12 @@ pub struct GetContractByIdQuery {
 
 #[debug_handler]
 pub async fn index(
-    auth: auth::JWT,
+    // auth: auth::JWT,
     Query(query): Query<GetContractByIdQuery>,
     Extension(ddk): Extension<Arc<SonsOfLiberty>>,
-    State(ctx): State<AppContext>,
+    // State(ctx): State<AppContext>,
 ) -> Result<Response> {
-    users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
+    // users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
 
     let contracts = dlcdevkit::get_filtered_contracts(ddk.dlcdevkit.storage.clone(), query.filter)?;
 

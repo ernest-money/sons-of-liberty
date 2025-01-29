@@ -10,11 +10,11 @@ use crate::{models::users, sol::SonsOfLiberty};
 
 #[debug_handler]
 pub async fn index(
-    auth: auth::JWT,
+    // auth: auth::JWT,
     Extension(ddk): Extension<Arc<SonsOfLiberty>>,
-    State(ctx): State<AppContext>,
+    // State(ctx): State<AppContext>,
 ) -> Result<Response> {
-    users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
+    // users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
     let peers = ddk
         .dlcdevkit
         .transport

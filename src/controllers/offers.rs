@@ -18,12 +18,12 @@ pub struct GetOfferByIdQuery {
 
 #[debug_handler]
 pub async fn index(
-    auth: auth::JWT,
+    // auth: auth::JWT,
     Query(query): Query<GetOfferByIdQuery>,
     Extension(ddk): Extension<Arc<SonsOfLiberty>>,
-    State(ctx): State<AppContext>,
+    // State(ctx): State<AppContext>,
 ) -> Result<Response> {
-    users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
+    // users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
 
     let offers = dlcdevkit::get_offers(ddk)?;
 
@@ -55,12 +55,12 @@ pub struct SendOfferBody {
 
 #[debug_handler]
 pub async fn send_offer(
-    auth: auth::JWT,
+    // auth: auth::JWT,
     Extension(ddk): Extension<Arc<SonsOfLiberty>>,
-    State(ctx): State<AppContext>,
+    // State(ctx): State<AppContext>,
     Json(body): Json<SendOfferBody>,
 ) -> Result<Response> {
-    users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
+    // users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
 
     let counter_party = PublicKey::from_str(&body.counter_party).map_err(|_| {
         Error::CustomError(
@@ -101,12 +101,12 @@ pub struct AcceptOfferResponse {
 
 #[debug_handler]
 pub async fn accept_offer(
-    auth: auth::JWT,
+    // auth: auth::JWT,
     Extension(ddk): Extension<Arc<SonsOfLiberty>>,
-    State(ctx): State<AppContext>,
+    // State(ctx): State<AppContext>,
     Json(body): Json<AcceptOfferBody>,
 ) -> Result<Response> {
-    users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
+    // users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
 
     let offer_id_bytes = hex::decode(&body.offer_id).map_err(|e| {
         Error::CustomError(

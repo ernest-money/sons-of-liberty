@@ -10,33 +10,33 @@ use crate::{common::dlcdevkit, models::users, sol::SonsOfLiberty};
 
 #[debug_handler]
 pub async fn index(
-    auth: auth::JWT,
+    // auth: auth::JWT,
     Extension(ddk): Extension<Arc<SonsOfLiberty>>,
-    State(ctx): State<AppContext>,
+    // State(ctx): State<AppContext>,
 ) -> Result<Response> {
-    users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
+    // users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
     let address = dlcdevkit::get_new_addresses(ddk)?;
     format::json(serde_json::json!({ "address": address }))
 }
 
 #[debug_handler]
 pub async fn get_wallet_transactions(
-    auth: auth::JWT,
+    // auth: auth::JWT,
     Extension(ddk): Extension<Arc<SonsOfLiberty>>,
-    State(ctx): State<AppContext>,
+    // State(ctx): State<AppContext>,
 ) -> Result<Response> {
-    users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
+    // users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
     let transactions = dlcdevkit::get_transactions(ddk)?;
     format::json(transactions)
 }
 
 #[debug_handler]
 pub async fn get_utxos(
-    auth: auth::JWT,
+    // auth: auth::JWT,
     Extension(ddk): Extension<Arc<SonsOfLiberty>>,
-    State(ctx): State<AppContext>,
+    // State(ctx): State<AppContext>,
 ) -> Result<Response> {
-    users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
+    // users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
     let utxos = dlcdevkit::get_utxos(ddk)?;
     format::json(utxos)
 }
