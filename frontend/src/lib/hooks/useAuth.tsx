@@ -31,9 +31,9 @@ export const AuthProvider: React.FC<{
           setToken(storedToken); // Ensure token state matches localStorage
         } catch (error) {
           // Only clear token if it's an auth error
-          if (error instanceof Error && error.message === 'Unauthorized') {
-            logout();
-          }
+          // if (error instanceof Error && error.message === 'Unauthorized') {
+          //   logout();
+          // }
           // For other errors, keep the token
           console.error('Error initializing auth:', error);
         }
@@ -57,10 +57,10 @@ export const AuthProvider: React.FC<{
 
   const logout = () => {
     console.log("logout");
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem('token');
-    sol.setToken(undefined);
+    // setToken(null);
+    // setUser(null);
+    // localStorage.removeItem('token');
+    // sol.setToken(undefined);
   };
 
   return (

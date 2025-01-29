@@ -5,7 +5,7 @@ import { ForgotParams, LoginParams, LoginResponse, MagicLinkParams, RegisterPara
 import { InfoResponse } from '../sol/info';
 import { Peer } from '../sol/peers';
 import { ContractFilter } from '../sol/contracts';
-
+import init, { say_hello } from '@dlcdevkit/ddk-wasm';
 interface SendOfferBody {
   counterparty: string;
   collateral: number;
@@ -19,6 +19,7 @@ interface AcceptOfferBody {
 }
 
 export interface SolContextType {
+  wasmInitialized: boolean;
   setToken: (token?: string) => void;
   register: (params: RegisterParams) => Promise<void>;
   login: (params: LoginParams) => Promise<LoginResponse>;
@@ -56,7 +57,15 @@ export const useSol = () => {
 };
 
 export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
+  const [initialized, setInitialized] = useState(false);
   const [token, setToken] = useState<string>();
+  useEffect(() => {
+    const initWasm = async () => {
+      await init();
+      setInitialized(true);
+    }
+    initWasm();
+  }, []);
 
   const instance = useMemo(() => {
     const axiosInstance = axios.create({
@@ -77,11 +86,9 @@ export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
     return axiosInstance;
   }, [baseUrl, token]);
 
-  useEffect(() => {
-    console.log("token", token);
-  }, [token]);
 
   const value: SolContextType = useMemo(() => ({
+    wasmInitialized: initialized,
     setToken,
     register: async (params: RegisterParams) => {
       await instance.post('/api/auth/register', params);
@@ -155,6 +162,10 @@ export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
       return data;
     },
   }), [instance, token]);
+
+  if (!initialized) {
+    return <div>Loading...</div>;
+  }
 
   return <SolContext.Provider value={value}>{children}</SolContext.Provider>;
 };
