@@ -1,10 +1,21 @@
-import { Separator } from "@radix-ui/react-separator";
-import { AppSidebar } from "./app-sidebar";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./ui/breadcrumb";
+// TODO: This is a temporary page until clean up structure
+import { AppSidebar } from "@/components/app-sidebar"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
+import { Separator } from "@/components/ui/separator"
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
 
-export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-
+export default function Page() {
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -16,17 +27,16 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
                 <BreadcrumbLink href="#">
-                  Ernest Money
+                  Building Your Application
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="hidden md:block" />
               <BreadcrumbItem>
-                <BreadcrumbPage>This can come from the url</BreadcrumbPage>
+                <BreadcrumbPage>Data Fetching</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
         </header>
-        {children}
         <div className="flex flex-1 flex-col gap-4 p-4">
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
             <div className="aspect-video rounded-xl bg-muted/50" />
@@ -38,4 +48,4 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
       </SidebarInset>
     </SidebarProvider>
   )
-};
+}

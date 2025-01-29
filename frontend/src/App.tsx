@@ -7,7 +7,7 @@ import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
 import { CreateContract } from './pages/CreateContract';
 import "./index.css"
-import { Layout } from './components/Layout';
+import { Layout } from './components/layout';
 import { ThemeProvider } from './components/theme-provider';
 import AuthPage from '@/app/auth/page';
 
