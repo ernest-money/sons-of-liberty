@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { compute_payout_range } from "@dlcdevkit/ddk-wasm"
 
 interface PayoutFunction {
   payoutPoints: PayoutPoint[][];

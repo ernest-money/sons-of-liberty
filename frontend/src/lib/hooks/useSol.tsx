@@ -5,7 +5,7 @@ import { ForgotParams, LoginParams, LoginResponse, MagicLinkParams, RegisterPara
 import { InfoResponse } from '../sol/info';
 import { Peer } from '../sol/peers';
 import { ContractFilter } from '../sol/contracts';
-import init, { say_hello } from '@dlcdevkit/ddk-wasm';
+import init from '@dlcdevkit/ddk-wasm';
 interface SendOfferBody {
   counterparty: string;
   collateral: number;
