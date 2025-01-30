@@ -2,8 +2,18 @@ import { Separator } from "@radix-ui/react-separator";
 import { AppSidebar } from "./app-sidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./ui/breadcrumb";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
+import { Button } from "./ui/button";
+import { PanelRightOpen, Plus } from "lucide-react";
+import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
+import { useMediaQuery } from "@/hooks/use-media-query";
+
+const ActionPanel = () => {
+  return <div className="p-4">this is where you can create an offer</div>
+}
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const isDesktop = useMediaQuery("(min-width: 768px)");
 
   return (
     <SidebarProvider>
@@ -26,16 +36,35 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
             </BreadcrumbList>
           </Breadcrumb>
         </header>
-        {children}
-        {/* <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-          </div>
-          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
-        </div> */}
+
+        {isDesktop ? (
+          <ResizablePanelGroup direction="horizontal" className="flex-1">
+            <ResizablePanel defaultSize={75}>{children}</ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={25}><ActionPanel /></ResizablePanel>
+          </ResizablePanelGroup>
+        ) : (
+          <>
+            <div className="relative flex-1">
+              {children}
+            </div>
+            <Drawer>
+              <DrawerTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="fixed bottom-4 right-4 h-12 w-12 rounded-full shadow-lg bg-primary hover:bg-primary/80"
+                >
+                  <Plus className="h-6 w-6 text-secondary" />
+                </Button>
+              </DrawerTrigger>
+              <DrawerContent className="h-[80vh]">
+                <ActionPanel />
+              </DrawerContent>
+            </Drawer>
+          </>
+        )}
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 };

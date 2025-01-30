@@ -8,12 +8,12 @@ interface RevenueCardProps {
   title: string
   amount: number
   percentage: number
-  data?: Array<{ value: number }>
+  data: Array<{ value: number }>
   className?: string
 }
 
 // TODO: Get the historical data from the API for the percentage change
-export function BalanceCard({ title, amount, percentage, className }: RevenueCardProps) {
+export function Pnl({ title, amount, percentage, data, className }: RevenueCardProps) {
   // const formattedAmount = new Intl.NumberFormat("en-US", {
   //   style: "currency",
   //   currency: "BTC",
@@ -23,8 +23,8 @@ export function BalanceCard({ title, amount, percentage, className }: RevenueCar
   const isPositive = percentage > 0
 
   return (
-    <Card className={`${className || ""} bg-black text-white overflow-hidden`}>
-      <CardContent className="p-6">
+    <Card className={`${className || ""} bg-black text-white overflow-hidden h-2/5`}>
+      <CardContent className="p-6 h-full">
         <div className={`space-y-2`}>
           <p className="text-sm font-medium leading-none">{title}</p>
           <p className="text-4xl font-bold">{formattedAmount}</p>
@@ -33,6 +33,32 @@ export function BalanceCard({ title, amount, percentage, className }: RevenueCar
             {percentage}% from last month
           </p>
         </div>
+
+        <div className="">
+          <ChartContainer
+            className="h-full"
+            config={{
+              value: {
+                label: "Value",
+                color: "white",
+              },
+            }}
+          >
+            <ResponsiveContainer width="100%">
+              <LineChart data={data}>
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  dot={{ r: 4 }}
+                  isAnimationActive={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </ChartContainer>
+        </div>
+
       </CardContent>
     </Card>
   )

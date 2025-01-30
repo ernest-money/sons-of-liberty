@@ -14,22 +14,19 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { Home } from "lucide-react"
 
-// This is sample data.
+const main = [
+  {
+    title: "Home",
+    url: "/dashboard",
+    isActive: window.location.pathname === "/dashboard",
+  }
+]
+
 const data = {
   versions: ["0.0.1",],
   navMain: [
-    {
-      title: "Dashboard",
-      url: "/dashboard",
-      items: [
-        {
-          title: "Home",
-          url: "/dashboard",
-          isActive: window.location.pathname === "/dashboard",
-        }
-      ]
-    },
     {
       title: "Contracts",
       url: "#",
@@ -87,7 +84,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SearchForm />
       </SidebarHeader>
       <SidebarContent>
-        {/* We create a SidebarGroup for each parent. */}
+        <SidebarMenu>
+          {main.map((item) => (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton asChild isActive={item.isActive}>
+                <a href={item.url}>
+                  <Home /> Home
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
         {data.navMain.map((item) => (
           <SidebarGroup key={item.title}>
             <SidebarGroupLabel>{item.title}</SidebarGroupLabel>

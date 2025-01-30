@@ -9,6 +9,7 @@ import { UtxoList } from '../components/UtxoList';
 import { BalanceCard } from '@/components/balance-card';
 import { useSol } from '@/lib/hooks/useSol';
 import { Balance, defaultBalance } from '@/types';
+import { Pnl } from '@/components/pnl';
 
 const data = [
   { value: 100 },
@@ -34,31 +35,15 @@ export const Dashboard: React.FC = () => {
   }, [])
 
   return (
-    <div className='flex flex-col gap-4 sm:w-full'>
-      <h1>Hello, {user?.email}</h1>
+    <div className='flex flex-col margin-auto gap-4 sm:w-full'>
+      <h1 className='text-4xl pl-6 pt-6 font-bold'>Hello, {user?.email ?? "anon"}</h1>
       <div>
-        <BalanceCard className='w-3/4 h-full' title="Profit & Loss" amount={balance.contract_pnl} percentage={10} data={data} />
-
-        <div className="flex flex-row gap-4">
+        <Pnl className='w-full h-full' title="Profit & Loss" amount={balance.contract_pnl} percentage={10} data={data} />
+        <div className="flex flex-row justify-center m-6 gap-4">
           <BalanceCard title="Contract Balance" amount={balance.contract} percentage={10} />
           <BalanceCard title="Confirmed Balance" amount={balance.confirmed} percentage={10} />
           <BalanceCard title="Unconfirmed Balance" amount={balance.change_unconfirmed + balance.foreign_unconfirmed} percentage={10} />
         </div>
-
-        <section>
-          <h2>Wallet</h2>
-          <WalletInfo />
-        </section>
-
-        <section>
-          <h2>Transactions</h2>
-          <TransactionList />
-        </section>
-
-        <section>
-          <h2>UTXOs</h2>
-          <UtxoList />
-        </section>
       </div>
     </div>
   );
