@@ -5,6 +5,7 @@ import { VersionSwitcher } from "@/components/version-switcher"
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -15,6 +16,8 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { Home, Wallet } from "lucide-react"
+import { NavUser } from "@/components/nav-user"
+import { useAuth } from "@/lib/hooks/useAuth"
 
 const main = [
   {
@@ -35,6 +38,17 @@ const data = {
   versions: ["0.0.1",],
   navMain: [
     {
+      title: "Market",
+      url: "/offers",
+      items: [
+        {
+          title: "Open Offers",
+          url: "/offers",
+          isActive: window.location.pathname === "/offers",
+        }
+      ],
+    },
+    {
       title: "Contracts",
       url: "#",
       items: [
@@ -52,21 +66,11 @@ const data = {
         },
       ],
     },
-    {
-      title: "Market",
-      url: "/offers",
-      items: [
-        {
-          title: "Open Offers",
-          url: "/offers",
-          isActive: window.location.pathname === "/offers",
-        }
-      ],
-    },
   ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useAuth()
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -74,7 +78,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           versions={data.versions}
           defaultVersion={data.versions[0]}
         />
-        <SearchForm />
+        {/* <SearchForm /> */}
       </SidebarHeader>
       <SidebarContent>
         <SidebarMenu>
@@ -105,6 +109,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarGroup>
         ))}
       </SidebarContent>
+      <SidebarFooter>
+        <NavUser user={{ name: user?.name ?? "anon", email: user?.email ?? "anon@example.com", avatar: "/avatars/shadcn.jpg" }} />
+      </SidebarFooter>
+
       <SidebarRail />
     </Sidebar>
   )
