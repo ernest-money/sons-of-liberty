@@ -13,6 +13,8 @@ import { ClosedContracts } from '@/app/contracts/closed';
 import { OfferList } from '@/components/OfferList';
 import { Transactions } from '@/app/wallet/transactions';
 import { Utxos } from '@/app/wallet/utxos';
+import { WalletSection } from '@/components/WalletSection';
+import { Toaster } from '@/components/ui/toaster';
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -68,7 +70,9 @@ export const App: React.FC = () => {
               <Route path="/offers" element={<PrivateRoute><OfferList /></PrivateRoute>} />
               <Route path="/wallet/transactions" element={<PrivateRoute><Transactions /></PrivateRoute>} />
               <Route path="/wallet/utxos" element={<PrivateRoute><Utxos /></PrivateRoute>} />
+              <Route path="/wallet" element={<PrivateRoute><WalletSection /></PrivateRoute>} />
             </Routes>
+            <Toaster />
           </AuthProvider>
         </SolProvider>
       </ThemeProvider>

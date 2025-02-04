@@ -14,14 +14,21 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { Home } from "lucide-react"
+import { Home, Wallet } from "lucide-react"
 
 const main = [
   {
     title: "Home",
     url: "/dashboard",
     isActive: window.location.pathname === "/dashboard",
-  }
+    icon: <Home />
+  },
+  {
+    title: "Wallet",
+    url: "/wallet",
+    isActive: window.location.pathname === "/wallet",
+    icon: <Wallet />
+  },
 ]
 
 const data = {
@@ -35,11 +42,13 @@ const data = {
           title: "Active",
           url: "/contracts/active",
           isActive: window.location.pathname === "/contracts/active",
+
         },
         {
           title: "Closed",
           url: "/contracts/closed",
           isActive: window.location.pathname === "/contracts/closed",
+          icon: <Home />
         },
       ],
     },
@@ -52,22 +61,6 @@ const data = {
           url: "/offers",
           isActive: window.location.pathname === "/offers",
         }
-      ],
-    },
-    {
-      title: "Wallet",
-      url: "/wallet",
-      items: [
-        {
-          title: "Transactions",
-          url: "/wallet/transactions",
-          isActive: window.location.pathname === "/wallet/transactions",
-        },
-        {
-          title: "UTXOs",
-          url: "/wallet/utxos",
-          isActive: window.location.pathname === "/wallet/utxos",
-        },
       ],
     },
   ],
@@ -89,7 +82,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild isActive={item.isActive}>
                 <a href={item.url}>
-                  <Home /> Home
+                  {item.icon} {item.title}
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>

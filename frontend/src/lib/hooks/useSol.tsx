@@ -34,7 +34,7 @@ export interface SolContextType {
   getOffers: (offerId?: string) => Promise<any>;
   sendOffer: (body: SendOfferBody) => Promise<any>;
   acceptOffer: (body: AcceptOfferBody) => Promise<any>;
-  getNewAddress: () => Promise<any>;
+  getNewAddress: () => Promise<{ address: string }>;
   getTransactions: () => Promise<any>;
   getUtxos: () => Promise<any>;
   getBalance: () => Promise<Balance>;
