@@ -8,6 +8,8 @@ use axum::{debug_handler, extract::Query, http::StatusCode, Extension};
 use loco_rs::{controller::ErrorDetail, prelude::*};
 use serde::{Deserialize, Serialize};
 
+use super::auth::CookieAuth;
+
 #[derive(Debug, Deserialize, Serialize)]
 pub enum ContractFilter {
     All,
@@ -24,12 +26,12 @@ pub struct GetContractByIdQuery {
 
 #[debug_handler]
 pub async fn index(
-    // auth: auth::JWT,
+    cookie: CookieAuth,
     Query(query): Query<GetContractByIdQuery>,
     Extension(ddk): Extension<Arc<SonsOfLiberty>>,
-    // State(ctx): State<AppContext>,
+    State(ctx): State<AppContext>,
 ) -> Result<Response> {
-    // users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
+    users::Model::find_by_pid(&ctx.db, &cookie.user.pid).await?;
 
     let contracts = dlcdevkit::get_filtered_contracts(ddk.dlcdevkit.storage.clone(), query.filter)?;
 

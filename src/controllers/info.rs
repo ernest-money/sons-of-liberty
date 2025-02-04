@@ -9,13 +9,15 @@ use loco_rs::{controller::ErrorDetail, prelude::*};
 
 use crate::{models::users, sol::SonsOfLiberty};
 
+use super::auth::CookieAuth;
+
 #[debug_handler]
 pub async fn index(
-    // auth: auth::JWT,
+    cookie: CookieAuth,
     Extension(ddk): Extension<Arc<SonsOfLiberty>>,
-    // State(ctx): State<AppContext>,
+    State(ctx): State<AppContext>,
 ) -> Result<Response> {
-    // users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
+    users::Model::find_by_pid(&ctx.db, &cookie.user.pid).await?;
     let transport_public_key = ddk.dlcdevkit.transport.public_key();
     let transport_type = ddk.dlcdevkit.transport.name();
     let oracle_public_key = ddk.dlcdevkit.oracle.get_pubkey().await.map_err(|e| {

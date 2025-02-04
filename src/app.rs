@@ -14,6 +14,7 @@ use loco_rs::{
 use migration::Migrator;
 use std::{path::Path, sync::Arc};
 use tokio::sync::OnceCell;
+use tower_cookies::CookieManagerLayer;
 
 use crate::{common::settings::Settings, sol::SonsOfLiberty};
 #[allow(unused_imports)]
@@ -93,7 +94,9 @@ impl Hooks for App {
                 tracing::error!("Error starting DDK: {:?}", e);
             }
         });
-        Ok(router.layer(Extension(ddk.clone())))
+        Ok(router
+            .layer(Extension(ddk.clone()))
+            .layer(CookieManagerLayer::new()))
     }
 
     async fn on_shutdown(_ctx: &AppContext) {

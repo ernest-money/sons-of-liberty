@@ -6,13 +6,48 @@ use crate::{
     },
     views::auth::{CurrentResponse, LoginResponse},
 };
-use axum::debug_handler;
-use loco_rs::prelude::*;
+use axum::{debug_handler, extract::FromRequestParts, http::request::Parts, RequestPartsExt};
+use loco_rs::{
+    auth::jwt::{UserClaims, JWT},
+    controller::ErrorDetail,
+    prelude::*,
+};
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::sync::OnceLock;
+use tower_cookies::{cookie::SameSite, Cookie, Cookies};
 
 pub static EMAIL_DOMAIN_RE: OnceLock<Regex> = OnceLock::new();
+pub const COOKIE_NAME: &str = "sol_cookie";
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct CookieAuth {
+    pub user: UserClaims,
+}
+
+impl FromRequestParts<AppContext> for CookieAuth {
+    type Rejection = Error;
+
+    async fn from_request_parts(
+        parts: &mut Parts,
+        state: &AppContext,
+    ) -> Result<Self, Self::Rejection> {
+        let cookies = parts
+            .extract::<Cookies>()
+            .await
+            .map_err(|e| Error::CustomError(e.0, ErrorDetail::new(e.1, "cookie not found")))?;
+        let cookie = cookies
+            .get(COOKIE_NAME)
+            .ok_or(Error::Unauthorized("cookie not found".to_string()))?;
+
+        let jwt_config = state.config.get_jwt_config()?;
+        let user = JWT::new(&jwt_config.secret)
+            .validate(&cookie.value().to_string())
+            .map_err(|e| Error::Unauthorized(e.to_string()))?;
+
+        Ok(CookieAuth { user: user.claims })
+    }
+}
 
 fn get_allow_email_domain_re() -> &'static Regex {
     EMAIL_DOMAIN_RE.get_or_init(|| {
@@ -128,7 +163,11 @@ async fn reset(State(ctx): State<AppContext>, Json(params): Json<ResetParams>) -
 
 /// Creates a user login and returns a token
 #[debug_handler]
-async fn login(State(ctx): State<AppContext>, Json(params): Json<LoginParams>) -> Result<Response> {
+async fn login(
+    cookies: Cookies,
+    State(ctx): State<AppContext>,
+    Json(params): Json<LoginParams>,
+) -> Result<Response> {
     let user = users::Model::find_by_email(&ctx.db, &params.email).await?;
 
     let valid = user.verify_password(&params.password);
@@ -143,12 +182,19 @@ async fn login(State(ctx): State<AppContext>, Json(params): Json<LoginParams>) -
         .generate_jwt(&jwt_secret.secret, &jwt_secret.expiration)
         .or_else(|_| unauthorized("unauthorized!"))?;
 
+    let mut cookie = Cookie::new(COOKIE_NAME, token.clone());
+    cookie.set_secure(true);
+    cookie.set_http_only(true);
+    cookie.set_path("/");
+    cookie.set_same_site(SameSite::Strict);
+    cookies.add(cookie);
+
     format::json(LoginResponse::new(&user, &token))
 }
 
 #[debug_handler]
-async fn current(auth: auth::JWT, State(ctx): State<AppContext>) -> Result<Response> {
-    let user = users::Model::find_by_pid(&ctx.db, &auth.claims.pid).await?;
+async fn current(cookie: CookieAuth, State(ctx): State<AppContext>) -> Result<Response> {
+    let user = users::Model::find_by_pid(&ctx.db, &cookie.user.pid).await?;
     format::json(CurrentResponse::new(&user))
 }
 

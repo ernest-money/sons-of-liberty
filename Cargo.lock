@@ -5246,6 +5246,7 @@ dependencies = [
  "serde_json",
  "serial_test",
  "tokio",
+ "tower-cookies",
  "tracing",
  "tracing-subscriber",
  "unic-langid",
@@ -5995,6 +5996,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "tower-cookies"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "151b5a3e3c45df17466454bb74e9ecedecc955269bdedbf4d150dfa393b55a36"
+dependencies = [
+ "axum-core",
+ "cookie",
+ "futures-util",
+ "http 1.2.0",
+ "parking_lot 0.12.3",
+ "pin-project-lite",
+ "tower-layer",
+ "tower-service",
+]
+
+[[package]]
 name = "tower-http"
 version = "0.6.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6357,7 +6374,6 @@ dependencies = [
  "getrandom",
  "rand",
  "serde",
- "wasm-bindgen",
 ]
 
 [[package]]
