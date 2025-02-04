@@ -1,8 +1,45 @@
-import React, { useEffect, useState } from 'react';
-import { Transaction } from '../types';
-import { useSol } from '../lib/hooks/useSol';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { useSol } from "@/lib/hooks/useSol";
+import { Transaction } from "../types";
+import { useEffect, useState } from "react";
 
-export const TransactionList: React.FC = () => {
+function TruncatedCell({ value, className = "" }: { value: string | number, className?: string }) {
+  const stringValue = String(value);
+  const shouldTruncate = stringValue.length > 15;
+
+  return shouldTruncate ? (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <TableCell className={`max-w-[120px] truncate ${className}`}>
+            {stringValue}
+          </TableCell>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{stringValue}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  ) : (
+    <TableCell className={`max-w-[120px] ${className}`}>{stringValue}</TableCell>
+  );
+}
+
+export function TransactionList() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [error, setError] = useState<string | null>(null);
   const client = useSol();
@@ -24,21 +61,30 @@ export const TransactionList: React.FC = () => {
     return <div>Error: {error}</div>;
   }
 
-  if (!transactions.length) {
-    return <div>No transactions found</div>;
-  }
-
   return (
-    <div>
-      {transactions.map((tx, index) => (
-        <div key={index}>
-          <h3>Transaction {index + 1}</h3>
-          <div>Version: {tx.version}</div>
-          <div>Lock Time: {tx.lock_time}</div>
-          <div>Inputs: {tx.input.length}</div>
-          <div>Outputs: {tx.output.length}</div>
-        </div>
-      ))}
+    <div className="flex flex-col gap-4 p-4">
+      <h1 className="text-2xl font-bold">Transactions</h1>
+      <Table>
+        <TableCaption>Your transaction history</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="max-w-[120px]">Version</TableHead>
+            <TableHead className="max-w-[120px]">Lock Time</TableHead>
+            <TableHead className="max-w-[120px]">Inputs</TableHead>
+            <TableHead className="max-w-[120px]">Outputs</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {transactions.map((tx, index) => (
+            <TableRow key={index}>
+              <TruncatedCell value={tx.version} className="font-medium" />
+              <TruncatedCell value={tx.lock_time} />
+              <TruncatedCell value={tx.input.length} />
+              <TruncatedCell value={tx.output.length} />
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
-}; 
+} 

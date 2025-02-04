@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { SolProvider } from './lib/hooks/useSol';
 import { AuthProvider, useAuth } from './lib/hooks/useAuth';
 import { Dashboard } from './pages/Dashboard';
-import { CreateContract } from './pages/CreateContract';
+import { CreateContract } from '@/app/create/page';
 import "./index.css"
 import { Layout } from './components/layout';
 import { ThemeProvider } from './components/theme-provider';
@@ -15,12 +15,18 @@ import { Transactions } from '@/app/wallet/transactions';
 import { Utxos } from '@/app/wallet/utxos';
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
   return isAuthenticated ? <Layout>{children}</Layout> : <Navigate to="/login" />;
 };
 
 const PublicRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
   return !isAuthenticated ? <>{children}</> : <Navigate to="/dashboard" />;
 };
 
@@ -28,7 +34,7 @@ export const App: React.FC = () => {
   return (
     <BrowserRouter>
       <ThemeProvider>
-        <SolProvider baseUrl="http://127.0.0.1:5150">
+        <SolProvider baseUrl="http://localhost:5150">
           <AuthProvider>
             <Routes>
               <Route
@@ -56,7 +62,7 @@ export const App: React.FC = () => {
                 }
               />
               <Route path="/" element={<Navigate to="/dashboard" />} />
-              <Route path="/create-contract" element={<PrivateRoute><CreateContract /></PrivateRoute>} />
+              <Route path="/create" element={<PrivateRoute><CreateContract /></PrivateRoute>} />
               <Route path="/contracts/active" element={<PrivateRoute><ActiveContracts /></PrivateRoute>} />
               <Route path="/contracts/closed" element={<PrivateRoute><ClosedContracts /></PrivateRoute>} />
               <Route path="/offers" element={<PrivateRoute><OfferList /></PrivateRoute>} />

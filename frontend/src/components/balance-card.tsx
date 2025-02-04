@@ -14,11 +14,7 @@ interface RevenueCardProps {
 
 // TODO: Get the historical data from the API for the percentage change
 export function BalanceCard({ title, amount, percentage, className }: RevenueCardProps) {
-  // const formattedAmount = new Intl.NumberFormat("en-US", {
-  //   style: "currency",
-  //   currency: "BTC",
-  // }).format(amount)
-  const formattedAmount = `${amount} sats`
+  const formattedAmount = `${amount.toLocaleString()} sats`
 
   const isPositive = percentage > 0
 

@@ -69,8 +69,8 @@ export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
 
   const instance = useMemo(() => {
     const axiosInstance = axios.create({
-      baseURL: baseUrl,
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      baseURL: "/",
+      withCredentials: true,
     });
 
     axiosInstance.interceptors.response.use(

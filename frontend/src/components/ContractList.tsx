@@ -1,12 +1,54 @@
-import React, { useEffect, useState } from 'react';
-import { Contract } from '../types';
-import { useSol } from '../lib/hooks/useSol';
-import { ContractFilter } from '../lib/sol/contracts';
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
+import { useSol } from "@/lib/hooks/useSol";
+import { Contract } from "../types";
+import { ContractFilter } from "../lib/sol/contracts";
+import { useEffect, useState } from "react";
 
-export const ContractList: React.FC = () => {
+interface ContractListProps {
+  defaultFilter?: ContractFilter;
+  showFilter?: boolean;
+}
+
+function TruncatedCell({ value, className = "" }: { value: string | number, className?: string }) {
+  const stringValue = String(value);
+  const shouldTruncate = stringValue.length > 15;
+
+  return shouldTruncate ? (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <TableCell className={`max-w-[120px] truncate ${className}`}>
+            {stringValue}
+          </TableCell>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{stringValue}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  ) : (
+    <TableCell className={`max-w-[120px] ${className}`}>{stringValue}</TableCell>
+  );
+}
+
+export function ContractList({ defaultFilter = ContractFilter.All, showFilter = true }: ContractListProps) {
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<ContractFilter>(ContractFilter.All);
+  const [filter, setFilter] = useState<ContractFilter>(defaultFilter);
   const client = useSol();
 
   useEffect(() => {
@@ -27,42 +69,50 @@ export const ContractList: React.FC = () => {
   }
 
   return (
-    <div>
-      <div>
-        <select
-          value={filter}
-          onChange={(e) => setFilter(e.target.value as ContractFilter)}
-        >
-          {Object.values(ContractFilter).map((value) => (
-            <option key={value} value={value}>
-              {value}
-            </option>
-          ))}
-        </select>
+    <div className="flex flex-col gap-4 p-4">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Contracts</h1>
+        {showFilter && (
+          <select
+            className="rounded-md border p-2"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value as ContractFilter)}
+          >
+            {Object.values(ContractFilter).map((value) => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
-
-      {!contracts.length ? (
-        <div>No contracts found</div>
-      ) : (
-        contracts.map((contract) => (
-          <div key={contract.contract_id}>
-            <h3>Contract {contract.contract_id}</h3>
-            <div>State: {contract.state}</div>
-            <div>Counterparty: {contract.counterparty}</div>
-            <div>Collateral: {contract.collateral}</div>
-            {contract.funding_txid && (
-              <div>Funding Transaction: {contract.funding_txid}</div>
-            )}
-            {contract.pnl !== undefined && <div>PnL: {contract.pnl}</div>}
-            {contract.event_ids && (
-              <div>Event IDs: {contract.event_ids.join(', ')}</div>
-            )}
-            {contract.error_message && (
-              <div>Error: {contract.error_message}</div>
-            )}
-          </div>
-        ))
-      )}
+      <Table>
+        <TableCaption>Your DLC contracts</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="max-w-[120px]">Contract ID</TableHead>
+            <TableHead className="max-w-[120px]">State</TableHead>
+            <TableHead className="max-w-[120px]">Counterparty</TableHead>
+            <TableHead className="max-w-[120px]">Collateral</TableHead>
+            <TableHead className="max-w-[120px]">Amount</TableHead>
+            <TableHead className="max-w-[120px]">PnL</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {contracts.map((contract) => (
+            <TableRow key={contract.contract_id}>
+              <TruncatedCell value={contract.contract_id} className="font-medium" />
+              <TruncatedCell value={contract.state} />
+              <TruncatedCell value={contract.counterparty} />
+              <TruncatedCell value={contract.collateral} />
+              <TruncatedCell
+                value={contract.is_offer_party ? contract.offer_amount || '-' : contract.accept_amount || '-'}
+              />
+              <TruncatedCell value={contract.pnl !== undefined ? contract.pnl : '-'} />
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
-}; 
+} 

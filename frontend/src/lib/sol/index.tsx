@@ -36,6 +36,7 @@ export class SolClient {
 
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       ...options,
+      credentials: "include",
       headers: {
         ...headers,
         ...options.headers,
@@ -156,9 +157,8 @@ export class SolClient {
     if (params?.id) searchParams.append("id", params.id);
     if (params?.filter) searchParams.append("filter", params.filter);
 
-    const endpoint = `/api/contracts${
-      searchParams.toString() ? "?" + searchParams.toString() : ""
-    }`;
+    const endpoint = `/api/contracts${searchParams.toString() ? "?" + searchParams.toString() : ""
+      }`;
     return this.fetch(endpoint);
   }
 }

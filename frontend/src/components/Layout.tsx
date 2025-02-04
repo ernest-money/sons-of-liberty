@@ -4,16 +4,31 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/s
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./ui/breadcrumb";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Button } from "./ui/button";
-import { PanelRightOpen, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { MarketChart, MarketChartType } from "./market-chart";
+import { ScrollArea } from "./ui/scroll-area";
 
 const ActionPanel = () => {
-  return <div className="p-4">this is where you can create an offer</div>
+  return (
+    <div className="pt-4 px-4 flex flex-col gap-4">
+      <ScrollArea className="h-[100vh]">
+        <MarketChart title="Price" type={MarketChartType.Price} />
+        <MarketChart title="Hashrate" type={MarketChartType.Hashrate} />
+        <MarketChart title="Difficulty" type={MarketChartType.Difficulty} />
+        <MarketChart title="Transaction Fee" type={MarketChartType.TransactionFee} />
+        <MarketChart title="Block Subsidy" type={MarketChartType.BlockSubsidy} />
+        <MarketChart title="Block Size" type={MarketChartType.BlockSize} />
+        <MarketChart title="Mempool Transactions" type={MarketChartType.MempoolTransactions} />
+        <MarketChart title="UTXO Set Size" type={MarketChartType.UtxoSetSize} />
+      </ScrollArea>
+    </div>
+  )
 }
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery("(min-width: 1100px)");
 
   return (
     <SidebarProvider>
@@ -39,9 +54,9 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
 
         {isDesktop ? (
           <ResizablePanelGroup direction="horizontal" className="flex-1">
-            <ResizablePanel defaultSize={75}>{children}</ResizablePanel>
+            <ResizablePanel defaultSize={60}>{children}</ResizablePanel>
             <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={25}><ActionPanel /></ResizablePanel>
+            <ResizablePanel defaultSize={40}><ActionPanel /></ResizablePanel>
           </ResizablePanelGroup>
         ) : (
           <>

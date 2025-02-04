@@ -4,8 +4,8 @@ import { useSol } from './useSol';
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  token: string | null;
-  user: { id: string; email: string } | null;
+  isLoading: boolean;
+  user: { id: string; email: string, name: string } | null;
   login: (params: LoginParams) => Promise<void>;
   register: (params: RegisterParams) => Promise<void>;
   logout: () => void;
@@ -16,39 +16,39 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
-  const [user, setUser] = useState<{ id: string; email: string } | null>(null);
+  const [user, setUser] = useState<{ id: string; email: string, name: string } | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const sol = useSol();
 
-  useEffect(() => {
-    const initAuth = async () => {
-      const storedToken = localStorage.getItem('token');
-      if (storedToken) {
-        try {
-          sol.setToken(storedToken);
-          const currentUser = await sol.current();
-          setUser(currentUser);
-          setToken(storedToken); // Ensure token state matches localStorage
-        } catch (error) {
-          // Only clear token if it's an auth error
-          // if (error instanceof Error && error.message === 'Unauthorized') {
-          //   logout();
-          // }
-          // For other errors, keep the token
-          console.error('Error initializing auth:', error);
-        }
-      }
-    };
+  const checkAuth = async () => {
+    console.log("checkAuth");
+    setIsLoading(true);
+    try {
+      const currentUser = await sol.current();
+      setUser(currentUser);
+      setIsAuthenticated(!!currentUser);
+    } catch (error) {
+      setUser(null);
+      setIsAuthenticated(false);
+      console.error('Error checking authentication:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-    initAuth();
+  useEffect(() => {
+    checkAuth();
   }, []);
 
   const login = async (params: LoginParams) => {
-    const response = await sol.login(params);
-    console.log(response);
-    setToken(response.token);
-    localStorage.setItem('token', response.token);
-    sol.setToken(response.token);
+    try {
+      await sol.login(params);
+      await checkAuth();
+    } catch (error) {
+      console.error('Error logging in:', error);
+      throw error;
+    }
   };
 
   const register = async (params: RegisterParams) => {
@@ -66,8 +66,8 @@ export const AuthProvider: React.FC<{
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated: !!token,
-        token,
+        isAuthenticated,
+        isLoading,
         user,
         login,
         register,
