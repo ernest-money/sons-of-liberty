@@ -17,6 +17,8 @@ import { useSol } from "@/lib/hooks/useSol";
 import { Contract } from "../types";
 import { ContractFilter } from "../lib/sol/contracts";
 import { useEffect, useState } from "react";
+import { useModal } from "@/hooks/use-modal";
+import { Modal, ContractModal } from "@/components/modals";
 
 interface ContractListProps {
   defaultFilter?: ContractFilter;
@@ -50,6 +52,8 @@ export function ContractList({ defaultFilter = ContractFilter.All, showFilter = 
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<ContractFilter>(defaultFilter);
   const client = useSol();
+  const { isOpen, open, close } = useModal();
+  const [selectedContract, setSelectedContract] = useState<number>(0);
 
   useEffect(() => {
     const fetchContracts = async () => {
@@ -99,8 +103,15 @@ export function ContractList({ defaultFilter = ContractFilter.All, showFilter = 
           </TableRow>
         </TableHeader>
         <TableBody>
-          {contracts.map((contract) => (
-            <TableRow key={contract.contract_id}>
+          {contracts.map((contract, index) => (
+            <TableRow
+              key={contract.contract_id}
+              onClick={() => {
+                setSelectedContract(index);
+                open();
+              }}
+              className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
               <TruncatedCell value={contract.contract_id} className="font-medium" />
               <TruncatedCell value={contract.state} />
               <TruncatedCell value={contract.counterparty} />
@@ -113,6 +124,9 @@ export function ContractList({ defaultFilter = ContractFilter.All, showFilter = 
           ))}
         </TableBody>
       </Table>
+      <Modal isOpen={isOpen} onClose={close}>
+        <ContractModal contract={contracts[selectedContract]} />
+      </Modal>
     </div>
   );
 } 

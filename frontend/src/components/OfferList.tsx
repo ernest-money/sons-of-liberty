@@ -16,6 +16,8 @@ import {
 import { useSol } from "@/lib/hooks/useSol";
 import { Offer } from "../types";
 import { useEffect, useState } from "react";
+import { useModal } from "@/hooks/use-modal";
+import { Modal, OfferModal } from "@/components/modals";
 
 function TruncatedCell({ value, className = "" }: { value: string | number, className?: string }) {
   const stringValue = String(value);
@@ -43,6 +45,8 @@ export function OfferList() {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [error, setError] = useState<string | null>(null);
   const client = useSol();
+  const { isOpen, open, close } = useModal();
+  const [selectedOffer, setSelectedOffer] = useState<number>(0);
 
   useEffect(() => {
     const fetchOffers = async () => {
@@ -77,8 +81,15 @@ export function OfferList() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {offers.map((offer) => (
-            <TableRow key={offer.contract_id}>
+          {offers.map((offer, index) => (
+            <TableRow
+              key={offer.contract_id}
+              onClick={() => {
+                setSelectedOffer(index);
+                open();
+              }}
+              className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
               <TruncatedCell value={offer.contract_id} className="font-medium" />
               <TruncatedCell value={offer.state} />
               <TruncatedCell value={offer.counter_party} />
@@ -89,6 +100,9 @@ export function OfferList() {
           ))}
         </TableBody>
       </Table>
+      <Modal isOpen={isOpen} onClose={close}>
+        <OfferModal offer={offers[selectedOffer]} />
+      </Modal>
     </div>
   );
 } 

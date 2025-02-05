@@ -4,7 +4,7 @@ import { BalanceCard } from '@/components/balance-card';
 import { useSol } from '@/lib/hooks/useSol';
 import { Balance, defaultBalance } from '@/types';
 import { Pnl } from '@/components/pnl';
-import { ContractTable } from '@/components/contract-table';
+import { ContractList } from '@/components/ContractList';
 
 const data = [
   { value: 100 },
@@ -39,7 +39,7 @@ export const Dashboard: React.FC = () => {
           <BalanceCard title="Confirmed Balance" amount={balance.confirmed} percentage={10} />
           <BalanceCard title="Unconfirmed Balance" amount={balance.change_unconfirmed + balance.foreign_unconfirmed} percentage={10} />
         </div>
-        <ContractTable />
+        <ContractList />
       </div>
     </div>
   );

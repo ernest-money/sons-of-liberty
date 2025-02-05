@@ -10,11 +10,15 @@ import {
 import { useSol } from "@/lib/hooks/useSol";
 import { LocalOutput } from "../types";
 import { useEffect, useState } from "react";
+import { useModal } from "@/hooks/use-modal";
+import { Modal, UtxoModal } from "@/components/modals";
 
 export function UtxoList() {
   const [utxos, setUtxos] = useState<LocalOutput[]>([]);
   const [error, setError] = useState<string | null>(null);
   const client = useSol();
+  const { isOpen, open, close } = useModal();
+  const [selectedUtxo, setSelectedUtxo] = useState<number>(0);
 
   useEffect(() => {
     const fetchUtxos = async () => {
@@ -48,8 +52,15 @@ export function UtxoList() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {utxos.map((utxo) => (
-            <TableRow key={`${utxo.outpoint.txid}-${utxo.outpoint.vout}`}>
+          {utxos.map((utxo, index) => (
+            <TableRow
+              key={`${utxo.outpoint.txid}-${utxo.outpoint.vout}`}
+              onClick={() => {
+                setSelectedUtxo(index);
+                open();
+              }}
+              className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+            >
               <TableCell className="font-medium">{utxo.outpoint.txid}</TableCell>
               <TableCell>{utxo.outpoint.vout}</TableCell>
               <TableCell>{utxo.keychain}</TableCell>
@@ -59,6 +70,9 @@ export function UtxoList() {
           ))}
         </TableBody>
       </Table>
+      <Modal isOpen={isOpen} onClose={close}>
+        <UtxoModal utxo={utxos[selectedUtxo]} />
+      </Modal>
     </div>
   );
 }
