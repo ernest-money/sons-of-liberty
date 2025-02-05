@@ -14,8 +14,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useSol } from "@/lib/hooks/useSol";
-import { Transaction } from "../types";
+import { Transaction } from "@/types";
 import { useEffect, useState } from "react";
+import { useModal } from "@/hooks/use-modal";
+import { Modal, TransactionModal } from "@/components/modals";
 
 function TruncatedCell({ value, className = "" }: { value: string | number, className?: string }) {
   const stringValue = String(value);
@@ -43,6 +45,8 @@ export function TransactionList() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [error, setError] = useState<string | null>(null);
   const client = useSol();
+  const { isOpen, open, close } = useModal()
+  const [selectedTransaction, setSelectedTransaction] = useState<number>(0);
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -76,7 +80,10 @@ export function TransactionList() {
         </TableHeader>
         <TableBody>
           {transactions.map((tx, index) => (
-            <TableRow key={index}>
+            <TableRow key={index} onClick={() => {
+              setSelectedTransaction(index)
+              open()
+            }}>
               <TruncatedCell value={tx.version} className="font-medium" />
               <TruncatedCell value={tx.lock_time} />
               <TruncatedCell value={tx.input.length} />
@@ -85,6 +92,9 @@ export function TransactionList() {
           ))}
         </TableBody>
       </Table>
+      <Modal isOpen={isOpen} onClose={close}>
+        <TransactionModal transaction={transactions[selectedTransaction]} />
+      </Modal>
     </div>
   );
-} 
+}

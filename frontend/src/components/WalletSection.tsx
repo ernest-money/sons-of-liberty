@@ -8,9 +8,11 @@ import { useState } from "react"
 import { Copy } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip"
+import { useModal } from "@/hooks/use-modal"
 
 export function WalletSection() {
   const [address, setAddress] = useState<string>("")
+  const { isOpen, open, close } = useModal()
   const client = useSol()
   const { toast } = useToast()
 
