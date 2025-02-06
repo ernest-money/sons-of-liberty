@@ -260,12 +260,18 @@ async fn magic_link_verify(
     format::json(LoginResponse::new(&user, &token))
 }
 
+async fn logout(cookies: Cookies) -> Result<Response> {
+    cookies.remove(Cookie::new(COOKIE_NAME, ""));
+    format::json(())
+}
+
 pub fn routes() -> Routes {
     Routes::new()
         .prefix("/api/auth")
         .add("/register", post(register))
         .add("/verify/{token}", get(verify))
         .add("/login", post(login))
+        .add("/logout", post(logout))
         .add("/forgot", post(forgot))
         .add("/reset", post(reset))
         .add("/current", get(current))

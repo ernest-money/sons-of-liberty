@@ -55,9 +55,10 @@ export const App: React.FC = () => {
                   </PublicRoute>
                 }
               />
-              <Route path="/" element={<Navigate to="/dashboard" />} />
+              <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
               <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
               <Route path="/create" element={<PrivateRoute><CreateContract /></PrivateRoute>} />
+              <Route path="/contracts" element={<PrivateRoute><ActiveContracts /></PrivateRoute>} />
               <Route path="/contracts/active" element={<PrivateRoute><ActiveContracts /></PrivateRoute>} />
               <Route path="/contracts/closed" element={<PrivateRoute><ClosedContracts /></PrivateRoute>} />
               <Route path="/offers" element={<PrivateRoute><OfferList /></PrivateRoute>} />

@@ -23,6 +23,7 @@ export interface SolContextType {
   setToken: (token?: string) => void;
   register: (params: RegisterParams) => Promise<void>;
   login: (params: LoginParams) => Promise<LoginResponse>;
+  logout: () => Promise<void>;
   verify: () => Promise<void>;
   forgot: (params: ForgotParams) => Promise<void>;
   reset: (params: ResetParams) => Promise<void>;
@@ -96,6 +97,9 @@ export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
     login: async (params: LoginParams) => {
       const data = await instance.post<LoginResponse>('/api/auth/login', params);
       return data.data;
+    },
+    logout: async () => {
+      await instance.post('/api/auth/logout');
     },
     verify: async () => {
       await instance.get('/api/auth/verify');

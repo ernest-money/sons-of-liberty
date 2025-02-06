@@ -9,6 +9,26 @@ import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { MarketChart, MarketChartType } from "./market-chart";
 import { ScrollArea } from "./ui/scroll-area";
+import { useLocation } from "react-router-dom";
+import { Fragment } from "react/jsx-runtime";
+
+const formatPathSegment = (segment: string): string => {
+  return segment
+    .split('-')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+};
+
+const getBreadcrumbItems = (pathname: string) => {
+  const segments = pathname.split('/').filter(Boolean);
+  return segments.map((segment, index) => {
+    const path = '/' + segments.slice(0, index + 1).join('/');
+    return {
+      text: formatPathSegment(segment),
+      path
+    };
+  });
+};
 
 const ActionPanel = () => {
   return (
@@ -29,6 +49,8 @@ const ActionPanel = () => {
 
 export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const isDesktop = useMediaQuery("(min-width: 1100px)");
+  const location = useLocation();
+  const breadcrumbItems = getBreadcrumbItems(location.pathname);
 
   return (
     <SidebarProvider>
@@ -40,14 +62,24 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">
+                <BreadcrumbLink href="/dashboard">
                   Ernest Money
                 </BreadcrumbLink>
               </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>This can come from the url</BreadcrumbPage>
-              </BreadcrumbItem>
+              {breadcrumbItems.map((item, index) => (
+                <Fragment key={item.path}>
+                  <BreadcrumbSeparator className="hidden md:block" />
+                  <BreadcrumbItem>
+                    {index === breadcrumbItems.length - 1 ? (
+                      <BreadcrumbPage>{item.text}</BreadcrumbPage>
+                    ) : (
+                      <BreadcrumbLink href={item.path}>
+                        {item.text}
+                      </BreadcrumbLink>
+                    )}
+                  </BreadcrumbItem>
+                </Fragment>
+              ))}
             </BreadcrumbList>
           </Breadcrumb>
         </header>

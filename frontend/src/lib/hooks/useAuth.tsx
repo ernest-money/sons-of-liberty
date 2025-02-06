@@ -8,7 +8,7 @@ interface AuthContextType {
   user: { id: string; email: string, name: string } | null;
   login: (params: LoginParams) => Promise<void>;
   register: (params: RegisterParams) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -55,12 +55,22 @@ export const AuthProvider: React.FC<{
     await sol.register(params);
   };
 
-  const logout = () => {
-    console.log("logout");
-    // setToken(null);
-    // setUser(null);
-    // localStorage.removeItem('token');
-    // sol.setToken(undefined);
+  const logout = async () => {
+    try {
+      console.log("logging out");
+      // Call backend logout endpoint to clear the cookie
+      await sol.logout();
+
+      // Clear frontend state
+      setUser(null);
+      setIsAuthenticated(false);
+
+      // Force refresh of auth state
+      await checkAuth();
+    } catch (error) {
+      console.error('Error during logout:', error);
+      throw error;
+    }
   };
 
   return (
