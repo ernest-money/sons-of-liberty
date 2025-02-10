@@ -1,20 +1,16 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TransactionList } from "./TransactionList"
-import { UtxoList } from "./UtxoList"
-import { useSol } from "@/lib/hooks/useSol"
+import { TransactionList } from "./transaction-list"
+import { UtxoList } from "./utxo-list"
+import { useSol, useToast } from "@/hooks"
 import { useEffect, useState } from "react"
 import { Copy } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip"
 import { SolBalance, defaultBalance } from "@/types"
 import { BalanceCard } from "./balance-card"
 
 export function WalletSection() {
-  const [address, setAddress] = useState<string>("")
-  const client = useSol()
-  const { toast } = useToast()
   const [balance, setBalance] = useState<SolBalance>(defaultBalance)
   const { getBalance } = useSol()
 

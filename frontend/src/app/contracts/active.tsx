@@ -1,4 +1,4 @@
-import { ContractList } from "@/components/ContractList"
+import { ContractList } from "@/components/contract-list"
 import { ContractFilter } from "@/lib/sol/contracts"
 
 export function ActiveContracts() {

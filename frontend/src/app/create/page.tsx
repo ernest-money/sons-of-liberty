@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { RangePayout, usePayout, PayoutPoint } from '@/lib/hooks/usePayout';
-import { PayoutChart } from '@/components/PayoutChart';
+import { RangePayout, usePayout, PayoutPoint } from '@/hooks';
+import { PayoutChart } from '@/components/payout-chart';
 import { compute_payout_range } from '@dlcdevkit/ddk-wasm';
 import { useSearchParams } from 'react-router-dom';
 

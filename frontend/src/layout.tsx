@@ -1,14 +1,13 @@
 import { Separator } from "@radix-ui/react-separator";
-import { AppSidebar } from "./app-sidebar";
+import { AppSidebar } from "./components/app-sidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./ui/breadcrumb";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
-import { Button } from "./ui/button";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "./components/ui/breadcrumb";
+import { Button } from "./components/ui/button";
 import { Plus } from "lucide-react";
-import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
-import { useMediaQuery } from "@/hooks/use-media-query";
-import { MarketChart, MarketChartType } from "./market-chart";
-import { ScrollArea } from "./ui/scroll-area";
+import { Drawer, DrawerContent, DrawerTrigger } from "./components/ui/drawer";
+import { useMediaQuery } from "@/hooks";
+import { MarketChart, MarketChartType } from "./components/market-chart";
+import { ScrollArea } from "./components/ui/scroll-area";
 import { useLocation } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
 

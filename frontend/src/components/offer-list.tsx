@@ -13,10 +13,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { useSol } from "@/lib/hooks/useSol";
+import { useSol, useModal } from "@/hooks";
 import { Offer } from "../types";
 import { useEffect, useState } from "react";
-import { useModal } from "@/hooks/use-modal";
 import { Modal, OfferModal } from "@/components/modals";
 
 function TruncatedCell({ value, className = "" }: { value: string | number, className?: string }) {

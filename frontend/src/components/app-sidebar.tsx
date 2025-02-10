@@ -1,6 +1,5 @@
 import * as React from "react"
 
-import { SearchForm } from "@/components/search-form"
 import { VersionSwitcher } from "@/components/version-switcher"
 import {
   Sidebar,
@@ -17,7 +16,7 @@ import {
 } from "@/components/ui/sidebar"
 import { Home, Wallet } from "lucide-react"
 import { NavUser } from "@/components/nav-user"
-import { useAuth } from "@/lib/hooks/useAuth"
+import { useAuth } from "@/hooks"
 
 const main = [
   {

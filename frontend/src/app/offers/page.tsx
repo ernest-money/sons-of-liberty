@@ -1,4 +1,4 @@
-import { OfferList } from "@/components/OfferList"
+import { OfferList } from "@/components/offer-list"
 
 export const Offers = () => {
   return <OfferList />

@@ -1,0 +1,14 @@
+output: stdout
+jobs:
+  run_task:
+    run: "balance_updater"
+    schedule: run every 5 seconds
+    output: stdout
+    tags: ["wallet", "dlcdevkit"]
+  # write_content:
+  #   shell: true
+  #   run: "echo loco >> ./scheduler.txt"
+  #   schedule: run every 5 seconds
+  #   # schedule: "* * * * * * *"
+  #   output: stdout
+  #   tags: ["base", "infra"]

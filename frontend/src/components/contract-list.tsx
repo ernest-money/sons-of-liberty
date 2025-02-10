@@ -13,11 +13,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { useSol } from "@/lib/hooks/useSol";
+import { useSol, useModal } from "@/hooks";
 import { Contract } from "../types";
 import { ContractFilter } from "../lib/sol/contracts";
 import { useEffect, useState } from "react";
-import { useModal } from "@/hooks/use-modal";
 import { Modal, ContractModal } from "@/components/modals";
 
 interface ContractListProps {

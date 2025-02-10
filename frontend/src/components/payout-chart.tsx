@@ -9,7 +9,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { RangePayout } from '../lib/hooks/usePayout';
+import { RangePayout } from '@/hooks';
 
 interface PayoutChartProps {
   rangePayouts: RangePayout[];

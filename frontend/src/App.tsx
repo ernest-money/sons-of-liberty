@@ -1,19 +1,18 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { SolProvider } from './lib/hooks/useSol';
-import { AuthProvider, useAuth } from './lib/hooks/useAuth';
-import { Dashboard } from './pages/Dashboard';
+import { SolProvider, AuthProvider, useAuth } from '@/hooks';
+import { Dashboard } from '@/app/dashboard/page';
 import { CreateContract } from '@/app/create/page';
 import "./index.css"
-import { Layout } from './components/layout';
+import { Layout } from './layout';
 import { ThemeProvider } from './components/theme-provider';
 import AuthPage from '@/app/auth/page';
 import { ActiveContracts } from '@/app/contracts/active';
 import { ClosedContracts } from '@/app/contracts/closed';
-import { OfferList } from '@/components/OfferList';
+import { OfferList } from '@/components/offer-list';
 import { Transactions } from '@/app/wallet/transactions';
 import { Utxos } from '@/app/wallet/utxos';
-import { WalletSection } from '@/components/WalletSection';
+import { WalletSection } from '@/components/wallet-section';
 import { Toaster } from '@/components/ui/toaster';
 
 const PrivateRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {

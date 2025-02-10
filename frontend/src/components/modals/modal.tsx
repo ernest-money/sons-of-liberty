@@ -3,7 +3,7 @@ import { cn } from '@/lib/utils'
 import { X } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Drawer } from 'vaul'
-import { useMediaQuery } from '@/hooks/use-media-query'
+import { useMediaQuery } from '@/hooks'
 
 interface ModalProps {
   isOpen: boolean

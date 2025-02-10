@@ -7,10 +7,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useSol } from "@/lib/hooks/useSol";
+import { useSol, useModal } from "@/hooks";
 import { LocalOutput } from "../types";
 import { useEffect, useState } from "react";
-import { useModal } from "@/hooks/use-modal";
 import { Modal, UtxoModal } from "@/components/modals";
 
 export function UtxoList() {

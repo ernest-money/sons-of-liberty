@@ -1,51 +1,49 @@
-// TODO: This is a temporary page until clean up structure
-import { AppSidebar } from "@/components/app-sidebar"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
+import React, { useEffect, useState } from 'react';
+import { useAuth, useSol } from '@/hooks';
+import { BalanceCard } from '@/components/balance-card';
+import { SolBalance, defaultBalance } from '@/types';
+import { Pnl } from '@/components/pnl';
+import { ContractList } from '@/components/contract-list';
 
-export default function DashboardPage() {
+const data = [
+  { value: 100 },
+  { value: 120 },
+  { value: 110 },
+  { value: 105 },
+  { value: 100 },
+  { value: 110 },
+  { value: 115 },
+  { value: 150 },
+]
+
+export const Dashboard: React.FC = () => {
+  const { user } = useAuth()
+  const { getBalance } = useSol()
+  const [balance, setBalance] = useState<SolBalance>(defaultBalance)
+  useEffect(() => {
+    const balance = async () => {
+      const balance = await getBalance()
+      console.log(balance)
+      setBalance(balance)
+    }
+    balance()
+  }, [])
+
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="#">
-                  Building Your Application
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator className="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
-        </header>
-        <div className="flex flex-1 flex-col gap-4 p-4">
-          <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
-            <div className="aspect-video rounded-xl bg-muted/50" />
+    <div className='flex flex-col margin-auto gap-4 sm:w-full'>
+      <h1 className='text-4xl pl-6 pt-6 font-bold'>Hello, {user?.name ?? "anon"}</h1>
+      <div>
+        <div className="flex flex-row justify-between gap-4 p-6">
+          <div className='w-1/2'>
+            <BalanceCard title="Confirmed Balance" amount={balance.confirmed} percentage={10} />
           </div>
-          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min" />
+          <div className='w-1/2'>
+            <BalanceCard title="Contract Balance" amount={balance.contract} percentage={10} />
+          </div>
         </div>
-      </SidebarInset>
-    </SidebarProvider>
-  )
-}
+        <Pnl className='w-full h-full' title="Profit & Loss" amount={balance.contractPnl} percentage={10} data={data} />
+        <ContractList />
+      </div>
+    </div>
+  );
+};
