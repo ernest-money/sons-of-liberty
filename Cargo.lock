@@ -2817,9 +2817,7 @@ dependencies = [
 
 [[package]]
 name = "kormir"
-version = "0.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ef15a66fa507767ca1d4dbe0705009e2c4c59d0f3cf6017a72fadf50c4a650f5"
+version = "0.4.2"
 dependencies = [
  "bitcoin",
  "dlc",
@@ -4898,6 +4896,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "serde-this-or-that"
+version = "0.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f90e7ee61f57b2b1a195326bf7ee88651d3d5e688f34bd5971110851764200bf"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "serde_derive"
 version = "1.0.217"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5240,9 +5247,11 @@ dependencies = [
  "loco-rs",
  "migration",
  "regex",
+ "reqwest 0.12.12",
  "rstest",
  "sea-orm",
  "serde",
+ "serde-this-or-that",
  "serde_json",
  "serial_test",
  "tokio",

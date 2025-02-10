@@ -22,7 +22,7 @@ use crate::{
     controllers, initializers, models::_entities::users, tasks, workers::downloader::DownloadWorker,
 };
 
-static SONS_OF_LIBERTY: OnceCell<Arc<SonsOfLiberty>> = OnceCell::const_new();
+pub static SONS_OF_LIBERTY: OnceCell<Arc<SonsOfLiberty>> = OnceCell::const_new();
 
 pub struct App;
 #[async_trait]
@@ -113,6 +113,7 @@ impl Hooks for App {
 
     #[allow(unused_variables)]
     fn register_tasks(tasks: &mut Tasks) {
+        tasks.register(tasks::balance_updater::BalanceUpdater);
         // tasks-inject (do not remove)
     }
     async fn truncate(ctx: &AppContext) -> Result<()> {
