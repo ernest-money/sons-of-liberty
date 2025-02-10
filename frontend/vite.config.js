@@ -9,6 +9,7 @@ export default defineConfig({
       allow: [
         path.resolve(__dirname, "../../dlcdevkit/ddk-wasm/pkg"),
         path.resolve(__dirname, "./src"),
+        path.resolve(__dirname, "./public"),
       ],
     },
     proxy: {

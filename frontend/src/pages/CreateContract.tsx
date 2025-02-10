@@ -2,11 +2,14 @@ import React from 'react';
 import { RangePayout, usePayout, PayoutPoint } from '../lib/hooks/usePayout';
 import { PayoutChart } from '../components/PayoutChart';
 import { compute_payout_range } from '@dlcdevkit/ddk-wasm';
+import { useSearchParams } from 'react-router-dom';
 
 export const CreateContract: React.FC = () => {
   const { payoutPoints, setPayoutPoints, roundingInterval, setRoundingInterval } = usePayout();
   const [rangePayouts, setRangePayouts] = React.useState<RangePayout[]>([]);
-
+  const [searchParams] = useSearchParams()
+  const type = searchParams.get('type');
+  console.log("type", type)
   // Add initial payout points
   React.useEffect(() => {
     if (payoutPoints.length === 0) {
@@ -53,7 +56,7 @@ export const CreateContract: React.FC = () => {
 
   return (
     <div style={{ padding: '20px', width: '100%' }}>
-      <h1>Create Contract</h1>
+      <h1 className='text-4xl pl-6 pt-6 font-bold'>hi</h1>
       <div>
         <h2>Payout Distribution</h2>
         {rangePayouts.length > 0 ? (

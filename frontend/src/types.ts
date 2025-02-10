@@ -1,17 +1,20 @@
-export interface Balance {
-  confirmed: number;
-  change_unconfirmed: number;
-  foreign_unconfirmed: number;
-  contract: number;
-  contract_pnl: number;
+export interface SolBalanceType {
+  sats: number;
+  btc: number;
 }
 
-export const defaultBalance: Balance = {
-  confirmed: 0,
-  change_unconfirmed: 0,
-  foreign_unconfirmed: 0,
-  contract: 0,
-  contract_pnl: 0,
+export interface SolBalance {
+  confirmed: SolBalanceType;
+  unconfirmed: SolBalanceType;
+  contract: SolBalanceType;
+  contractPnl: SolBalanceType;
+}
+
+export const defaultBalance: SolBalance = {
+  confirmed: { sats: 0, btc: 0 },
+  unconfirmed: { sats: 0, btc: 0 },
+  contract: { sats: 0, btc: 0 },
+  contractPnl: { sats: 0, btc: 0 },
 };
 
 export interface Contract {

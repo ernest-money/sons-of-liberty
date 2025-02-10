@@ -1,21 +1,20 @@
 "use client"
 
-import { Line, LineChart, ResponsiveContainer } from "recharts"
 import { Card, CardContent } from "@/components/ui/card"
-import { ChartContainer } from "@/components/ui/chart"
+import { formatAmount } from "@/lib/utils"
+import { SolBalanceType } from "@/types"
 
 interface RevenueCardProps {
   title: string
-  amount: number
+  amount: SolBalanceType
   percentage: number
   data?: Array<{ value: number }>
   className?: string
 }
 
+
 // TODO: Get the historical data from the API for the percentage change
 export function BalanceCard({ title, amount, percentage, className }: RevenueCardProps) {
-  const formattedAmount = `${amount.toLocaleString()} sats`
-
   const isPositive = percentage > 0
 
   return (
@@ -23,7 +22,7 @@ export function BalanceCard({ title, amount, percentage, className }: RevenueCar
       <CardContent className="p-6">
         <div className={`space-y-2`}>
           <p className="text-sm font-medium leading-none">{title}</p>
-          <p className="text-4xl font-bold">{formattedAmount}</p>
+          <p className="text-4xl font-bold">{formatAmount(amount)}</p>
           <p className={`text-sm ${isPositive ? "text-green-500" : "text-red-500"}`}>
             {isPositive ? "+" : ""}
             {percentage}% from last month

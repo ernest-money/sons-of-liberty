@@ -37,7 +37,7 @@ export function MarketChart({ title, type, className }: MarketChartProps) {
   ]
 
   return (
-    <Card className={`${className || ""} bg-black text-white overflow-hidden h-2/5 my-2`} onClick={() => navigate(`/create?type=${type}`)}>
+    <Card className={`${className || ""} bg-black text-white overflow-hidden h-2/5 my-2 cursor-pointer hover:bg-gray-900 transition-colors duration-200`} onClick={() => navigate(`/create?type=${type}`)}>
       <CardContent className="p-6 h-full w-full">
         <div className={`space-y-2`}>
           <h2 className="text-xl font-medium leading-none">{title}</h2>

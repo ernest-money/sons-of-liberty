@@ -3,10 +3,12 @@
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
 import { Card, CardContent } from "@/components/ui/card"
 import { ChartContainer } from "@/components/ui/chart"
+import { SolBalanceType } from "@/types"
+import { formatAmount } from "@/lib/utils"
 
 interface RevenueCardProps {
   title: string
-  amount: number
+  amount: SolBalanceType
   percentage: number
   data: Array<{ value: number }>
   className?: string
@@ -14,8 +16,6 @@ interface RevenueCardProps {
 
 // TODO: Get the historical data from the API for the percentage change
 export function Pnl({ title, amount, percentage, data, className }: RevenueCardProps) {
-  const formattedAmount = `${amount} sats`
-
   const isPositive = percentage > 0
 
   return (
@@ -23,7 +23,7 @@ export function Pnl({ title, amount, percentage, data, className }: RevenueCardP
     <div className="p-6 h-full w-full">
       <div className={`space-y-2`}>
         <p className="text-sm font-medium leading-none">{title}</p>
-        <p className="text-4xl font-bold">{formattedAmount}</p>
+        <p className="text-4xl font-bold">{formatAmount(amount)}</p>
         <p className={`text-sm ${isPositive ? "text-green-500" : "text-red-500"}`}>
           {isPositive ? "+" : ""}
           {percentage}% from last month

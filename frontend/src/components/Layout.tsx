@@ -34,6 +34,7 @@ const ActionPanel = () => {
   return (
     <div className="pt-4 px-4 flex flex-col gap-4">
       <ScrollArea className="h-[100vh]">
+        <h1 className='text-4xl font-bold p-0 m-0'>Markets</h1>
         <MarketChart title="Price" type={MarketChartType.Price} />
         <MarketChart title="Hashrate" type={MarketChartType.Hashrate} />
         <MarketChart title="Difficulty" type={MarketChartType.Difficulty} />
@@ -85,11 +86,18 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
         </header>
 
         {isDesktop ? (
-          <ResizablePanelGroup direction="horizontal" className="flex-1">
-            <ResizablePanel defaultSize={60}>{children}</ResizablePanel>
-            <ResizableHandle withHandle />
-            <ResizablePanel defaultSize={40}><ActionPanel /></ResizablePanel>
-          </ResizablePanelGroup>
+          <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] overflow-hidden">
+            <div className="flex-1 flex flex-row w-full relative">
+              <div className="w-3/5 min-w-0 overflow-auto flex-shrink-0">
+                {children}
+              </div>
+              <div className="w-2/5 min-w-0 flex-shrink-0">
+                <ScrollArea className="h-full">
+                  <ActionPanel />
+                </ScrollArea>
+              </div>
+            </div>
+          </div>
         ) : (
           <>
             <div className="relative flex-1">

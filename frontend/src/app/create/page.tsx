@@ -1,14 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { RangePayout, usePayout, PayoutPoint } from '@/lib/hooks/usePayout';
 import { PayoutChart } from '@/components/PayoutChart';
 import { compute_payout_range } from '@dlcdevkit/ddk-wasm';
+import { useSearchParams } from 'react-router-dom';
 
 export const CreateContract: React.FC = () => {
   const { payoutPoints, setPayoutPoints, roundingInterval, setRoundingInterval } = usePayout();
   const [rangePayouts, setRangePayouts] = React.useState<RangePayout[]>([]);
+  const [searchParams] = useSearchParams()
+  const type = searchParams.get('type');
 
-  // Add initial payout points
-  React.useEffect(() => {
+  useEffect(() => {
     if (payoutPoints.length === 0) {
       const initialPoints: PayoutPoint[] = [
         { eventOutcome: 0, outcomePayout: 0, extraPrecision: 0 },
@@ -31,7 +33,7 @@ export const CreateContract: React.FC = () => {
   }, [payoutPoints.length, setPayoutPoints, setRoundingInterval]);
 
   // Update range payouts whenever payout points change
-  React.useEffect(() => {
+  useEffect(() => {
     const loadWasm = async () => {
       if (compute_payout_range && payoutPoints.length >= 1) {
         try {
@@ -47,13 +49,14 @@ export const CreateContract: React.FC = () => {
   }, [payoutPoints, roundingInterval]);
 
   // Log payoutPoints whenever they change
-  React.useEffect(() => {
+  useEffect(() => {
     console.log("Current payoutPoints:", payoutPoints);
   }, [payoutPoints]);
 
   return (
     <div style={{ padding: '20px', width: '100%' }}>
-      <h1>Create Contract</h1>
+      {/* @ts-ignore */}
+      <h1 className='text-4xl font-bold'>{type?.charAt(0).toUpperCase() + type?.slice(1) ?? "Create Contract"}</h1>
       <div>
         <h2>Payout Distribution</h2>
         {rangePayouts.length > 0 ? (

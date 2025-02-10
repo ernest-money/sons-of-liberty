@@ -12,6 +12,7 @@ import { Peer } from "./peers";
 import { SendOfferBody, AcceptOfferBody, AcceptOfferResponse } from "./offers";
 import { WalletAddress, Transaction, UTXO } from "./wallet";
 import { ContractFilter } from "./contracts";
+import { SolBalance } from "@/types";
 
 export class SolClient {
   private baseUrl: string;
@@ -144,7 +145,7 @@ export class SolClient {
   }
 
   // Balance Methods
-  async getBalance(): Promise<any> {
+  async getBalance(): Promise<SolBalance> {
     return this.fetch("/api/balance");
   }
 
