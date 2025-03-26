@@ -29,7 +29,7 @@ export function LoginForm({
 
     try {
       await login({ email, password });
-      navigate('/dashboard');
+      navigate('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to login');
     }

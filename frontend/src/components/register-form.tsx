@@ -30,7 +30,7 @@ export function RegisterForm({
 
     try {
       await register({ email, password, name });
-      navigate('/dashboard');
+      navigate('/');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to login');
     }

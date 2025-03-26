@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 
 export default defineConfig({
+  base: "/",
   plugins: [react()],
   server: {
     fs: {
@@ -14,7 +15,7 @@ export default defineConfig({
     },
     proxy: {
       "/api": {
-        target: "http://localhost:5150", // Replace 8000 with your target port
+        target: "http://localhost:5150",
         changeOrigin: true,
       },
     },
@@ -23,5 +24,8 @@ export default defineConfig({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  optimizeDeps: {
+    force: true,
   },
 });

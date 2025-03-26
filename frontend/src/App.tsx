@@ -35,6 +35,7 @@ export const App: React.FC = () => {
   return (
     <BrowserRouter>
       <ThemeProvider>
+        {/** TODO this should be a config*/}
         <SolProvider baseUrl="http://localhost:5150">
           <AuthProvider>
             <Routes>

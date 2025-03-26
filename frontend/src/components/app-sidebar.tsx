@@ -21,8 +21,8 @@ import { useAuth } from "@/hooks"
 const main = [
   {
     title: "Home",
-    url: "/dashboard",
-    isActive: window.location.pathname === "/dashboard",
+    url: "/",
+    isActive: window.location.pathname === "/",
     icon: <Home />
   },
   {

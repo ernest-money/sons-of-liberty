@@ -17,3 +17,4 @@ pub mod wallet;
 // }
 
 pub mod home;
+pub mod hashrate;

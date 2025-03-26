@@ -7,3 +7,4 @@ pub mod offers;
 pub mod contracts;
 pub mod peers;
 pub mod wallet;
+pub mod hashrate;

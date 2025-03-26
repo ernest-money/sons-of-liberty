@@ -23,9 +23,9 @@ export function WalletSection() {
   }, [])
 
   return (
-    <div className="flex flex-col gap-6">
-      <h1 className='text-4xl pl-6 pt-6 font-bold'>Wallet</h1>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 p-6">
+    <div className="flex flex-col gap-6 px-6">
+      <h1 className='text-4xl pt-6 font-bold'>Wallet</h1>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <BalanceCard title="Wallet Balance" amount={balance.confirmed} percentage={10} />
         <GenerateAddressCard />
       </div>

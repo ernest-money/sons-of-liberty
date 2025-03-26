@@ -16,7 +16,10 @@ use std::{path::Path, sync::Arc};
 use tokio::sync::OnceCell;
 use tower_cookies::CookieManagerLayer;
 
-use crate::{common::settings::Settings, sol::SonsOfLiberty};
+use crate::{
+    common::{market::Market, settings::Settings},
+    sol::SonsOfLiberty,
+};
 #[allow(unused_imports)]
 use crate::{
     controllers, initializers, models::_entities::users, tasks, workers::downloader::DownloadWorker,
@@ -57,6 +60,7 @@ impl Hooks for App {
 
     fn routes(_ctx: &AppContext) -> AppRoutes {
         AppRoutes::with_default_routes() // controller routes below
+            .add_route(controllers::hashrate::routes())
             .add_route(controllers::home::routes())
             .add_route(controllers::wallet::routes())
             .add_route(controllers::peers::routes())
@@ -94,8 +98,13 @@ impl Hooks for App {
                 tracing::error!("Error starting DDK: {:?}", e);
             }
         });
+
+        let market =
+            Arc::new(Market::new("postgres://loco:loco@localhost:5432/city_tavern").await?);
+
         Ok(router
             .layer(Extension(ddk.clone()))
+            .layer(Extension(market))
             .layer(CookieManagerLayer::new()))
     }
 

@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useMemo, useState, FC, useEffect } from 'react';
 import axios from 'axios';
-import { Balance, Contract } from '../../types';
-import { ForgotParams, LoginParams, LoginResponse, MagicLinkParams, RegisterParams, ResetParams } from '../sol/auth';
-import { InfoResponse } from '../sol/info';
-import { Peer } from '../sol/peers';
-import { ContractFilter } from '../sol/contracts';
+import { SolBalance, Contract } from '@/types';
+import { ForgotParams, LoginParams, LoginResponse, MagicLinkParams, RegisterParams, ResetParams } from '@/lib/sol/auth';
+import { InfoResponse } from '@/lib/sol/info';
+import { MarketStats } from '@/lib/sol/market';
+import { Peer } from '@/lib/sol/peers';
+import { ContractFilter } from '@/lib/sol/contracts';
 import init from '@dlcdevkit/ddk-wasm';
 interface SendOfferBody {
   counterparty: string;
@@ -38,8 +39,9 @@ export interface SolContextType {
   getNewAddress: () => Promise<{ address: string }>;
   getTransactions: () => Promise<any>;
   getUtxos: () => Promise<any>;
-  getBalance: () => Promise<Balance>;
+  getBalance: () => Promise<SolBalance>;
   getContracts: (params?: { id?: string; filter?: ContractFilter }) => Promise<Contract[]>;
+  getMarketStats: () => Promise<MarketStats[]>;
 }
 
 interface SolProviderProps {
@@ -155,7 +157,7 @@ export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
       return data;
     },
     getBalance: async () => {
-      const { data } = await instance.get<Balance>('/api/balance');
+      const { data } = await instance.get<SolBalance>('/api/balance');
       return data;
     },
     getContracts: async (params?: { id?: string; filter?: ContractFilter }) => {
@@ -163,6 +165,10 @@ export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
       if (params?.id) searchParams.append('id', params.id);
       if (params?.filter) searchParams.append('filter', JSON.stringify(params.filter));
       const { data } = await instance.get<Contract[]>(`/api/contracts`);
+      return data;
+    },
+    getMarketStats: async () => {
+      const { data } = await instance.get<MarketStats[]>('/api/market/hashrates');
       return data;
     },
   }), [instance, token]);

@@ -13,6 +13,7 @@ import { SendOfferBody, AcceptOfferBody, AcceptOfferResponse } from "./offers";
 import { WalletAddress, Transaction, UTXO } from "./wallet";
 import { ContractFilter } from "./contracts";
 import { SolBalance } from "@/types";
+import { MarketStats } from "@/lib/sol/market";
 
 export class SolClient {
   private baseUrl: string;
@@ -147,6 +148,10 @@ export class SolClient {
   // Balance Methods
   async getBalance(): Promise<SolBalance> {
     return this.fetch("/api/balance");
+  }
+
+  async getMarketStats(): Promise<MarketStats[]> {
+    return this.fetch("/api/market/hashrates");
   }
 
   // Contracts Methods

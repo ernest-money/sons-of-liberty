@@ -10,6 +10,7 @@ import { MarketChart, MarketChartType } from "./components/market-chart";
 import { ScrollArea } from "./components/ui/scroll-area";
 import { useLocation } from "react-router-dom";
 import { Fragment } from "react/jsx-runtime";
+import { HashrateChart } from "./components/charts/hashrate";
 
 const formatPathSegment = (segment: string): string => {
   return segment
@@ -34,14 +35,8 @@ const ActionPanel = () => {
     <div className="pt-4 px-4 flex flex-col gap-4">
       <ScrollArea className="h-[100vh]">
         <h1 className='text-4xl font-bold p-0 m-0'>Markets</h1>
+        <HashrateChart />
         <MarketChart title="Price" type={MarketChartType.Price} />
-        <MarketChart title="Hashrate" type={MarketChartType.Hashrate} />
-        <MarketChart title="Difficulty" type={MarketChartType.Difficulty} />
-        <MarketChart title="Transaction Fee" type={MarketChartType.TransactionFee} />
-        <MarketChart title="Block Subsidy" type={MarketChartType.BlockSubsidy} />
-        <MarketChart title="Block Size" type={MarketChartType.BlockSize} />
-        <MarketChart title="Mempool Transactions" type={MarketChartType.MempoolTransactions} />
-        <MarketChart title="UTXO Set Size" type={MarketChartType.UtxoSetSize} />
       </ScrollArea>
     </div>
   )
@@ -62,7 +57,7 @@ export const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) =>
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="/dashboard">
+                <BreadcrumbLink href="/">
                   Ernest Money
                 </BreadcrumbLink>
               </BreadcrumbItem>
