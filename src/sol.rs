@@ -4,16 +4,17 @@ use bitcoin::key::rand::Fill;
 use bitcoin::Network;
 use ddk::builder::Builder;
 use ddk::oracle::kormir::KormirOracleClient;
-use ddk::storage::sled::SledStorage;
-use ddk::transport::lightning::LightningTransport;
+use ddk::storage::postgres::PostgresStore;
+use ddk::transport::nostr::NostrDlc;
 use ddk::DlcDevKit;
 use std::fs::{create_dir_all, File};
 use std::path::{Path, PathBuf};
+use std::str::FromStr;
 use std::sync::Arc;
 
 use crate::common::settings::Settings;
 
-type SonsOfLiberyDdk = DlcDevKit<LightningTransport, SledStorage, KormirOracleClient>;
+type SonsOfLiberyDdk = DlcDevKit<NostrDlc, PostgresStore, KormirOracleClient>;
 
 #[derive(Clone)]
 pub struct SonsOfLiberty {
@@ -30,21 +31,25 @@ impl SonsOfLiberty {
                 .join(".sons-of-liberty"),
         };
 
-        let seed_bytes = xprv_from_path(&liberty_dir, Network::Regtest);
+        let network = Network::from_str(&settings.network)
+            .map_err(|_| loco_rs::Error::string("Invalid network"))?;
+
+        let seed_bytes = xprv_from_path(&liberty_dir, network);
 
         let storage = Arc::new(
-            SledStorage::new(
-                liberty_dir
-                    .join("db.sled")
-                    .to_str()
-                    .ok_or(loco_rs::Error::string("Failed to get db path"))?,
-            )
-            .map_err(|e| loco_rs::Error::string(e.to_string().as_str()))?,
+            PostgresStore::new(&settings.postgres_url, true, "sol".to_string())
+                .await
+                .map_err(|e| loco_rs::Error::string(e.to_string().as_str()))?,
         );
 
         let transport = Arc::new(
-            LightningTransport::new(&seed_bytes.private_key.secret_bytes(), 1776)
-                .map_err(|e| loco_rs::Error::string(e.to_string().as_str()))?,
+            NostrDlc::new(
+                &seed_bytes.private_key.secret_bytes(),
+                &settings.nostr_relay,
+                network,
+            )
+            .await
+            .map_err(|e| loco_rs::Error::string(e.to_string().as_str()))?,
         );
         let oracle = Arc::new(
             KormirOracleClient::new(&settings.kormir_host, None)

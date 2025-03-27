@@ -16,10 +16,17 @@ pub struct Settings {
     #[serde(default = "default_network")]
     pub network: String,
     pub name: String,
+    pub postgres_url: String,
+    #[serde(default = "default_nostr_relay")]
+    pub nostr_relay: String,
 }
 
 fn default_network() -> String {
     "regtest".to_string()
+}
+
+fn default_nostr_relay() -> String {
+    "wss://nostr.dlcdevkit.com".to_string()
 }
 
 impl Settings {

@@ -1,9 +1,9 @@
 name: "sons-of-liberty"
 services:
-  postgres:
+  postgres-sol:
     image: postgres:latest
-    container_name: postgres
-    hostname: postgres
+    container_name: postgres-sol
+    hostname: postgres-sol
     environment:
       - POSTGRES_PASSWORD=loco
       - POSTGRES_USER=loco

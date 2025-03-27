@@ -121,3 +121,4 @@ settings:
   esplora_host: "http://localhost:30000"
   network: "regtest"
   name: "sons-of-liberty"
+  postgres_url: "postgres://loco:loco@localhost:5432/sons-of-liberty_development"
