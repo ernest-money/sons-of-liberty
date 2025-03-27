@@ -17,7 +17,7 @@ pub async fn index(
     State(ctx): State<AppContext>,
 ) -> Result<Response> {
     users::Model::find_by_pid(&ctx.db, &cookie.user.pid).await?;
-    let address = dlcdevkit::get_new_addresses(ddk)?;
+    let address = dlcdevkit::get_new_addresses(ddk).await?;
     format::json(serde_json::json!({ "address": address }))
 }
 

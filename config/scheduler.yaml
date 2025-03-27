@@ -1,6 +1,6 @@
 output: stdout
 jobs:
-  run_task:
+  balance_updater:
     run: "balance_updater"
     schedule: run every 5 seconds
     output: stdout

@@ -40,7 +40,7 @@ pub async fn index(
 ) -> Result<Response> {
     users::Model::find_by_pid(&ctx.db, &cookie.user.pid).await?;
 
-    let balance = dlcdevkit::get_balance(ddk)?;
+    let balance = dlcdevkit::get_balance(ddk).await?;
     let sol_balance = SolBalance {
         confirmed: SolBalanceType {
             sats: balance.confirmed.to_sat(),

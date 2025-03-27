@@ -14,7 +14,7 @@ pub async fn render_home(
     // State(ctx): State<AppContext>,
     ViewEngine(v): ViewEngine<TeraView>,
 ) -> Result<impl IntoResponse> {
-    views::dashboard::home(v, sol)
+    views::dashboard::home(v, sol).await
 }
 
 #[debug_handler]

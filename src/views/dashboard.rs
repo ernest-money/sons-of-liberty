@@ -5,8 +5,8 @@ use loco_rs::prelude::*;
 
 use crate::sol::SonsOfLiberty;
 
-pub fn home(v: impl ViewRenderer, sol: Arc<SonsOfLiberty>) -> Result<Response> {
-    let balance = dlcdevkit::get_balance(sol)?;
+pub async fn home(v: impl ViewRenderer, sol: Arc<SonsOfLiberty>) -> Result<Response> {
+    let balance = dlcdevkit::get_balance(sol).await?;
     format::render().view(
         &v,
         "index.html",

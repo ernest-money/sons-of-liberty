@@ -27,7 +27,7 @@ pub async fn index(
 ) -> Result<Response> {
     users::Model::find_by_pid(&ctx.db, &cookie.user.pid).await?;
 
-    let offers = dlcdevkit::get_offers(ddk)?;
+    let offers = dlcdevkit::get_offers(ddk).await?;
 
     let offers = offers
         .into_iter()

@@ -1,6 +1,7 @@
 use std::sync::Arc;
 
-use loco_rs::prelude::*;
+use axum::http::StatusCode;
+use loco_rs::{controller::ErrorDetail, prelude::*};
 
 use crate::{
     app::SONS_OF_LIBERTY,
@@ -38,7 +39,12 @@ impl Task for BalanceUpdater {
                 )
             })
             .await;
-        let balance = ddk.dlcdevkit.balance().unwrap();
+        let balance = ddk.dlcdevkit.balance().await.map_err(|_| {
+            loco_rs::Error::CustomError(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                ErrorDetail::with_reason("Failed to get balance"),
+            )
+        })?;
         println!("Got the price? {:?}", price);
         println!("Got the balance? {:?}", balance);
         Ok(())

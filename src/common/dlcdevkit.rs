@@ -11,8 +11,8 @@ use serde_json::Value;
 
 use crate::{controllers::contracts::ContractFilter, sol::SonsOfLiberty};
 
-pub fn get_balance(ddk: Arc<SonsOfLiberty>) -> Result<Balance> {
-    ddk.dlcdevkit.balance().map_err(|e| {
+pub async fn get_balance(ddk: Arc<SonsOfLiberty>) -> Result<Balance> {
+    ddk.dlcdevkit.balance().await.map_err(|e| {
         Error::CustomError(
             StatusCode::NOT_FOUND,
             ErrorDetail::with_reason(e.to_string()),
@@ -27,18 +27,20 @@ pub fn get_balance(ddk: Arc<SonsOfLiberty>) -> Result<Balance> {
 //         .map_err(storage_error_to_http_error)
 // }
 
-pub fn get_offers(ddk: Arc<SonsOfLiberty>) -> Result<Vec<OfferedContract>> {
+pub async fn get_offers(ddk: Arc<SonsOfLiberty>) -> Result<Vec<OfferedContract>> {
     ddk.dlcdevkit
         .storage
         .get_contract_offers()
+        .await
         .map_err(storage_error_to_http_error)
 }
 
-pub fn get_new_addresses(ddk: Arc<SonsOfLiberty>) -> Result<Address> {
+pub async fn get_new_addresses(ddk: Arc<SonsOfLiberty>) -> Result<Address> {
     Ok(ddk
         .dlcdevkit
         .wallet
         .new_external_address()
+        .await
         .map_err(wallet_error_to_http_error)?
         .address)
 }
@@ -59,7 +61,7 @@ pub fn get_utxos(ddk: Arc<SonsOfLiberty>) -> Result<Vec<LocalOutput>> {
         .map_err(wallet_error_to_http_error)?)
 }
 
-pub fn get_filtered_contracts<S: Storage>(
+pub async fn get_filtered_contracts<S: Storage>(
     contracts: Arc<S>,
     filter: Option<ContractFilter>,
 ) -> Result<Vec<Value>, loco_rs::Error> {
@@ -68,6 +70,7 @@ pub fn get_filtered_contracts<S: Storage>(
         ContractFilter::All => {
             let contracts = contracts
                 .get_contracts()
+                .await
                 .map_err(storage_error_to_http_error)?;
             Ok(contracts
                 .into_iter()
@@ -77,6 +80,7 @@ pub fn get_filtered_contracts<S: Storage>(
         ContractFilter::Signed => {
             let signed_contracts = contracts
                 .get_signed_contracts()
+                .await
                 .map_err(storage_error_to_http_error)?;
             Ok(signed_contracts
                 .into_iter()
@@ -86,6 +90,7 @@ pub fn get_filtered_contracts<S: Storage>(
         ContractFilter::Confirmed => {
             let confirmed_contracts = contracts
                 .get_confirmed_contracts()
+                .await
                 .map_err(storage_error_to_http_error)?;
             Ok(confirmed_contracts
                 .into_iter()
@@ -95,6 +100,7 @@ pub fn get_filtered_contracts<S: Storage>(
         ContractFilter::Preclosed => {
             let preclosed_contracts = contracts
                 .get_preclosed_contracts()
+                .await
                 .map_err(storage_error_to_http_error)?;
             Ok(preclosed_contracts
                 .into_iter()

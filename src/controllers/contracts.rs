@@ -33,7 +33,8 @@ pub async fn index(
 ) -> Result<Response> {
     users::Model::find_by_pid(&ctx.db, &cookie.user.pid).await?;
 
-    let contracts = dlcdevkit::get_filtered_contracts(ddk.dlcdevkit.storage.clone(), query.filter)?;
+    let contracts =
+        dlcdevkit::get_filtered_contracts(ddk.dlcdevkit.storage.clone(), query.filter).await?;
 
     if let Some(id) = query.id {
         let contract = contracts
