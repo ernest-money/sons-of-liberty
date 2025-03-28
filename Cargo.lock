@@ -686,20 +686,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bdk_sqlx"
-version = "0.1.0"
-dependencies = [
- "bdk_wallet",
- "serde",
- "serde_json",
- "sqlx",
- "thiserror 1.0.69",
- "tokio",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
 name = "bdk_wallet"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1466,13 +1452,13 @@ checksum = "575f75dfd25738df5b91b8e43e14d44bda14637a58fae779fd2b064f8bf3e010"
 [[package]]
 name = "ddk"
 version = "0.0.15"
+source = "git+https://github.com/bennyhodl/dlcdevkit?branch=async-wallet#461776227187c2d5a948189e95d371b2e5c250b2"
 dependencies = [
  "anyhow",
  "async-trait",
  "base64 0.13.1",
  "bdk_chain",
  "bdk_esplora",
- "bdk_sqlx",
  "bdk_wallet",
  "bitcoin",
  "chrono",
@@ -1501,6 +1487,7 @@ dependencies = [
 [[package]]
 name = "ddk-manager"
 version = "0.7.3"
+source = "git+https://github.com/bennyhodl/dlcdevkit?branch=async-wallet#461776227187c2d5a948189e95d371b2e5c250b2"
 dependencies = [
  "async-trait",
  "bitcoin",
@@ -1519,6 +1506,7 @@ dependencies = [
 [[package]]
 name = "ddk-payouts"
 version = "0.0.15"
+source = "git+https://github.com/bennyhodl/dlcdevkit?branch=async-wallet#461776227187c2d5a948189e95d371b2e5c250b2"
 dependencies = [
  "anyhow",
  "bitcoin",

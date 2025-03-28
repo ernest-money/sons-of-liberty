@@ -60,7 +60,7 @@ impl SonsOfLiberty {
         let dlcdevkit = Arc::new(
             Builder::new()
                 .set_esplora_host(settings.esplora_host)
-                .set_network(Network::Regtest)
+                .set_network(network)
                 .set_name(&settings.name)
                 .set_seed_bytes(seed_bytes.private_key.secret_bytes())
                 .set_storage(storage.clone())
