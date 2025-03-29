@@ -2,13 +2,12 @@ import React, { useEffect } from 'react';
 import { RangePayout, usePayout, PayoutPoint } from '@/hooks';
 import { PayoutChart } from '@/components/payout-chart';
 import { compute_payout_range } from '@dlcdevkit/ddk-wasm';
-import { useSearchParams } from 'react-router-dom';
-
+import { useParams } from '@tanstack/react-router';
+import { createContractRoute } from '@/router';
 export const CreateContract: React.FC = () => {
   const { payoutPoints, setPayoutPoints, roundingInterval, setRoundingInterval } = usePayout();
   const [rangePayouts, setRangePayouts] = React.useState<RangePayout[]>([]);
-  const [searchParams] = useSearchParams()
-  const type = searchParams.get('type');
+  const { contractType } = useParams({ from: createContractRoute.id });
 
   useEffect(() => {
     if (payoutPoints.length === 0) {
@@ -56,7 +55,7 @@ export const CreateContract: React.FC = () => {
   return (
     <div style={{ padding: '20px', width: '100%' }}>
       {/* @ts-ignore */}
-      <h1 className='text-4xl font-bold'>{type?.charAt(0).toUpperCase() + type?.slice(1) ?? "Create Contract"}</h1>
+      <h1 className='text-4xl font-bold'>{contractType?.charAt(0).toUpperCase() + contractType?.slice(1) ?? "Create Contract"}</h1>
       <div>
         <h2>Payout Distribution</h2>
         {rangePayouts.length > 0 ? (

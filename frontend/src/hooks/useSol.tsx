@@ -173,9 +173,5 @@ export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
     },
   }), [instance, token]);
 
-  if (!initialized) {
-    return <div>Loading...</div>;
-  }
-
   return <SolContext.Provider value={value}>{children}</SolContext.Provider>;
 };

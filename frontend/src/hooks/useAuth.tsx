@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { LoginParams, RegisterParams } from '../sol/auth';
 import { useSol } from './useSol';
+import { LoginParams, RegisterParams } from '@/lib/sol/auth';
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -22,7 +22,6 @@ export const AuthProvider: React.FC<{
   const sol = useSol();
 
   const checkAuth = async () => {
-    console.log("checkAuth");
     setIsLoading(true);
     try {
       const currentUser = await sol.current();
@@ -57,8 +56,6 @@ export const AuthProvider: React.FC<{
 
   const logout = async () => {
     try {
-      console.log("logging out");
-      // Call backend logout endpoint to clear the cookie
       await sol.logout();
 
       // Clear frontend state

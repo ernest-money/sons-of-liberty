@@ -3,7 +3,7 @@
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
 import { Card, CardContent } from "@/components/ui/card"
 import { ChartContainer } from "@/components/ui/chart"
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
 import { useSol } from "@/hooks"
 import { MarketStats } from "@/lib/sol/market"
@@ -32,7 +32,7 @@ export function HashrateChart({ className }: HashrateChartProps) {
   }, [])
 
   return (
-    <Card className={`${className || ""} bg-black text-white overflow-hidden h-2/5 my-2 cursor-pointer hover:bg-gray-900 transition-colors duration-200`} onClick={() => navigate(`/create?type=hashrate`)}>
+    <Card className={`${className || ""} bg-black text-white overflow-hidden h-2/5 my-2 cursor-pointer hover:bg-gray-900 transition-colors duration-200`} onClick={() => navigate({ to: `/` })}>
       <CardContent className="p-6 h-full w-full">
         <div className={`space-y-2`}>
           <h2 className="text-xl font-medium leading-none">Hashrate</h2>

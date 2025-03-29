@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
 import { useAuth } from "@/hooks"
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "@tanstack/react-router"
 
 export function RegisterForm({
   className,
@@ -30,7 +30,7 @@ export function RegisterForm({
 
     try {
       await register({ email, password, name });
-      navigate('/');
+      navigate({ to: '/' });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to login');
     }
