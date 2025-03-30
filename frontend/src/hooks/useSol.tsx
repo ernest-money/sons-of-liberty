@@ -20,7 +20,6 @@ interface AcceptOfferBody {
 }
 
 export interface SolContextType {
-  wasmInitialized: boolean;
   setToken: (token?: string) => void;
   register: (params: RegisterParams) => Promise<void>;
   login: (params: LoginParams) => Promise<LoginResponse>;
@@ -60,15 +59,7 @@ export const useSol = () => {
 };
 
 export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
-  const [initialized, setInitialized] = useState(false);
   const [token, setToken] = useState<string>();
-  useEffect(() => {
-    const initWasm = async () => {
-      await init();
-      setInitialized(true);
-    }
-    initWasm();
-  }, []);
 
   const instance = useMemo(() => {
     const axiosInstance = axios.create({
@@ -91,7 +82,6 @@ export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
 
 
   const value: SolContextType = useMemo(() => ({
-    wasmInitialized: initialized,
     setToken,
     register: async (params: RegisterParams) => {
       await instance.post('/api/auth/register', params);

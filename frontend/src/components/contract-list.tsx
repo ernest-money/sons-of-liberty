@@ -17,7 +17,7 @@ import { useSol, useModal } from "@/hooks";
 import { Contract } from "../types";
 import { ContractFilter } from "../lib/sol/contracts";
 import { useEffect, useState } from "react";
-import { Modal, ContractModal } from "@/components/modals";
+import { useNavigate } from "@tanstack/react-router";
 
 interface ContractListProps {
   defaultFilter?: ContractFilter;
@@ -51,8 +51,7 @@ export function ContractList({ defaultFilter = ContractFilter.All, showFilter = 
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<ContractFilter>(defaultFilter);
   const client = useSol();
-  const { isOpen, open, close } = useModal();
-  const [selectedContract, setSelectedContract] = useState<number>(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchContracts = async () => {
@@ -106,8 +105,7 @@ export function ContractList({ defaultFilter = ContractFilter.All, showFilter = 
             <TableRow
               key={contract.contract_id}
               onClick={() => {
-                setSelectedContract(index);
-                open();
+                navigate({ to: "/contracts/$contractId", params: { contractId: contract.contract_id } });
               }}
               className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
             >
@@ -123,9 +121,6 @@ export function ContractList({ defaultFilter = ContractFilter.All, showFilter = 
           ))}
         </TableBody>
       </Table>
-      <Modal isOpen={isOpen} onClose={close}>
-        <ContractModal contract={contracts[selectedContract]} />
-      </Modal>
     </div>
   );
 } 

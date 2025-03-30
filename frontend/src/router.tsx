@@ -16,6 +16,9 @@ import { ClosedContracts } from './app/contracts/closed';
 import { OfferList } from './components/offer-list';
 import { Transactions } from './app/wallet/transactions';
 import { Utxos } from './app/wallet/utxos';
+import { OfferPage } from './app/offer-page';
+import { Contracts } from './app/contracts/page';
+import { ContractPage } from './app/contracts/contract';
 
 // Create the root route
 const rootRoute = createRootRoute({
@@ -58,6 +61,18 @@ export const createContractRoute = createRoute({
 
 export const contractsRoute = createRoute({
   getParentRoute: () => authenticatedParentRoute,
+  path: '/contracts',
+  component: Contracts,
+});
+
+export const contractRoute = createRoute({
+  getParentRoute: () => authenticatedParentRoute,
+  path: '/contracts/$contractId',
+  component: ContractPage,
+});
+
+export const activeContractsRoute = createRoute({
+  getParentRoute: () => authenticatedParentRoute,
   path: '/contracts/active',
   component: ActiveContracts,
 });
@@ -72,6 +87,12 @@ const offersRoute = createRoute({
   getParentRoute: () => authenticatedParentRoute,
   path: '/offers',
   component: OfferList,
+});
+
+export const offerRoute = createRoute({
+  getParentRoute: () => authenticatedParentRoute,
+  path: '/offers/$offerId',
+  component: OfferPage,
 });
 
 // Protected routes using the authenticated parent route
@@ -89,13 +110,13 @@ export const walletRoute = createRoute({
 
 const transactionsRoute = createRoute({
   getParentRoute: () => authenticatedParentRoute,
-  path: '/transactions',
+  path: '/wallet/transactions',
   component: Transactions,
 });
 
 const utxosRoute = createRoute({
   getParentRoute: () => authenticatedParentRoute,
-  path: '/utxos',
+  path: '/wallet/utxos',
   component: Utxos,
 });
 
@@ -125,8 +146,11 @@ const routeTree = rootRoute.addChildren([
     walletRoute,
     createContractRoute,
     contractsRoute,
+    contractRoute,
+    activeContractsRoute,
     closedContractsRoute,
     offersRoute,
+    offerRoute,
     transactionsRoute,
     utxosRoute,
     // accountRoute,

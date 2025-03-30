@@ -13,10 +13,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { useSol, useModal } from "@/hooks";
+import { useSol } from "@/hooks";
 import { Offer } from "../types";
 import { useEffect, useState } from "react";
-import { Modal, OfferModal } from "@/components/modals";
+import { useNavigate } from "@tanstack/react-router";
 
 function TruncatedCell({ value, className = "" }: { value: string | number, className?: string }) {
   const stringValue = String(value);
@@ -44,8 +44,7 @@ export function OfferList() {
   const [offers, setOffers] = useState<Offer[]>([]);
   const [error, setError] = useState<string | null>(null);
   const client = useSol();
-  const { isOpen, open, close } = useModal();
-  const [selectedOffer, setSelectedOffer] = useState<number>(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOffers = async () => {
@@ -84,8 +83,7 @@ export function OfferList() {
             <TableRow
               key={offer.contract_id}
               onClick={() => {
-                setSelectedOffer(index);
-                open();
+                navigate({ to: '/offers/$offerId', params: { offerId: offer.contract_id } });
               }}
               className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
             >
@@ -99,9 +97,6 @@ export function OfferList() {
           ))}
         </TableBody>
       </Table>
-      <Modal isOpen={isOpen} onClose={close}>
-        <OfferModal offer={offers[selectedOffer]} />
-      </Modal>
     </div>
   );
 } 
