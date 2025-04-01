@@ -1,8 +1,8 @@
 export enum ContractFilter {
-  All = "All",
-  Signed = "Signed",
-  Confirmed = "Confirmed",
-  Preclosed = "Preclosed",
+  All = "all",
+  Active = "active",
+  Closed = "closed",
+  Failed = "failed",
 }
 
 export interface Contract {

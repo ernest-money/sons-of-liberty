@@ -17,33 +17,59 @@ export const defaultBalance: SolBalance = {
   contractPnl: { sats: 0, btc: 0 },
 };
 
+export const convertState = (state: number) => {
+  switch (state) {
+    case 1:
+      return "Offer";
+    case 2:
+      return "Accept";
+    case 3:
+      return "Signed";
+    case 4:
+      return "Confirmed";
+    case 5:
+      return "Pre-Closed";
+    case 6:
+      return "Closed";
+    case 7:
+      return "Failed Accept";
+    case 8:
+      return "Failed Sign";
+    case 9:
+      return "Refunded";
+    case 10:
+      return "Rejected";
+    default:
+      return "unknown";
+  }
+};
+
 export interface Contract {
-  state: string;
-  contract_id: string;
-  counterparty: string;
-  collateral: number;
-  event_ids: string[];
-  funding_txid?: string;
-  is_offer_party?: boolean;
-  offer_amount?: number;
-  accept_amount?: number;
-  num_cets?: number;
-  refund_txid?: string;
-  pnl?: number;
-  signed_cet?: any;
-  attestations?: any;
-  signed_cet_txid?: string;
-  error_message?: string;
+  id: string;
+  state: number;
+  is_offer_party: boolean;
+  counter_party: string;
+  offer_collateral: number;
+  total_collateral: number;
+  accept_collateral: number;
+  fee_rate_per_vb: number;
+  cet_locktime: number;
+  refund_locktime: number;
+  pnl: number | null;
 }
 
 export interface Offer {
-  state: string;
-  contract_id: string;
+  id: string;
+  state: number;
   is_offer_party: boolean;
   counter_party: string;
-  collateral: number;
-  offer_amount: number;
-  event_ids: string[];
+  offer_collateral: number;
+  total_collateral: number;
+  accept_collateral: number;
+  fee_rate_per_vb: number;
+  cet_locktime: number;
+  refund_locktime: number;
+  pnl: number | null;
 }
 
 export interface Transaction {

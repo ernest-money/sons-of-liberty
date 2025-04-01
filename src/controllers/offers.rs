@@ -6,11 +6,9 @@ use std::{str::FromStr, sync::Arc};
 use crate::{common::dlcdevkit, models::users, sol::SonsOfLiberty};
 use axum::{debug_handler, extract::Query, http::StatusCode, Extension};
 use bitcoin::secp256k1::PublicKey;
-use ddk::util::ser::ContractPrefix;
-use ddk_manager::contract::{contract_input::ContractInput, Contract};
-use dlc_messages::{oracle_msgs::OracleAnnouncement, AcceptDlc, OfferDlc};
+use ddk_manager::contract::contract_input::ContractInput;
+use dlc_messages::{oracle_msgs::OracleAnnouncement, AcceptDlc};
 use loco_rs::{controller::ErrorDetail, prelude::*};
-use sea_orm::sqlx;
 use serde::{Deserialize, Serialize};
 
 use super::auth::CookieAuth;
@@ -29,12 +27,12 @@ pub async fn index(
 ) -> Result<Response> {
     users::Model::find_by_pid(&ctx.db, &cookie.user.pid).await?;
 
-    let offers = dlcdevkit::get_offers(ddk).await?;
+    let offers = dlcdevkit::get_offers(ddk.dlcdevkit.storage.clone()).await?;
 
     if let Some(id) = query.id {
         let offer = offers
             .iter()
-            .find(|offer| hex::encode(offer.id) == id)
+            .find(|offer| offer.id == id)
             .ok_or(Error::CustomError(
                 StatusCode::NOT_FOUND,
                 ErrorDetail::with_reason("Offer not found"),

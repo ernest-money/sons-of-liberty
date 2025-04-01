@@ -11,11 +11,12 @@ use serde::{Deserialize, Serialize};
 use super::auth::CookieAuth;
 
 #[derive(Debug, Deserialize, Serialize)]
+#[serde(rename_all = "lowercase")]
 pub enum ContractFilter {
     All,
-    Signed,
-    Confirmed,
-    Preclosed,
+    Active,
+    Closed,
+    Failed,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -37,13 +38,14 @@ pub async fn index(
         dlcdevkit::get_filtered_contracts(ddk.dlcdevkit.storage.clone(), query.filter).await?;
 
     if let Some(id) = query.id {
-        let contract = contracts
-            .iter()
-            .find(|contract| contract["id"] == id)
-            .ok_or(Error::CustomError(
-                StatusCode::NOT_FOUND,
-                ErrorDetail::with_reason("Contract not found"),
-            ))?;
+        let contract =
+            contracts
+                .iter()
+                .find(|contract| contract.id == id)
+                .ok_or(Error::CustomError(
+                    StatusCode::NOT_FOUND,
+                    ErrorDetail::with_reason("Contract not found"),
+                ))?;
         return format::json(contract);
     }
 

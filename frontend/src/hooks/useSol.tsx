@@ -38,7 +38,8 @@ export interface SolContextType {
   getTransactions: () => Promise<any>;
   getUtxos: () => Promise<any>;
   getBalance: () => Promise<SolBalance>;
-  getContracts: (params?: { id?: string; filter?: ContractFilter }) => Promise<Contract[]>;
+  getContracts: (filter?: ContractFilter) => Promise<Contract[]>;
+  getContract: (id: string) => Promise<Contract>;
   getMarketStats: () => Promise<MarketStats[]>;
 }
 
@@ -149,11 +150,12 @@ export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
       const { data } = await instance.get<SolBalance>('/api/balance');
       return data;
     },
-    getContracts: async (params?: { id?: string; filter?: ContractFilter }) => {
-      const searchParams = new URLSearchParams();
-      if (params?.id) searchParams.append('id', params.id);
-      if (params?.filter) searchParams.append('filter', JSON.stringify(params.filter));
-      const { data } = await instance.get<Contract[]>(`/api/contracts`);
+    getContracts: async (filter?: ContractFilter) => {
+      const { data } = await instance.get<Contract[]>(`/api/contracts?filter=${filter}`);
+      return data;
+    },
+    getContract: async (id: string) => {
+      const { data } = await instance.get<Contract>(`/api/contracts?id=${id}`);
       return data;
     },
     getMarketStats: async () => {

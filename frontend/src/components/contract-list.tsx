@@ -18,6 +18,7 @@ import { Contract } from "../types";
 import { ContractFilter } from "../lib/sol/contracts";
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { ContractStateBadge } from "./contract-state-badge";
 
 interface ContractListProps {
   defaultFilter?: ContractFilter;
@@ -56,7 +57,7 @@ export function ContractList({ defaultFilter = ContractFilter.All, showFilter = 
   useEffect(() => {
     const fetchContracts = async () => {
       try {
-        const data = await client.getContracts({ filter });
+        const data = await client.getContracts(filter);
         setContracts(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch contracts');
@@ -93,30 +94,32 @@ export function ContractList({ defaultFilter = ContractFilter.All, showFilter = 
         <TableHeader>
           <TableRow>
             <TableHead className="max-w-[120px]">Contract ID</TableHead>
-            <TableHead className="max-w-[120px]">State</TableHead>
             <TableHead className="max-w-[120px]">Counterparty</TableHead>
             <TableHead className="max-w-[120px]">Collateral</TableHead>
             <TableHead className="max-w-[120px]">Amount</TableHead>
             <TableHead className="max-w-[120px]">PnL</TableHead>
+            <TableHead className="max-w-[120px]">State</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {contracts.map((contract, index) => (
             <TableRow
-              key={contract.contract_id}
+              key={contract.id}
               onClick={() => {
-                navigate({ to: "/contracts/$contractId", params: { contractId: contract.contract_id } });
+                navigate({ to: "/contracts/$contractId", params: { contractId: contract.id } });
               }}
               className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
             >
-              <TruncatedCell value={contract.contract_id} className="font-medium" />
-              <TruncatedCell value={contract.state} />
-              <TruncatedCell value={contract.counterparty} />
-              <TruncatedCell value={contract.collateral} />
+              <TruncatedCell value={contract.id} className="font-medium" />
+              <TruncatedCell value={contract.counter_party} />
+              <TruncatedCell value={contract.total_collateral} />
               <TruncatedCell
-                value={contract.is_offer_party ? contract.offer_amount || '-' : contract.accept_amount || '-'}
+                value={contract.is_offer_party ? contract.offer_collateral : contract.accept_collateral}
               />
-              <TruncatedCell value={contract.pnl !== undefined ? contract.pnl : '-'} />
+              <TruncatedCell value={contract.pnl !== null ? contract.pnl : '-'} />
+              <TableCell>
+                <ContractStateBadge state={contract.state} />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
