@@ -1,14 +1,14 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { TransactionList } from "./transaction-list"
-import { UtxoList } from "./utxo-list"
+import { TransactionList } from "../../components/transaction-list"
+import { UtxoList } from "../../components/utxo-list"
 import { useSol, useToast } from "@/hooks"
 import { useEffect, useState } from "react"
 import { Copy } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip"
 import { SolBalance, defaultBalance } from "@/types"
-import { BalanceCard } from "./balance-card"
+import { BalanceCard } from "../../components/balance-card"
 
 export function WalletSection() {
   const [balance, setBalance] = useState<SolBalance>(defaultBalance)

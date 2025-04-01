@@ -9,7 +9,7 @@ import { RootLayout } from '@/layouts/root';
 import AuthPage from './app/auth/page';
 import { AuthenticatedRoute } from '@/layouts/authenticated';
 import { Dashboard } from './app/dashboard/page';
-import { WalletSection } from './components/wallet-section';
+import { WalletSection } from './app/wallet/page';
 import { CreateContract } from './app/create/page';
 import { ActiveContracts } from './app/contracts/active';
 import { ClosedContracts } from './app/contracts/closed';
@@ -19,6 +19,7 @@ import { Utxos } from './app/wallet/utxos';
 import { OfferPage } from './app/offer-page';
 import { Contracts } from './app/contracts/page';
 import { ContractPage } from './app/contracts/contract';
+import { AccountPage } from './app/account/page';
 
 // Create the root route
 const rootRoute = createRootRoute({
@@ -120,11 +121,11 @@ const utxosRoute = createRoute({
   component: Utxos,
 });
 
-// export const accountRoute = createRoute({
-//   getParentRoute: () => authenticatedParentRoute,
-//   path: '/account',
-//   component: AccountPage,
-// });
+export const accountRoute = createRoute({
+  getParentRoute: () => authenticatedParentRoute,
+  path: '/account',
+  component: AccountPage,
+});
 
 const NotFoundPage = () => {
   return <div>Not Found</div>;
@@ -153,7 +154,7 @@ const routeTree = rootRoute.addChildren([
     offerRoute,
     transactionsRoute,
     utxosRoute,
-    // accountRoute,
+    accountRoute,
   ]),
   notFoundRoute,
 ]);

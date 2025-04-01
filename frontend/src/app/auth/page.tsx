@@ -1,7 +1,7 @@
 import { Landmark } from "lucide-react"
 
-import { LoginForm } from "@/components/login-form"
-import { RegisterForm } from "@/components/register-form";
+import { LoginForm } from "@/components/auth/login-form"
+import { RegisterForm } from "@/components/auth/register-form";
 
 export default function AuthPage() {
   const path = window.location.pathname;

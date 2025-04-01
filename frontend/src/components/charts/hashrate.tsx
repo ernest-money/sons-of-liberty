@@ -6,7 +6,6 @@ import { ChartContainer } from "@/components/ui/chart"
 import { useNavigate } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
 import { useSol } from "@/hooks"
-import { MarketStats } from "@/lib/sol/market"
 
 interface HashrateChartProps {
   className?: string

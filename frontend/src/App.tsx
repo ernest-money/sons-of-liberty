@@ -1,7 +1,7 @@
 import React from 'react';
 import { SolProvider, AuthProvider, useAuth } from '@/hooks';
 import "./index.css"
-import { ThemeProvider } from './components/theme-provider';
+import { ThemeProvider } from './components/ui/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import router from './router';
 import { RouterProvider } from '@tanstack/react-router';

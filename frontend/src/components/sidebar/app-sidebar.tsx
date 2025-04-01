@@ -1,6 +1,6 @@
 import * as React from "react"
 
-import { VersionSwitcher } from "@/components/version-switcher"
+// import { VersionSwitcher } from "@/components/version-switcher"
 import {
   Sidebar,
   SidebarContent,
@@ -14,9 +14,10 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { Home, Wallet } from "lucide-react"
-import { NavUser } from "@/components/nav-user"
+import { Home, Landmark, Wallet } from "lucide-react"
+import { NavUser } from "@/components/sidebar/nav-user"
 import { useAuth } from "@/hooks"
+import { useNavigate } from "@tanstack/react-router"
 
 const main = [
   {
@@ -70,13 +71,24 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth()
+  const navigate = useNavigate()
   return (
     <Sidebar {...props}>
       <SidebarHeader>
-        <VersionSwitcher
-          versions={data.versions}
-          defaultVersion={data.versions[0]}
-        />
+        <SidebarMenuButton
+          size="lg"
+          className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+          onClick={() => {
+            navigate({ to: "/" })
+          }}
+        >
+          <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+            <Landmark className="size-4" />
+          </div>
+          <div className="flex flex-col gap-0.5 leading-none">
+            <span className="font-semibold">Ernest Money</span>
+          </div>
+        </SidebarMenuButton>
         {/* <SearchForm /> */}
       </SidebarHeader>
       <SidebarContent>

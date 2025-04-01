@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth, useSol } from '@/hooks';
 import { BalanceCard } from '@/components/balance-card';
 import { SolBalance, defaultBalance } from '@/types';
-import { Pnl } from '@/components/pnl';
+import { Pnl } from '@/components/charts/pnl';
 import { ContractList } from '@/components/contract-list';
 
 const data = [

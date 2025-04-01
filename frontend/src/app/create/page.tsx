@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { RangePayout, usePayout, PayoutPoint } from '@/hooks';
-import { PayoutChart } from '@/components/payout-chart';
+import { PayoutChart } from '@/components/charts/payout-chart';
 import { compute_payout_range } from '@dlcdevkit/ddk-wasm';
 import { useParams } from '@tanstack/react-router';
 import { createContractRoute } from '@/router';

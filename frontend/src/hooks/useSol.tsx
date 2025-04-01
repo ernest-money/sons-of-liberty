@@ -6,7 +6,6 @@ import { InfoResponse } from '@/lib/sol/info';
 import { MarketStats } from '@/lib/sol/market';
 import { Peer } from '@/lib/sol/peers';
 import { ContractFilter } from '@/lib/sol/contracts';
-import init from '@dlcdevkit/ddk-wasm';
 interface SendOfferBody {
   counterparty: string;
   collateral: number;
