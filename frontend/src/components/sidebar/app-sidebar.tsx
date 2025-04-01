@@ -1,77 +1,86 @@
 import * as React from "react"
 
-// import { VersionSwitcher } from "@/components/version-switcher"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { Home, Landmark, Wallet } from "lucide-react"
+import { ChartCandlestick, Home, Landmark, ReceiptText, Wallet } from "lucide-react"
 import { NavUser } from "@/components/sidebar/nav-user"
 import { useAuth } from "@/hooks"
-import { useNavigate } from "@tanstack/react-router"
+import { useLocation, useNavigate } from "@tanstack/react-router"
 
 const main = [
   {
     title: "Home",
     url: "/",
-    isActive: window.location.pathname === "/",
+    isActive: (pathname: string) => pathname === "/",
     icon: <Home />
   },
   {
     title: "Wallet",
     url: "/wallet",
-    isActive: window.location.pathname === "/wallet",
+    isActive: (pathname: string) => pathname === "/wallet",
     icon: <Wallet />
   },
+  {
+    title: "Market",
+    url: "/offers",
+    isActive: (pathname: string) => pathname === "/offers",
+    icon: <ChartCandlestick />
+  },
+  {
+    title: "Contracts",
+    url: "/contracts",
+    isActive: (pathname: string) => pathname === "/contracts",
+    icon: <ReceiptText />
+  }
 ]
 
-const data = {
-  versions: ["0.0.1",],
-  navMain: [
-    {
-      title: "Market",
-      url: "/offers",
-      items: [
-        {
-          title: "Open Offers",
-          url: "/offers",
-          isActive: window.location.pathname === "/offers",
-        }
-      ],
-    },
-    {
-      title: "Contracts",
-      url: "#",
-      items: [
-        {
-          title: "Active",
-          url: "/contracts/active",
-          isActive: window.location.pathname === "/contracts/active",
+// const data = {
+//   versions: ["0.0.1",],
+//   navMain: [
+//     {
+//       title: "Market",
+//       url: "/offers",
+//       items: [
+//         {
+//           title: "Open Offers",
+//           url: "/offers",
+//           isActive: window.location.pathname === "/offers",
+//         }
+//       ],
+//     },
+//     {
+//       title: "Contracts",
+//       url: "#",
+//       items: [
+//         {
+//           title: "Active",
+//           url: "/contracts/active",
+//           isActive: window.location.pathname === "/contracts/active",
 
-        },
-        {
-          title: "Closed",
-          url: "/contracts/closed",
-          isActive: window.location.pathname === "/contracts/closed",
-          icon: <Home />
-        },
-      ],
-    },
-  ],
-}
+//         },
+//         {
+//           title: "Closed",
+//           url: "/contracts/closed",
+//           isActive: window.location.pathname === "/contracts/closed",
+//           icon: <Home />
+//         },
+//       ],
+//     },
+//   ],
+// }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const { pathname } = useLocation()
   return (
     <Sidebar {...props}>
       <SidebarHeader>
@@ -95,7 +104,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           {main.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild isActive={item.isActive}>
+              <SidebarMenuButton asChild className="px-4" isActive={item.isActive(pathname)}>
                 <a href={item.url}>
                   {item.icon} {item.title}
                 </a>
@@ -103,7 +112,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
-        {data.navMain.map((item) => (
+        {/* {data.navMain.map((item) => (
           <SidebarGroup key={item.title}>
             <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
             <SidebarGroupContent>
@@ -118,7 +127,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </SidebarMenu>
             </SidebarGroupContent>
           </SidebarGroup>
-        ))}
+        ))} */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={{ name: user?.name ?? "anon", email: user?.email ?? "anon@example.com", avatar: "/avatars/shadcn.jpg" }} />

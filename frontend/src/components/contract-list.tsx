@@ -13,6 +13,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { useSol, useModal } from "@/hooks";
 import { Contract } from "../types";
 import { ContractFilter } from "../lib/sol/contracts";
@@ -22,7 +29,6 @@ import { ContractStateBadge } from "./contract-state-badge";
 
 interface ContractListProps {
   defaultFilter?: ContractFilter;
-  showFilter?: boolean;
 }
 
 function TruncatedCell({ value, className = "" }: { value: string | number, className?: string }) {
@@ -47,7 +53,7 @@ function TruncatedCell({ value, className = "" }: { value: string | number, clas
   );
 }
 
-export function ContractList({ defaultFilter = ContractFilter.All, showFilter = true }: ContractListProps) {
+export function ContractList({ defaultFilter = ContractFilter.All }: ContractListProps) {
   const [contracts, setContracts] = useState<Contract[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<ContractFilter>(defaultFilter);
@@ -75,19 +81,18 @@ export function ContractList({ defaultFilter = ContractFilter.All, showFilter = 
     <div className="flex flex-col gap-4 p-4">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Contracts</h1>
-        {showFilter && (
-          <select
-            className="rounded-md border p-2"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value as ContractFilter)}
-          >
+        <Select value={filter} onValueChange={(value: ContractFilter) => setFilter(value)}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Select filter" />
+          </SelectTrigger>
+          <SelectContent>
             {Object.values(ContractFilter).map((value) => (
-              <option key={value} value={value}>
+              <SelectItem key={value} value={value}>
                 {value}
-              </option>
+              </SelectItem>
             ))}
-          </select>
-        )}
+          </SelectContent>
+        </Select>
       </div>
       <Table>
         <TableCaption>Your DLC contracts</TableCaption>
