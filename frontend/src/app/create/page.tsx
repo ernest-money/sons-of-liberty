@@ -1,69 +1,56 @@
-import React, { useEffect } from 'react';
-import { RangePayout, usePayout, PayoutPoint } from '@/hooks';
-import { PayoutChart } from '@/components/charts/payout-chart';
-import { compute_payout_range } from '@dlcdevkit/ddk-wasm';
-import { useParams } from '@tanstack/react-router';
-import { createContractRoute } from '@/router';
-export const CreateContract: React.FC = () => {
-  const { payoutPoints, setPayoutPoints, roundingInterval, setRoundingInterval } = usePayout();
-  const [rangePayouts, setRangePayouts] = React.useState<RangePayout[]>([]);
-  const { contractType } = useParams({ from: createContractRoute.id });
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Link } from "@tanstack/react-router"
+import { ChartColumnStacked, ChartLine, ChartScatter } from "lucide-react"
 
-  useEffect(() => {
-    if (payoutPoints.length === 0) {
-      const initialPoints: PayoutPoint[] = [
-        { eventOutcome: 0, outcomePayout: 0, extraPrecision: 0 },
-        { eventOutcome: 1_000, outcomePayout: 1_000, extraPrecision: 0 },
-      ];
+interface ContractType {
+  type: string
+  title: string
+  description: string
+  chart: React.ReactNode
+}
 
-      const secondPoints: PayoutPoint[] = [
-        { eventOutcome: 1_000, outcomePayout: 1_000, extraPrecision: 0 },
-        { eventOutcome: 2_000, outcomePayout: 2_000, extraPrecision: 0 },
-      ];
+const contractTypes: ContractType[] = [
+  {
+    type: "parlay",
+    title: "Continuous Parlay",
+    description: "Build a contract composing multiple data points",
+    chart: <ChartScatter width={50} height={50} />
+  },
+  {
+    type: "price-feed",
+    title: "Price Feed Contract",
+    description: "Create a contract based on the future Bitcoin price",
+    chart: <ChartLine width={50} height={50} />
+  },
+  {
+    type: "enumeration",
+    title: "Enumeration Contract",
+    description: "Create a contract with a fixed set of outcomes",
+    chart: <ChartColumnStacked width={50} height={50} />
+  }
+]
 
-      const thirdPoints: PayoutPoint[] = [
-        { eventOutcome: 2_000, outcomePayout: 2_000, extraPrecision: 0 },
-        { eventOutcome: 3_000, outcomePayout: 3_000, extraPrecision: 0 },
-      ];
-
-      setPayoutPoints([initialPoints, secondPoints, thirdPoints]);
-      setRoundingInterval([{ beginInterval: 0, roundingMod: 100 }]);
-    }
-  }, [payoutPoints.length, setPayoutPoints, setRoundingInterval]);
-
-  // Update range payouts whenever payout points change
-  useEffect(() => {
-    const loadWasm = async () => {
-      if (compute_payout_range && payoutPoints.length >= 1) {
-        try {
-          const newRangePayouts = compute_payout_range(BigInt(3_000), payoutPoints, roundingInterval);
-          setRangePayouts(newRangePayouts);
-        } catch (error) {
-          console.error('Error computing range payouts:', error);
-        }
-      }
-    };
-
-    loadWasm();
-  }, [payoutPoints, roundingInterval]);
-
-  // Log payoutPoints whenever they change
-  useEffect(() => {
-    console.log("Current payoutPoints:", payoutPoints);
-  }, [payoutPoints]);
-
+export function CreateContract() {
   return (
-    <div style={{ padding: '20px', width: '100%' }}>
-      {/* @ts-ignore */}
-      <h1 className='text-4xl font-bold'>{contractType?.charAt(0).toUpperCase() + contractType?.slice(1) ?? "Create Contract"}</h1>
-      <div>
-        <h2>Payout Distribution</h2>
-        {rangePayouts.length > 0 ? (
-          <PayoutChart rangePayouts={rangePayouts} roundingMod={roundingInterval[0].roundingMod} />
-        ) : (
-          <p>Add at least two payout points to see the distribution.</p>
-        )}
+    <div className="container mx-auto py-8 px-6">
+      <h1 className="text-3xl font-bold mb-8">Create New Contract</h1>
+      <div className="flex flex-col gap-6">
+        {contractTypes.map((contract) => (
+          <Link key={contract.type} to="/create/$contractType" params={{ contractType: contract.type }}>
+            <Card className="w-full hover:bg-accent/50 transition-colors cursor-pointer flex flex-row gap-4 justify-between items-center">
+              <CardHeader>
+                <div>
+                  <CardTitle className="text-2xl font-bold">{contract.title}</CardTitle>
+                  <CardDescription>{contract.description}</CardDescription>
+                </div>
+              </CardHeader>
+              <div className="pr-12">
+                {contract.chart}
+              </div>
+            </Card>
+          </Link>
+        ))}
       </div>
     </div>
-  );
-};
+  )
+}

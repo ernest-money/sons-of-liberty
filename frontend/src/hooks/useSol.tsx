@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo, useState, FC, useEffect } from 'react';
 import axios from 'axios';
-import { SolBalance, Contract } from '@/types';
+import { SolBalance, Contract, EnumerationContractParams, CreateEnumerationContractResponse } from '@/types';
 import { ForgotParams, LoginParams, LoginResponse, MagicLinkParams, RegisterParams, ResetParams } from '@/lib/sol/auth';
 import { InfoResponse } from '@/lib/sol/info';
 import { MarketStats } from '@/lib/sol/market';
@@ -41,6 +41,7 @@ export interface SolContextType {
   getContracts: (filter?: ContractFilter) => Promise<Contract[]>;
   getContract: (id: string) => Promise<Contract>;
   getMarketStats: () => Promise<MarketStats[]>;
+  createEnumerationContract: (params: EnumerationContractParams) => Promise<CreateEnumerationContractResponse>;
 }
 
 interface SolProviderProps {
@@ -160,6 +161,10 @@ export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
     },
     getMarketStats: async () => {
       const { data } = await instance.get<MarketStats[]>('/api/market/hashrates');
+      return data;
+    },
+    createEnumerationContract: async (params: EnumerationContractParams) => {
+      const { data } = await instance.post<CreateEnumerationContractResponse>('/api/create/enum', params);
       return data;
     },
   }), [instance, token]);

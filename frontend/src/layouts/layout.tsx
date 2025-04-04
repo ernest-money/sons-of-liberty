@@ -30,20 +30,7 @@ const getBreadcrumbItems = (pathname: string) => {
   });
 };
 
-const ActionPanel = () => {
-  return (
-    <div className="pt-4 px-4 flex flex-col gap-4">
-      <ScrollArea className="h-[100vh]">
-        <h1 className='text-4xl font-bold p-0 m-0'>Markets</h1>
-        <HashrateChart />
-        <MarketChart title="Price" type={MarketChartType.Price} />
-      </ScrollArea>
-    </div>
-  )
-}
-
 export const ProtectedLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const isDesktop = useMediaQuery("(min-width: 1100px)");
   const location = useLocation();
   const breadcrumbItems = getBreadcrumbItems(location.pathname);
 
@@ -78,41 +65,9 @@ export const ProtectedLayout: React.FC<{ children: React.ReactNode }> = ({ child
             </BreadcrumbList>
           </Breadcrumb>
         </header>
-
-        {isDesktop ? (
-          <div className="flex-1 flex flex-col h-[calc(100vh-4rem)] overflow-hidden">
-            <div className="flex-1 flex flex-row w-full relative">
-              <div className="w-3/5 min-w-0 overflow-auto flex-shrink-0">
-                {children}
-              </div>
-              <div className="w-2/5 min-w-0 flex-shrink-0">
-                <ScrollArea className="h-full">
-                  <ActionPanel />
-                </ScrollArea>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <>
-            <div className="relative flex-1">
-              {children}
-            </div>
-            <Drawer>
-              <DrawerTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="fixed bottom-4 right-4 h-12 w-12 rounded-full shadow-lg bg-primary hover:bg-primary/80"
-                >
-                  <Plus className="h-6 w-6 text-secondary" />
-                </Button>
-              </DrawerTrigger>
-              <DrawerContent className="h-[80vh]">
-                <ActionPanel />
-              </DrawerContent>
-            </Drawer>
-          </>
-        )}
+        <div className="w-full md:w-4/5 m-auto my-0">
+          {children}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );

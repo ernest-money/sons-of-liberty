@@ -10,16 +10,18 @@ import AuthPage from './app/auth/page';
 import { AuthenticatedRoute } from '@/layouts/authenticated';
 import { Dashboard } from './app/dashboard/page';
 import { WalletSection } from './app/wallet/page';
-import { CreateContract } from './app/create/page';
+import { CreateContractType } from './app/create/contract-type';
 import { ActiveContracts } from './app/contracts/active';
 import { ClosedContracts } from './app/contracts/closed';
 import { OfferList } from './components/offer-list';
 import { Transactions } from './app/wallet/transactions';
 import { Utxos } from './app/wallet/utxos';
-import { OfferPage } from './app/offer-page';
+import { OfferPage } from './app/offers/offer-page';
 import { Contracts } from './app/contracts/page';
 import { ContractPage } from './app/contracts/contract';
 import { AccountPage } from './app/account/page';
+import { CreateContract } from './app/create/page';
+import { MarketPage } from './app/market/page';
 
 // Create the root route
 const rootRoute = createRootRoute({
@@ -56,8 +58,18 @@ const authenticatedParentRoute = createRoute({
 
 export const createContractRoute = createRoute({
   getParentRoute: () => authenticatedParentRoute,
-  path: '/create/$contractType',
+  path: '/create',
   component: CreateContract,
+});
+
+export type CreateContractTypeParams = {
+  contractType: "parlay" | "price-feed" | "enumeration";
+}
+
+export const createContractTypeRoute = createRoute({
+  getParentRoute: () => authenticatedParentRoute,
+  path: '/create/$contractType',
+  component: CreateContractType,
 });
 
 export const contractsRoute = createRoute({
@@ -82,6 +94,12 @@ export const closedContractsRoute = createRoute({
   getParentRoute: () => authenticatedParentRoute,
   path: '/contracts/closed',
   component: ClosedContracts,
+});
+
+export const marketRoute = createRoute({
+  getParentRoute: () => authenticatedParentRoute,
+  path: '/market',
+  component: MarketPage,
 });
 
 const offersRoute = createRoute({
@@ -145,7 +163,9 @@ const routeTree = rootRoute.addChildren([
   authenticatedParentRoute.addChildren([
     dashboardRoute,
     walletRoute,
+    marketRoute,
     createContractRoute,
+    createContractTypeRoute,
     contractsRoute,
     contractRoute,
     activeContractsRoute,

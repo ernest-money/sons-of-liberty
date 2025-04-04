@@ -10,7 +10,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { ChartCandlestick, Home, Landmark, ReceiptText, Wallet } from "lucide-react"
+import { ChartCandlestick, HandCoins, Home, Landmark, Plus, ReceiptText, Wallet } from "lucide-react"
 import { NavUser } from "@/components/sidebar/nav-user"
 import { useAuth } from "@/hooks"
 import { useLocation, useNavigate } from "@tanstack/react-router"
@@ -23,6 +23,12 @@ const main = [
     icon: <Home />
   },
   {
+    title: "Create Contract",
+    url: "/create",
+    isActive: (pathname: string) => pathname === "/create-contract",
+    icon: <Plus />
+  },
+  {
     title: "Wallet",
     url: "/wallet",
     isActive: (pathname: string) => pathname === "/wallet",
@@ -30,9 +36,15 @@ const main = [
   },
   {
     title: "Market",
+    url: "/market",
+    isActive: (pathname: string) => pathname === "/market",
+    icon: <ChartCandlestick />
+  },
+  {
+    title: "Offers",
     url: "/offers",
     isActive: (pathname: string) => pathname === "/offers",
-    icon: <ChartCandlestick />
+    icon: <HandCoins />
   },
   {
     title: "Contracts",

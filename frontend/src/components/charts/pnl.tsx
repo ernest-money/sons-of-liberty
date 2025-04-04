@@ -2,7 +2,7 @@
 
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
 import { Card, CardContent } from "@/components/ui/card"
-import { ChartContainer } from "@/components/ui/chart"
+import { ChartConfig, ChartContainer } from "@/components/ui/chart"
 import { SolBalanceType } from "@/types"
 import { formatAmount } from "@/lib/utils"
 
@@ -13,6 +13,13 @@ interface RevenueCardProps {
   data: Array<{ value: number }>
   className?: string
 }
+
+const chartConfig = {
+  value: {
+    label: "Profit & Loss",
+    color: "white",
+  },
+} satisfies ChartConfig;
 
 // TODO: Get the historical data from the API for the percentage change
 export function Pnl({ title, amount, percentage, data, className }: RevenueCardProps) {
@@ -32,26 +39,21 @@ export function Pnl({ title, amount, percentage, data, className }: RevenueCardP
 
 
       <ChartContainer
-        className="h-[150px] w-full"
-        config={{
-          value: {
-            label: "Value",
-            color: "white",
-          },
-        }}
+        className="h-full w-full"
+        config={chartConfig}
       >
-        <ResponsiveContainer width="100%">
+        <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
-            {/* <XAxis
-                dataKey="value"
-                stroke="white"
-                fontSize={12}
-              />
-              <YAxis
-                stroke="white"
-                fontSize={12}
-                domain={['dataMin', 'auto']}
-              /> */}
+            <XAxis
+              dataKey="value"
+              stroke="white"
+              fontSize={12}
+            />
+            <YAxis
+              stroke="white"
+              fontSize={12}
+              domain={['dataMin', 'auto']}
+            />
             <Tooltip
               contentStyle={{
                 backgroundColor: '#000',

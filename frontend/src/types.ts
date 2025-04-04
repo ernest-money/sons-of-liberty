@@ -98,3 +98,27 @@ export interface LocalOutput {
   derivation_index: number;
   chain_position: any; // We can type this more specifically if needed
 }
+
+export interface OutcomePayout {
+  outcome: string;
+  payout: {
+    offer: number;
+    accept: number;
+  };
+}
+
+export interface EnumerationContractParams {
+  counterparty: string;
+  offer_collateral: number;
+  accept_collateral: number;
+  fee_rate: number;
+  descriptor: {
+    outcomePayouts: OutcomePayout[];
+  };
+  maturity: number;
+}
+
+export interface CreateEnumerationContractResponse {
+  id: string;
+  oracle_event_id: string;
+}

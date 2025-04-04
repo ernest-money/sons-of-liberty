@@ -2,7 +2,7 @@
 
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
 import { Card, CardContent } from "@/components/ui/card"
-import { ChartContainer } from "@/components/ui/chart"
+import { ChartConfig, ChartContainer } from "@/components/ui/chart"
 import { useNavigate } from "@tanstack/react-router"
 
 export enum MarketChartType {
@@ -22,6 +22,13 @@ interface MarketChartProps {
   className?: string
 }
 
+const chartConfig = {
+  value: {
+    label: "Price",
+    color: "white",
+  },
+} satisfies ChartConfig;
+
 // TODO: Get the historical data from the API for the percentage change
 export function MarketChart({ title, type, className }: MarketChartProps) {
   const navigate = useNavigate()
@@ -40,21 +47,16 @@ export function MarketChart({ title, type, className }: MarketChartProps) {
     <Card className={`${className || ""} bg-black text-white overflow-hidden h-2/5 my-2 cursor-pointer hover:bg-gray-900 transition-colors duration-200`} onClick={() => navigate({ to: `/create?type=${type}` })}>
       <CardContent className="p-6 h-full w-full">
         <div className={`space-y-2`}>
-          <h2 className="text-xl font-medium leading-none">{title}</h2>
+          <h2 className="text-2xl font-medium leading-none pb-2">{title}</h2>
         </div>
 
         <ChartContainer
-          className="h-[100px] w-full"
-          config={{
-            value: {
-              label: "Value",
-              color: "white",
-            },
-          }}
+          className="h-full w-full"
+          config={chartConfig}
         >
-          <ResponsiveContainer width="100%">
+          <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data}>
-              {/* <XAxis
+              <XAxis
                 dataKey="value"
                 stroke="white"
                 fontSize={12}
@@ -63,7 +65,7 @@ export function MarketChart({ title, type, className }: MarketChartProps) {
                 stroke="white"
                 fontSize={12}
                 domain={['dataMin', 'auto']}
-              /> */}
+              />
               <Tooltip
                 contentStyle={{
                   backgroundColor: '#000',
