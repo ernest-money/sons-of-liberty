@@ -1,17 +1,21 @@
 import { useSol } from '@/hooks';
-import { offerRoute } from '@/router';
-import { useParams } from '@tanstack/react-router';
+import { offerRoute, contractRoute } from '@/router';
+import { useParams, useNavigate } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 import { Offer } from '@/types';
 import { Skeleton } from "@/components/ui/skeleton";
 import { ContractDetails } from "@/components/contract-details";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 export const OfferPage = () => {
   const { offerId } = useParams({ from: offerRoute.id });
   const [offer, setOffer] = useState<Offer | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [accepting, setAccepting] = useState(false);
   const client = useSol();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchOffer = async () => {
@@ -27,6 +31,24 @@ export const OfferPage = () => {
     };
     fetchOffer();
   }, [client, offerId]);
+
+  const handleAcceptOffer = async () => {
+    if (!offer) return;
+
+    try {
+      setAccepting(true);
+      const response = await client.acceptOffer({
+        offer_id: offer.id,
+      });
+
+      toast.success("Offer accepted successfully");
+      navigate({ to: '/contracts/$contractId', params: { contractId: response.contract_id } });
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Failed to accept offer");
+    } finally {
+      setAccepting(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -63,10 +85,24 @@ export const OfferPage = () => {
   }
 
   return (
-    <ContractDetails
-      contract={offer}
-      title="Offer Details"
-      description="View and manage your DLC offer"
-    />
+    <div className="space-y-6">
+      <ContractDetails
+        contract={offer}
+        title="Offer Details"
+        description="View and manage your DLC offer"
+      />
+
+      {!offer.is_offer_party && (
+        <div className="pb-6 flex justify-center">
+          <Button
+            onClick={handleAcceptOffer}
+            disabled={accepting}
+            className="w-full max-w-md"
+          >
+            {accepting ? "Accepting..." : "Accept Offer"}
+          </Button>
+        </div>
+      )}
+    </div>
   );
 };

@@ -14,8 +14,7 @@ interface SendOfferBody {
 }
 
 interface AcceptOfferBody {
-  contract_id: string;
-  accept_amount: number;
+  offer_id: string;
 }
 
 export interface SolContextType {

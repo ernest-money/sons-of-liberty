@@ -1,5 +1,3 @@
-"use client"
-
 import { useSol } from "@/hooks/useSol";
 import { EnumerationChart } from "@/components/charts/enumeration-chart";
 import { Button } from "@/components/ui/button";
@@ -11,6 +9,7 @@ import { EnumerationContractParams, OutcomePayout } from "@/types";
 import { Edit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
 
 export const Enumeration = () => {
   const sol = useSol();
@@ -20,6 +19,9 @@ export const Enumeration = () => {
   const [acceptCollateral, setAcceptCollateral] = useState(10000);
   const [totalCollateral, setTotalCollateral] = useState(20000);
   const [feeRate, setFeeRate] = useState(1);
+  const [maturityDate, setMaturityDate] = useState<Date | undefined>(
+    new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 1 week from now
+  );
   const [maturity, setMaturity] = useState(Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60); // 1 week from now
   const [outcomePayouts, setOutcomePayouts] = useState<OutcomePayout[]>([]);
   const [newOutcome, setNewOutcome] = useState("");
@@ -151,6 +153,7 @@ export const Enumeration = () => {
       setAcceptCollateral(10000);
       setTotalCollateral(20000);
       setFeeRate(1);
+      setMaturityDate(new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)); // 1 week from now
       setMaturity(Math.floor(Date.now() / 1000) + 7 * 24 * 60 * 60);
       setOutcomePayouts([]);
     } catch (error) {
@@ -267,12 +270,12 @@ export const Enumeration = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="maturity">Maturity (Unix timestamp)</Label>
-                <Input
-                  id="maturity"
-                  type="number"
-                  value={maturity}
-                  onChange={(e) => setMaturity(Number(e.target.value))}
+                <DateTimePicker
+                  date={maturityDate}
+                  setDate={setMaturityDate}
+                  label="Contract Maturity"
+                  placeholder="Select maturity date and time"
+                  onTimestampChange={setMaturity}
                 />
               </div>
             </CardContent>

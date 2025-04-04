@@ -1,5 +1,3 @@
-"use client"
-
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { OutcomePayout } from "@/types";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
