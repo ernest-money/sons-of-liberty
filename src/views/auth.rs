@@ -27,6 +27,7 @@ pub struct CurrentResponse {
     pub pid: String,
     pub name: String,
     pub email: String,
+    pub nostr_profile: Option<String>,
 }
 
 impl CurrentResponse {
@@ -36,6 +37,7 @@ impl CurrentResponse {
             pid: user.pid.to_string(),
             name: user.name.clone(),
             email: user.email.clone(),
+            nostr_profile: user.nostr_profile.clone(),
         }
     }
 }

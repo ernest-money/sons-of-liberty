@@ -5,7 +5,7 @@ import { LoginParams, RegisterParams } from '@/lib/sol/auth';
 interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
-  user: { id: string; email: string, name: string } | null;
+  user: { id: string; email: string, name: string, nostr_profile: string | null } | null;
   login: (params: LoginParams) => Promise<void>;
   register: (params: RegisterParams) => Promise<void>;
   logout: () => Promise<void>;
@@ -16,7 +16,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export const AuthProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
-  const [user, setUser] = useState<{ id: string; email: string, name: string } | null>(null);
+  const [user, setUser] = useState<{ id: string; email: string, name: string, nostr_profile: string | null } | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const sol = useSol();

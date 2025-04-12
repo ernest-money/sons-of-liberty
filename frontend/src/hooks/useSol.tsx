@@ -42,8 +42,8 @@ export interface SolContextType {
   getMarketStats: () => Promise<MarketStats[]>;
   createEnumerationContract: (params: EnumerationContractParams) => Promise<CreateEnumerationContractResponse>;
   getCounterparties: () => Promise<NostrCounterparty[]>;
+  createProfile: (params: { name: string; about: string }) => Promise<void>;
 }
-
 interface SolProviderProps {
   children: React.ReactNode;
   baseUrl: string;
@@ -170,6 +170,9 @@ export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
     getCounterparties: async () => {
       const { data } = await instance.get<NostrCounterparty[]>('/api/nostr/counterparties');
       return data;
+    },
+    createProfile: async (params: { name: string; about: string }) => {
+      await instance.post('/api/nostr/create-profile', params);
     },
   }), [instance, token]);
 

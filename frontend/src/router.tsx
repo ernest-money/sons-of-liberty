@@ -23,6 +23,7 @@ import { AccountPage } from './app/account/page';
 import { CreateContract } from './app/create/page';
 import { MarketPage } from './app/market/page';
 import { CounterpartiesPage } from './app/counterparties/page';
+import { FinishProfilePage } from './app/account/finish';
 
 // Create the root route
 const rootRoute = createRootRoute({
@@ -152,6 +153,13 @@ export const accountRoute = createRoute({
   component: AccountPage,
 });
 
+// Add the finish profile route
+const finishProfileRoute = createRoute({
+  getParentRoute: () => authenticatedParentRoute,
+  path: '/account/finish',
+  component: FinishProfilePage,
+});
+
 const NotFoundPage = () => {
   return <div>Not Found</div>;
 };
@@ -183,6 +191,7 @@ const routeTree = rootRoute.addChildren([
     transactionsRoute,
     utxosRoute,
     accountRoute,
+    finishProfileRoute,
   ]),
   notFoundRoute,
 ]);

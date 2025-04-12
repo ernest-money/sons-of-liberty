@@ -14,7 +14,7 @@ export const AuthenticatedRoute: React.FC<AuthenticatedRouteProps> = ({
   redirectTo = '/login'
 }) => {
   const [loading, setLoading] = useState<boolean>(true);
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,6 +25,11 @@ export const AuthenticatedRoute: React.FC<AuthenticatedRouteProps> = ({
           // Simply redirect to login page without any parameters
           navigate({ to: redirectTo });
           return;
+        }
+
+        // If user is authenticated but doesn't have a Nostr profile, redirect to finish profile page
+        if (user && !user.nostr_profile) {
+          navigate({ to: '/account/finish' });
         }
 
         // Set loading to false when we've confirmed authentication

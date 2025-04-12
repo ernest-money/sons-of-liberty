@@ -77,15 +77,18 @@ pub async fn create_profile(
     Extension(sol): Extension<Arc<SonsOfLiberty>>,
     Json(profile): Json<CreateProfileParams>,
 ) -> Result<Response> {
-    users::Model::find_by_pid(&ctx.db, &cookie.user.pid).await?;
+    let user = users::Model::find_by_pid(&ctx.db, &cookie.user.pid).await?;
 
-    let profile = sol
+    let (profile, event) = sol
         .nostr
         .create_or_update_dlc_profile(profile.name, profile.about)
         .await
         .map_err(nostr_err_to_http)?;
 
     // update db profile to have nostr profile id
+    user.into_active_model()
+        .update_nostr_profile(&ctx.db, &event.id.to_string())
+        .await?;
 
     format::json(profile)
 }

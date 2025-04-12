@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use nostr::{
-    event::{EventBuilder, Kind, Tag, TagKind},
+    event::{Event, EventBuilder, Kind, Tag, TagKind},
     filter::{Alphabet, Filter, SingleLetterTag},
     key::{Keys, PublicKey, SecretKey},
     nips::nip01::Metadata,
@@ -85,7 +85,7 @@ impl Nostr {
         &self,
         name: String,
         about: String,
-    ) -> Result<Metadata, TradeCounterpartyError> {
+    ) -> Result<(Metadata, Event), TradeCounterpartyError> {
         let metadata = Metadata::new().name(name).about(about);
 
         let event = EventBuilder::new(Kind::Metadata, metadata.as_json())
@@ -98,7 +98,7 @@ impl Nostr {
 
         self.nostr_client.send_event(&event).await?;
 
-        Ok(metadata)
+        Ok((metadata, event))
     }
 
     /// Retrieves a specific trade counterparty's profile information from the Nostr network.

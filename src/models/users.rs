@@ -363,4 +363,19 @@ impl ActiveModel {
         self.magic_link_expiration = ActiveValue::set(None);
         Ok(self.update(db).await?)
     }
+
+    /// Updates the Nostr profile for the user.
+    ///
+    /// This method updates the Nostr profile for the user with the provided Nostr event ID.
+    ///
+    /// # Arguments
+    ///
+    pub async fn update_nostr_profile(
+        mut self,
+        db: &DatabaseConnection,
+        nostr_event_id: &str,
+    ) -> ModelResult<Model> {
+        self.nostr_profile = ActiveValue::set(Some(nostr_event_id.to_string()));
+        Ok(self.update(db).await?)
+    }
 }
