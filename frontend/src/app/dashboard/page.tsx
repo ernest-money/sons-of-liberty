@@ -31,9 +31,9 @@ export const Dashboard: React.FC = () => {
 
   return (
     <div className='flex flex-col margin-auto gap-4 sm:w-full'>
-      <h1 className='text-4xl pl-6 pt-6 font-bold'>Hello, {user?.name ?? "anon"}</h1>
+      <h1 className='text-4xl pt-6 font-bold'>Hello, {user?.name ?? "anon"}</h1>
       <div>
-        <div className="flex flex-row justify-between gap-4 p-6">
+        <div className="flex flex-row justify-between gap-4">
           <div className='w-1/2'>
             <BalanceCard title="Confirmed Balance" amount={balance.confirmed} percentage={10} />
           </div>
