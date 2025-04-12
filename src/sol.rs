@@ -12,6 +12,7 @@ use std::path::{Path, PathBuf};
 use std::str::FromStr;
 use std::sync::Arc;
 
+use crate::common::nostr::Nostr;
 use crate::common::settings::Settings;
 
 type SonsOfLiberyDdk = DlcDevKit<NostrDlc, PostgresStore, KormirOracleClient>;
@@ -19,6 +20,7 @@ type SonsOfLiberyDdk = DlcDevKit<NostrDlc, PostgresStore, KormirOracleClient>;
 #[derive(Clone)]
 pub struct SonsOfLiberty {
     pub dlcdevkit: Arc<SonsOfLiberyDdk>,
+    pub nostr: Nostr,
 }
 
 impl SonsOfLiberty {
@@ -70,7 +72,15 @@ impl SonsOfLiberty {
                 .await
                 .map_err(|e| loco_rs::Error::string(e.to_string().as_str()))?,
         );
-        Ok(Self { dlcdevkit })
+
+        let nostr = Nostr::new(
+            &seed_bytes.private_key.secret_bytes(),
+            vec![settings.nostr_relay.clone()],
+        )
+        .await
+        .map_err(|e| loco_rs::Error::string(e.to_string().as_str()))?;
+
+        Ok(Self { dlcdevkit, nostr })
     }
 }
 

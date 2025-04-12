@@ -122,3 +122,4 @@ settings:
   network: "regtest"
   name: "sons-of-liberty"
   postgres_url: "postgres://loco:loco@localhost:5432/sons-of-liberty_development"
+  nostr_relay: "ws://localhost:8081"

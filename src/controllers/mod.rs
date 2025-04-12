@@ -19,3 +19,4 @@ pub mod wallet;
 pub mod home;
 pub mod hashrate;
 pub mod create;
+pub mod nostr;
