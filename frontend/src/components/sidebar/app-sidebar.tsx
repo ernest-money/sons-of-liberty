@@ -10,7 +10,7 @@ import {
   SidebarMenuItem,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { ChartCandlestick, HandCoins, Home, Landmark, Plus, ReceiptText, Wallet } from "lucide-react"
+import { ChartCandlestick, HandCoins, Home, Landmark, Plus, ReceiptText, Users, Wallet } from "lucide-react"
 import { NavUser } from "@/components/sidebar/nav-user"
 import { useAuth } from "@/hooks"
 import { useLocation, useNavigate } from "@tanstack/react-router"
@@ -33,6 +33,12 @@ const main = [
     url: "/wallet",
     isActive: (pathname: string) => pathname === "/wallet",
     icon: <Wallet />
+  },
+  {
+    title: "Counterparties",
+    url: "/counterparties",
+    isActive: (pathname: string) => pathname === "/counterparties",
+    icon: <Users />
   },
   {
     title: "Market",

@@ -10,6 +10,7 @@ import { Edit, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "@tanstack/react-router";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
+import { CounterpartySelect } from "@/components/counterparty-select";
 
 export const Enumeration = () => {
   const sol = useSol();
@@ -200,15 +201,12 @@ export const Enumeration = () => {
           <Card>
             <CardHeader>
               <CardTitle>Counterparty</CardTitle>
-              <CardDescription>Enter the public key of your counterparty</CardDescription>
+              <CardDescription>Select your counterparty</CardDescription>
             </CardHeader>
             <CardContent>
-              <Input
-                id="counterparty"
+              <CounterpartySelect
                 value={counterparty}
-                onChange={(e) => setCounterparty(e.target.value)}
-                placeholder="02b6..."
-                className="text-lg h-14"
+                onValueChange={setCounterparty}
               />
             </CardContent>
           </Card>

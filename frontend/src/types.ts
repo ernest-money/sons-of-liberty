@@ -122,3 +122,11 @@ export interface CreateEnumerationContractResponse {
   id: string;
   oracle_event_id: string;
 }
+
+export interface NostrCounterparty {
+  pubkey: string;
+  name: string;
+  about: string;
+  picture: string;
+  website: string;
+}

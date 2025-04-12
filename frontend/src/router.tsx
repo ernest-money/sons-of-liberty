@@ -22,6 +22,7 @@ import { ContractPage } from './app/contracts/contract';
 import { AccountPage } from './app/account/page';
 import { CreateContract } from './app/create/page';
 import { MarketPage } from './app/market/page';
+import { CounterpartiesPage } from './app/counterparties/page';
 
 // Create the root route
 const rootRoute = createRootRoute({
@@ -102,6 +103,12 @@ export const marketRoute = createRoute({
   component: MarketPage,
 });
 
+export const counterpartiesRoute = createRoute({
+  getParentRoute: () => authenticatedParentRoute,
+  path: '/counterparties',
+  component: CounterpartiesPage,
+});
+
 const offersRoute = createRoute({
   getParentRoute: () => authenticatedParentRoute,
   path: '/offers',
@@ -163,6 +170,7 @@ const routeTree = rootRoute.addChildren([
   authenticatedParentRoute.addChildren([
     dashboardRoute,
     walletRoute,
+    counterpartiesRoute,
     marketRoute,
     createContractRoute,
     createContractTypeRoute,
