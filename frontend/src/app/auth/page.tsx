@@ -2,10 +2,21 @@ import { Landmark } from "lucide-react"
 
 import { LoginForm } from "@/components/auth/login-form"
 import { RegisterForm } from "@/components/auth/register-form";
+import { useLocation, useNavigate } from "@tanstack/react-router";
+import { useAuth, useSol } from "@/hooks";
+import { useEffect } from "react";
 
 export default function AuthPage() {
-  const path = window.location.pathname;
-  const isLogin = path === '/login';
+  const location = useLocation();
+  const isLogin = location.pathname === '/login';
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate({ to: '/' });
+    }
+  }, [isAuthenticated]);
+
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">

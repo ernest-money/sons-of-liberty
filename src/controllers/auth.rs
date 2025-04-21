@@ -15,7 +15,7 @@ use loco_rs::{
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::sync::OnceLock;
-use tower_cookies::{cookie::SameSite, Cookie, Cookies};
+use tower_cookies::{cookie::time::Duration as CookieDuration, cookie::SameSite, Cookie, Cookies};
 
 pub static EMAIL_DOMAIN_RE: OnceLock<Regex> = OnceLock::new();
 pub const COOKIE_NAME: &str = "sol_cookie";
@@ -187,6 +187,7 @@ async fn login(
     cookie.set_http_only(true);
     cookie.set_path("/");
     cookie.set_same_site(SameSite::Strict);
+    cookie.set_max_age(Some(CookieDuration::seconds(jwt_secret.expiration as i64)));
     cookies.add(cookie);
 
     format::json(LoginResponse::new(&user, &token))
@@ -261,8 +262,14 @@ async fn magic_link_verify(
 }
 
 async fn logout(cookies: Cookies) -> Result<Response> {
-    cookies.remove(Cookie::new(COOKIE_NAME, ""));
-    format::json(())
+    let mut cookie = Cookie::new(COOKIE_NAME, "");
+    cookie.set_path("/");
+    cookie.set_secure(true);
+    cookie.set_http_only(true);
+    cookie.set_same_site(SameSite::Strict);
+    cookie.set_max_age(Some(CookieDuration::seconds(0)));
+    cookies.add(cookie);
+    format::json(serde_json::json!({"success": true}))
 }
 
 pub fn routes() -> Routes {
