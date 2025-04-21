@@ -20,80 +20,45 @@ const main = [
     title: "Home",
     url: "/",
     isActive: (pathname: string) => pathname === "/",
-    icon: <Home />
+    icon: <Home className="size-6" />
   },
   {
     title: "Create Contract",
     url: "/create",
     isActive: (pathname: string) => pathname === "/create-contract",
-    icon: <Plus />
+    icon: <Plus className="size-6" />
   },
   {
     title: "Wallet",
     url: "/wallet",
     isActive: (pathname: string) => pathname === "/wallet",
-    icon: <Wallet />
+    icon: <Wallet className="size-6" />
   },
   {
     title: "Counterparties",
     url: "/counterparties",
     isActive: (pathname: string) => pathname === "/counterparties",
-    icon: <Users />
+    icon: <Users className="size-6" />
   },
   {
     title: "Market",
     url: "/market",
     isActive: (pathname: string) => pathname === "/market",
-    icon: <ChartCandlestick />
+    icon: <ChartCandlestick className="size-6" />
   },
   {
     title: "Offers",
     url: "/offers",
     isActive: (pathname: string) => pathname === "/offers",
-    icon: <HandCoins />
+    icon: <HandCoins className="size-6" />
   },
   {
     title: "Contracts",
     url: "/contracts",
     isActive: (pathname: string) => pathname === "/contracts",
-    icon: <ReceiptText />
+    icon: <ReceiptText className="size-6" />
   }
 ]
-
-// const data = {
-//   versions: ["0.0.1",],
-//   navMain: [
-//     {
-//       title: "Market",
-//       url: "/offers",
-//       items: [
-//         {
-//           title: "Open Offers",
-//           url: "/offers",
-//           isActive: window.location.pathname === "/offers",
-//         }
-//       ],
-//     },
-//     {
-//       title: "Contracts",
-//       url: "#",
-//       items: [
-//         {
-//           title: "Active",
-//           url: "/contracts/active",
-//           isActive: window.location.pathname === "/contracts/active",
-
-//         },
-//         {
-//           title: "Closed",
-//           url: "/contracts/closed",
-//           isActive: window.location.pathname === "/contracts/closed",
-//           icon: <Home />
-//         },
-//       ],
-//     },
-//   ],
-// }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useAuth()
@@ -119,33 +84,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/* <SearchForm /> */}
       </SidebarHeader>
       <SidebarContent>
-        <SidebarMenu>
+        <SidebarMenu className="space-y-4 px-4">
           {main.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild className="px-4" isActive={item.isActive(pathname)}>
-                <a href={item.url}>
+              <SidebarMenuButton
+                asChild
+                className="px-4 py-3 text-base font-xl"
+                isActive={item.isActive(pathname)}
+              >
+                <a href={item.url} className="flex items-center gap-2">
                   {item.icon} {item.title}
                 </a>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
-        {/* {data.navMain.map((item) => (
-          <SidebarGroup key={item.title}>
-            <SidebarGroupLabel>{item.title}</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                {item.items.map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton asChild isActive={item.isActive}>
-                      <a href={item.url}>{item.title}</a>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        ))} */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={{ name: user?.name ?? "anon", email: user?.email ?? "anon@example.com", avatar: "/avatars/shadcn.jpg" }} />
