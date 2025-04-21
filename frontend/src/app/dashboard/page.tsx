@@ -4,6 +4,7 @@ import { BalanceCard } from '@/components/balance-card';
 import { SolBalance, defaultBalance } from '@/types';
 import { Pnl } from '@/components/charts/pnl';
 import { ContractList } from '@/components/contract-list';
+import { formatAmount } from '@/lib/utils';
 
 const data = [
   { value: 100 },
@@ -41,7 +42,7 @@ export const Dashboard: React.FC = () => {
             <BalanceCard title="Contract Balance" amount={balance.contract} percentage={10} />
           </div>
         </div>
-        <Pnl className='w-full h-full' title="Profit & Loss" amount={balance.contractPnl} percentage={10} data={data} />
+        <Pnl title="Profit & Loss" amount={balance.contractPnl} height='300px' percentage={10} data={data} />
         <ContractList />
       </div>
     </div>
