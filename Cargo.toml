@@ -46,9 +46,9 @@ bitcoin = { version = "0.32.5", features = ["serde"] }
 # ddk-manager = { version = "0.7.3", path = "../dlcdevkit/ddk-manager", features = ["use-serde"] }
 # ddk-payouts = { version = "0.0.15", path = "../dlcdevkit/payouts" }
 # dlc-messages = { version = "0.7.1", features = ["use-serde"] }
-ddk = { version = "0.0.15", git = "https://github.com/bennyhodl/dlcdevkit", branch = "async-wallet", features = ["kormir", "postgres", "nostr"]}
-ddk-manager = { version = "0.7.3", git = "https://github.com/bennyhodl/dlcdevkit", branch = "async-wallet", features = ["use-serde"] }
-ddk-payouts = { version = "0.0.15", git = "https://github.com/bennyhodl/dlcdevkit", branch = "async-wallet" }
+ddk = { version = "0.0.16", features = ["kormir", "postgres", "nostr"]}
+ddk-manager = { version = "0.7.5", features = ["use-serde"] }
+ddk-payouts = "0.0.16"
 dlc-messages = { version = "0.7.1", features = ["use-serde"] }
 homedir = "0.3.4"
 hex = "0.4.3"

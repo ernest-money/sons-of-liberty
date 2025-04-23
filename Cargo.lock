@@ -1451,8 +1451,9 @@ checksum = "575f75dfd25738df5b91b8e43e14d44bda14637a58fae779fd2b064f8bf3e010"
 
 [[package]]
 name = "ddk"
-version = "0.0.15"
-source = "git+https://github.com/bennyhodl/dlcdevkit?branch=async-wallet#da9c4c88af68b4d2322dc62a781ba62ec43bba99"
+version = "0.0.16"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c92da54c4e9786794195b40ece18952670506cd9fd607b7699e1922357500812"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1486,8 +1487,9 @@ dependencies = [
 
 [[package]]
 name = "ddk-manager"
-version = "0.7.3"
-source = "git+https://github.com/bennyhodl/dlcdevkit?branch=async-wallet#da9c4c88af68b4d2322dc62a781ba62ec43bba99"
+version = "0.7.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b1deba46833b49d91f6690a1970e5d80ca3ce71272651fca1d487e15b228606a"
 dependencies = [
  "async-trait",
  "bitcoin",
@@ -1505,8 +1507,9 @@ dependencies = [
 
 [[package]]
 name = "ddk-payouts"
-version = "0.0.15"
-source = "git+https://github.com/bennyhodl/dlcdevkit?branch=async-wallet#da9c4c88af68b4d2322dc62a781ba62ec43bba99"
+version = "0.0.16"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "54450f9cf99dfc27d1e082c562d4de4a52b078d5beb3e728063306fa304f6ece"
 dependencies = [
  "anyhow",
  "bitcoin",
@@ -1516,6 +1519,7 @@ dependencies = [
  "dlc-trie",
  "serde",
  "serde_json",
+ "thiserror 2.0.12",
 ]
 
 [[package]]
