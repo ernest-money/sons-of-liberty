@@ -7,6 +7,7 @@ use ddk::oracle::kormir::KormirOracleClient;
 use ddk::storage::postgres::PostgresStore;
 use ddk::transport::nostr::NostrDlc;
 use ddk::DlcDevKit;
+use loco_rs::app::AppContext;
 use std::fs::{create_dir_all, File};
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
@@ -24,13 +25,13 @@ pub struct SonsOfLiberty {
 }
 
 impl SonsOfLiberty {
-    pub async fn new(settings: Settings) -> loco_rs::Result<Self> {
-        let liberty_dir = match settings.data_dir {
-            Some(dir) => PathBuf::from(dir),
-            None => homedir::my_home()
+    pub async fn new(settings: Settings, ctx: &AppContext) -> loco_rs::Result<Self> {
+        let liberty_dir = match settings.data_dir.as_str() {
+            "home" => homedir::my_home()
                 .map_err(|e| loco_rs::Error::string(e.to_string().as_str()))?
                 .ok_or(loco_rs::Error::string("Failed to get home directory"))?
                 .join(".sons-of-liberty"),
+            _ => PathBuf::from(&settings.data_dir),
         };
 
         let network = Network::from_str(&settings.network)
@@ -39,7 +40,7 @@ impl SonsOfLiberty {
         let seed_bytes = xprv_from_path(&liberty_dir, network);
 
         let storage = Arc::new(
-            PostgresStore::new(&settings.postgres_url, true, "sol".to_string())
+            PostgresStore::new(&ctx.config.database.uri, true, settings.name.clone())
                 .await
                 .map_err(|e| loco_rs::Error::string(e.to_string().as_str()))?,
         );

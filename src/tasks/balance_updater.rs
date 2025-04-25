@@ -33,7 +33,7 @@ impl Task for BalanceUpdater {
             .get_or_init(|| async {
                 tracing::warn!("Initializing DDK");
                 Arc::new(
-                    SonsOfLiberty::new(settings)
+                    SonsOfLiberty::new(settings, app_context)
                         .await
                         .expect("Failed to initialize DDK"),
                 )

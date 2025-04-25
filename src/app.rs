@@ -16,10 +16,8 @@ use std::{path::Path, sync::Arc};
 use tokio::sync::OnceCell;
 use tower_cookies::CookieManagerLayer;
 
-use crate::{
-    common::{market::Market, settings::Settings},
-    sol::SonsOfLiberty,
-};
+use crate::{common::settings::Settings, sol::SonsOfLiberty};
+// use crate::common::market::Market;
 #[allow(unused_imports)]
 use crate::{
     controllers, initializers, models::_entities::users, tasks, workers::downloader::DownloadWorker,
@@ -87,7 +85,7 @@ impl Hooks for App {
             .get_or_init(|| async {
                 tracing::warn!("Initializing DDK");
 
-                let ddk = SonsOfLiberty::new(settings.clone())
+                let ddk = SonsOfLiberty::new(settings.clone(), ctx)
                     .await
                     .map_err(|e| {
                         tracing::error!("{}", e.to_string());
@@ -106,7 +104,7 @@ impl Hooks for App {
             }
         });
 
-        // let market = Arc::new(Market::new(&settings.postgres_url).await?);
+        // let market = Arc::new(Market::new(&ctx.config.database.uri).await?);
 
         Ok(router
             .layer(Extension(ddk.clone()))

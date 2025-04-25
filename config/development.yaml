@@ -118,10 +118,15 @@ auth:
     expiration: 604800 # 7 days
     
 settings:
-  listening_port: 1776
+  # oracle implementation (default is kormir.dlcdevkit.com)
   kormir_host: "https://kormir.dlcdevkit.com"
-  esplora_host: "http://host.docker.internal:30000"
+  # esplora implementation (default is localhost:30000)
+  esplora_host: "http://localhost:30000"
+  # bitcoin network (default is regtest)
   network: "regtest"
+  # wallet name (default is sons-of-liberty)
   name: "sons-of-liberty"
-  postgres_url: {{ get_env(name="DATABASE_URL", default="postgres://loco:loco@localhost:5432/sons-of-liberty_development") }}
-  nostr_relay: "ws://host.docker.internal:8081"
+  # nostr relay (default is nostr.dlcdevkit.com)
+  nostr_relay: "wss://nostr.dlcdevkit.com"
+  # data directory (default is ~/.sons-of-liberty)
+  data_dir: {{ get_env(name="DATA_DIR", default="home") }}

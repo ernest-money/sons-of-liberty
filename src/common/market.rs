@@ -45,9 +45,8 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_hashrate_stats() {
-        let market = Market::new("postgres://loco:loco@localhost:5432/city_tavern")
-            .await
-            .unwrap();
+        let db = std::env::var("DATABASE_URL").expect("DATABASE_URL is not set");
+        let market = Market::new(&db).await.unwrap();
         let stats = market.get_hashrate_stats().await.unwrap();
         println!("{:?}", stats);
     }

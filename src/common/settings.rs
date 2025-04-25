@@ -9,14 +9,12 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone)]
 pub struct Settings {
-    pub data_dir: Option<String>,
-    pub listening_port: u16,
+    pub data_dir: String,
     pub kormir_host: String,
     pub esplora_host: String,
     #[serde(default = "default_network")]
     pub network: String,
     pub name: String,
-    pub postgres_url: String,
     #[serde(default = "default_nostr_relay")]
     pub nostr_relay: String,
 }
