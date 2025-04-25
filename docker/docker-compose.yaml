@@ -1,0 +1,124 @@
+version: "3.8"
+services:
+  postgres-sol:
+    image: postgres:latest
+    container_name: postgres-sol
+    hostname: postgres-sol
+    environment:
+      - POSTGRES_PASSWORD=loco
+      - POSTGRES_USER=loco
+      - POSTGRES_DB=sons-of-liberty_development
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - sol-network
+    profiles:
+      - development
+  bitcoin:
+    image: bitcoin/bitcoin:28.0
+    container_name: bitcoin
+    command: |
+      -regtest=1
+      -rpcuser=ddk
+      -rpcpassword=ddk
+      -rpcallowip=0.0.0.0/0
+      -rpcbind=0.0.0.0
+      -server=1
+      -addresstype=bech32
+      -fallbackfee=0.0002
+      -txindex=1
+      -zmqpubrawblock=tcp://0.0.0.0:28332
+      -zmqpubrawtx=tcp://0.0.0.0:28333
+      -printtoconsole
+      -regtest
+      -disablewallet=0
+    ports:
+      # regtest ports
+      - 18443:18443
+    volumes:
+      - ddk-bitcoin:/bitcoin/.bitcoin
+    networks:
+      - sol-network
+    profiles:
+      - development
+  electrs:
+    image: ghcr.io/vulpemventures/electrs:latest
+    container_name: electrs
+    entrypoint:
+      - /build/electrs
+    command:
+      - -vvvv
+      - --network
+      - regtest
+      - --daemon-dir
+      - /config
+      - --daemon-rpc-addr
+      - bitcoin:18443
+      - --cookie
+      - ddk:ddk
+      - --http-addr
+      - 0.0.0.0:30000
+      - --electrum-rpc-addr
+      - 0.0.0.0:50000
+      - --cors
+      - "*"
+      - --jsonrpc-import
+    depends_on:
+      - bitcoin
+    ports:
+      - 50000:50000
+      - 30000:30000
+    expose:
+      - "30000"
+      - "50000"
+    volumes:
+      - ddk-bitcoin:/config
+    restart: unless-stopped
+    networks:
+      - sol-network
+    profiles:
+      - development
+      
+  sol:
+    container_name: sol
+    hostname: sol
+    build:
+      context: ..
+      dockerfile: docker/dockerfile
+    ports:
+      - "5150:5150"
+    volumes:
+      # Where the config is stored locally on the host machine
+      - ../config:/app/config
+      # Where the seed is stored locally on the host machine
+      - ../seed:${DATA_DIR:-/sol}
+    environment:
+      - RUST_LOG=info
+      - DATABASE_URL=${DATABASE_URL:-postgres://loco:loco@postgres-sol:5432/sons-of-liberty_development}
+      - ESPLORA_HOST=${ESPLORA_HOST:-http://electrs:30000}
+      - DATA_DIR=${DATA_DIR:-/sol}
+    networks:
+      - sol-network
+
+  sol-frontend:
+    container_name: sol-frontend
+    hostname: sol-frontend
+    build:
+      context: ..
+      dockerfile: docker/dockerfile-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - sol
+    networks:
+      - sol-network
+
+volumes:
+  postgres-data:
+  ddk-bitcoin:
+
+networks:
+  sol-network:
+    driver: bridge

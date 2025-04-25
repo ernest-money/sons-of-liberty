@@ -121,7 +121,7 @@ settings:
   # oracle implementation (default is kormir.dlcdevkit.com)
   kormir_host: "https://kormir.dlcdevkit.com"
   # esplora implementation (default is localhost:30000)
-  esplora_host: "http://localhost:30000"
+  esplora_host: {{ get_env(name="ESPLORA_HOST", default="http://localhost:30000") }}
   # bitcoin network (default is regtest)
   network: "regtest"
   # wallet name (default is sons-of-liberty)
