@@ -10,6 +10,7 @@ use axum::{debug_handler, extract::FromRequestParts, http::request::Parts, Reque
 use loco_rs::{
     auth::jwt::{UserClaims, JWT},
     controller::ErrorDetail,
+    environment::Environment,
     prelude::*,
 };
 use regex::Regex;
@@ -183,10 +184,17 @@ async fn login(
         .or_else(|_| unauthorized("unauthorized!"))?;
 
     let mut cookie = Cookie::new(COOKIE_NAME, token.clone());
-    cookie.set_secure(true);
+    if ctx.environment == Environment::Development {
+        // Development settings
+        cookie.set_secure(false); // Allow HTTP in development
+        cookie.set_same_site(SameSite::Lax); // More permissive in development
+    } else {
+        // Production/staging settings
+        cookie.set_secure(true);
+        cookie.set_same_site(SameSite::Strict);
+    }
     cookie.set_http_only(true);
     cookie.set_path("/");
-    cookie.set_same_site(SameSite::Strict);
     cookie.set_max_age(Some(CookieDuration::seconds(jwt_secret.expiration as i64)));
     cookies.add(cookie);
 

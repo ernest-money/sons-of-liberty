@@ -37,6 +37,8 @@ server:
     allow_origins:
       - "http://127.0.0.1:5173"
       - "http://localhost:5173"
+      - "http://localhost"
+      - "http://localhost:80"
     allow_methods:
       - "GET"
       - "POST"
@@ -118,8 +120,8 @@ auth:
 settings:
   listening_port: 1776
   kormir_host: "https://kormir.dlcdevkit.com"
-  esplora_host: "http://localhost:30000"
+  esplora_host: "http://host.docker.internal:30000"
   network: "regtest"
   name: "sons-of-liberty"
-  postgres_url: "postgres://loco:loco@localhost:5432/sons-of-liberty_development"
-  nostr_relay: "ws://localhost:8081"
+  postgres_url: {{ get_env(name="DATABASE_URL", default="postgres://loco:loco@localhost:5432/sons-of-liberty_development") }}
+  nostr_relay: "ws://host.docker.internal:8081"

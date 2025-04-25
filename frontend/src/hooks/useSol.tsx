@@ -18,7 +18,6 @@ interface AcceptOfferBody {
 }
 
 export interface SolContextType {
-  setToken: (token?: string) => void;
   register: (params: RegisterParams) => Promise<void>;
   login: (params: LoginParams) => Promise<LoginResponse>;
   logout: () => Promise<{ success: boolean }>;
@@ -60,11 +59,9 @@ export const useSol = () => {
 };
 
 export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
-  const [token, setToken] = useState<string>();
-
   const instance = useMemo(() => {
     const axiosInstance = axios.create({
-      baseURL: "/",
+      baseURL: "/api/",
       withCredentials: true,
     });
 
@@ -79,103 +76,102 @@ export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
     );
 
     return axiosInstance;
-  }, [baseUrl, token]);
+  }, [baseUrl]);
 
 
   const value: SolContextType = useMemo(() => ({
-    setToken,
     register: async (params: RegisterParams) => {
-      await instance.post('/api/auth/register', params);
+      await instance.post('/auth/register', params);
     },
     login: async (params: LoginParams) => {
-      const data = await instance.post<LoginResponse>('/api/auth/login', params);
+      const data = await instance.post<LoginResponse>('/auth/login', params);
       return data.data;
     },
     logout: async (): Promise<{ success: boolean }> => {
-      const { data } = await instance.post('/api/auth/logout');
+      const { data } = await instance.post('/auth/logout');
       return data;
     },
     verify: async () => {
-      await instance.get('/api/auth/verify');
+      await instance.get('/auth/verify');
     },
     forgot: async (params: ForgotParams) => {
-      await instance.post('/api/auth/forgot', params);
+      await instance.post('/auth/forgot', params);
     },
     reset: async (params: ResetParams) => {
-      await instance.post('/api/auth/reset', params);
+      await instance.post('/auth/reset', params);
     },
     current: async () => {
-      const { data } = await instance.get('/api/auth/current');
+      const { data } = await instance.get('/auth/current');
       return data;
     },
     magicLink: async (params: MagicLinkParams) => {
-      await instance.post('/api/auth/magic-link', params);
+      await instance.post('/auth/magic-link', params);
     },
     magicLinkVerify: async (token: string) => {
-      const { data } = await instance.get<LoginResponse>(`/api/auth/magic-link/${token}`);
+      const { data } = await instance.get<LoginResponse>(`/auth/magic-link/${token}`);
       return data;
     },
     getInfo: async () => {
-      const { data } = await instance.get<InfoResponse>('/api/info');
+      const { data } = await instance.get<InfoResponse>('/info');
       return data;
     },
     getPeers: async () => {
-      const { data } = await instance.get<Peer[]>('/api/peers');
+      const { data } = await instance.get<Peer[]>('/peers');
       return data;
     },
     getOffers: async (offerId?: string) => {
-      const endpoint = offerId ? `/api/offers?id=${offerId}` : '/api/offers';
+      const endpoint = offerId ? `/offers?id=${offerId}` : '/offers';
       const { data } = await instance.get(endpoint);
       return data;
     },
     sendOffer: async (body: SendOfferBody) => {
-      const { data } = await instance.post('/api/offers', body);
+      const { data } = await instance.post('/offers', body);
       return data;
     },
     acceptOffer: async (body: AcceptOfferBody) => {
-      const { data } = await instance.post('/api/offers/accept', body);
+      const { data } = await instance.post('/offers/accept', body);
       return data;
     },
     getNewAddress: async () => {
-      const { data } = await instance.post('/api/wallet/address');
+      const { data } = await instance.post('/wallet/address');
       return data;
     },
     getTransactions: async () => {
-      const { data } = await instance.get('/api/wallet/transactions');
+      const { data } = await instance.get('/wallet/transactions');
       return data;
     },
     getUtxos: async () => {
-      const { data } = await instance.get('/api/wallet/utxos');
+      const { data } = await instance.get('/wallet/utxos');
       return data;
     },
     getBalance: async () => {
-      const { data } = await instance.get<SolBalance>('/api/balance');
+      const { data } = await instance.get<SolBalance>('/balance');
       return data;
     },
     getContracts: async (filter?: ContractFilter) => {
-      const { data } = await instance.get<Contract[]>(`/api/contracts?filter=${filter}`);
+      const { data } = await instance.get<Contract[]>(`/contracts?filter=${filter}`);
       return data;
     },
     getContract: async (id: string) => {
-      const { data } = await instance.get<Contract>(`/api/contracts?id=${id}`);
+      const { data } = await instance.get<Contract>(`/contracts?id=${id}`);
       return data;
     },
     getMarketStats: async () => {
-      const { data } = await instance.get<MarketStats[]>('/api/market/hashrates');
+      const { data } = await instance.get<MarketStats[]>('/market/hashrates');
       return data;
     },
     createEnumerationContract: async (params: EnumerationContractParams) => {
-      const { data } = await instance.post<CreateEnumerationContractResponse>('/api/create/enum', params);
+      const { data } = await instance.post<CreateEnumerationContractResponse>('/create/enum', params);
       return data;
     },
     getCounterparties: async () => {
-      const { data } = await instance.get<NostrCounterparty[]>('/api/nostr/counterparties');
+      const { data } = await instance.get<NostrCounterparty[]>('/nostr/counterparties');
       return data;
     },
     createProfile: async (params: { name: string; about: string }) => {
-      await instance.post('/api/nostr/create-profile', params);
+      await instance.post('/nostr/create-profile', params);
     },
-  }), [instance, token]);
+  }), [instance]);
 
   return <SolContext.Provider value={value}>{children}</SolContext.Provider>;
 };

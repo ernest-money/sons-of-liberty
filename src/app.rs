@@ -62,7 +62,7 @@ impl Hooks for App {
         AppRoutes::with_default_routes() // controller routes below
             .add_route(controllers::nostr::routes())
             .add_route(controllers::create::routes())
-            .add_route(controllers::hashrate::routes())
+            // .add_route(controllers::hashrate::routes())
             .add_route(controllers::home::routes())
             .add_route(controllers::wallet::routes())
             .add_route(controllers::peers::routes())
@@ -86,11 +86,16 @@ impl Hooks for App {
         let ddk = SONS_OF_LIBERTY
             .get_or_init(|| async {
                 tracing::warn!("Initializing DDK");
-                Arc::new(
-                    SonsOfLiberty::new(settings)
-                        .await
-                        .expect("Failed to initialize DDK"),
-                )
+
+                let ddk = SonsOfLiberty::new(settings.clone())
+                    .await
+                    .map_err(|e| {
+                        tracing::error!("{}", e.to_string());
+                        loco_rs::Error::string(e.to_string().as_str())
+                    })
+                    .expect("Failed to initialize DDK");
+
+                Arc::new(ddk)
             })
             .await;
 
@@ -101,12 +106,11 @@ impl Hooks for App {
             }
         });
 
-        let market =
-            Arc::new(Market::new("postgres://loco:loco@localhost:5432/city_tavern").await?);
+        // let market = Arc::new(Market::new(&settings.postgres_url).await?);
 
         Ok(router
             .layer(Extension(ddk.clone()))
-            .layer(Extension(market))
+            // .layer(Extension(market))
             .layer(CookieManagerLayer::new()))
     }
 

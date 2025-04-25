@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 // periodic sync time?
 // ip address fence range
 
-#[derive(Serialize, Deserialize, Default, Debug)]
+#[derive(Serialize, Deserialize, Default, Debug, Clone)]
 pub struct Settings {
     pub data_dir: Option<String>,
     pub listening_port: u16,
