@@ -1,5 +1,9 @@
 # Stage 1: Build the React app
 FROM node:20 AS builder
+
+ARG ENVIRONMENT=development
+ENV NODE_ENV=$ENVIRONMENT
+
 WORKDIR /app
 RUN npm install -g pnpm@9
 COPY ../frontend .
@@ -8,7 +12,11 @@ RUN pnpm run build
 
 # Stage 2: Serve with Nginx
 FROM nginx:alpine
+
 COPY --from=builder /app/dist /usr/share/nginx/html
-COPY ../../docker/nginx.conf /etc/nginx/conf.d/default.conf
-EXPOSE 80
+RUN mkdir -p /etc/nginx/ssl /etc/nginx/includes
+COPY ./docker/nginx/base.conf /etc/nginx/includes/base.conf
+COPY ./docker/nginx/${ENVIRONMENT:-development}.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80 443
 CMD ["nginx", "-g", "daemon off;"]

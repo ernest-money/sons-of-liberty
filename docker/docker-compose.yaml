@@ -80,7 +80,7 @@ services:
       - sol-network
     profiles:
       - development
-      
+
   sol:
     container_name: sol
     hostname: sol
@@ -96,9 +96,15 @@ services:
       - ../seed:${DATA_DIR:-/sol}
     environment:
       - RUST_LOG=info
+      - NODE_ENV=${NODE_ENV:-development}
       - DATABASE_URL=${DATABASE_URL:-postgres://loco:loco@postgres-sol:5432/sons-of-liberty_development}
       - ESPLORA_HOST=${ESPLORA_HOST:-http://electrs:30000}
       - DATA_DIR=${DATA_DIR:-/sol}
+      - KORMIR_HOST=${KORMIR_HOST:-https://kormir.dlcdevkit.com}
+      - NETWORK=${NETWORK:-regtest}
+      - NAME=${NAME:-sons-of-liberty}
+      - NOSTR_RELAY=${NOSTR_RELAY:-wss://nostr.dlcdevkit.com}
+      - JWT_SECRET=${JWT_SECRET:-UZLZh3Lb5R9MoRADZXF6}
     networks:
       - sol-network
 
@@ -108,6 +114,10 @@ services:
     build:
       context: ..
       dockerfile: docker/dockerfile-frontend
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+    volumes:
+      - ./ssl:/etc/nginx/ssl
     ports:
       - "80:80"
     depends_on:

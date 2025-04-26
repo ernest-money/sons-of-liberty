@@ -6,6 +6,7 @@ import { InfoResponse } from '@/lib/sol/info';
 import { MarketStats } from '@/lib/sol/market';
 import { Peer } from '@/lib/sol/peers';
 import { ContractFilter } from '@/lib/sol/contracts';
+import config from '@/config';
 interface SendOfferBody {
   counterparty: string;
   collateral: number;
@@ -61,7 +62,7 @@ export const useSol = () => {
 export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
   const instance = useMemo(() => {
     const axiosInstance = axios.create({
-      baseURL: "/api/",
+      baseURL: config.apiBaseUrl,
       withCredentials: true,
     });
 

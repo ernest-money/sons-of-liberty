@@ -39,6 +39,8 @@ server:
       - "http://localhost:5173"
       - "http://localhost"
       - "http://localhost:80"
+      - "https://staging.ernest.money"
+      - "https://app.ernest.money"
     allow_methods:
       - "GET"
       - "POST"
@@ -113,20 +115,20 @@ auth:
   # JWT authentication
   jwt:
     # Secret key for token generation and verification
-    secret: UZLZh3Lb5R9MoRADZXF6
+    secret: {{ get_env(name="JWT_SECRET", default="UZLZh3Lb5R9MoRADZXF6")}}
     # Token expiration time in seconds
     expiration: 604800 # 7 days
     
 settings:
   # oracle implementation (default is kormir.dlcdevkit.com)
-  kormir_host: "https://kormir.dlcdevkit.com"
+  kormir_host: {{ get_env(name="KORMIR_HOST", default="https://kormir.dlcdevkit.com")}}
   # esplora implementation (default is localhost:30000)
   esplora_host: {{ get_env(name="ESPLORA_HOST", default="http://localhost:30000") }}
   # bitcoin network (default is regtest)
-  network: "regtest"
+  network: {{ get_env(name="NETWORK", default="regtest")}}
   # wallet name (default is sons-of-liberty)
-  name: "sons-of-liberty"
+  name: {{ get_env(name="NAME", default="sons-of-liberty")}}
   # nostr relay (default is nostr.dlcdevkit.com)
-  nostr_relay: "wss://nostr.dlcdevkit.com"
+  nostr_relay: {{ get_env(name="NOSTR_RELAY", default="wss://nostr.dlcdevkit.com")}}
   # data directory (default is ~/.sons-of-liberty)
   data_dir: {{ get_env(name="DATA_DIR", default="home") }}
