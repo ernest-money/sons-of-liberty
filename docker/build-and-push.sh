@@ -1,5 +1,12 @@
 #!/bin/bash
 # build-and-push.sh
+set -e  # Exit on any error
+
+# Check if environment is specified
+if [ -z "$1" ]; then
+  echo "Error: No environment specified. Please provide an environment (development, staging, or production)."
+  exit 1
+fi
 
 # Define variables
 ENVIRONMENT=$1  # development, staging, or production
@@ -9,30 +16,46 @@ GIT_COMMIT=$(git rev-parse --short HEAD)  # Get short commit hash
 TAG="${ENVIRONMENT}-${GIT_COMMIT}"
 LATEST_TAG="${ENVIRONMENT}"
 
-# Set NODE_ENV for the build
-export NODE_ENV=$ENVIRONMENT
+# Create and use a new builder instance if it doesn't exist, otherwise use existing one
+if ! docker buildx inspect sol-builder > /dev/null 2>&1; then
+  if ! docker buildx create --name sol-builder; then
+    echo "Error: Failed to create Docker buildx builder instance"
+    exit 1
+  fi
+fi
 
-docker build \
+# Use the builder
+if ! docker buildx use sol-builder; then
+  echo "Error: Failed to use Docker buildx builder instance"
+  exit 1
+fi
+
+# Build multi-platform images for SOL
+echo "Building SOL images..."
+if ! docker buildx build \
+  --platform linux/amd64,linux/arm64 \
   --build-arg ENVIRONMENT=$ENVIRONMENT \
   -t $SOL_IMAGE_NAME:$TAG \
   -t $SOL_IMAGE_NAME:$LATEST_TAG \
-  -f ./docker/dockerfile .
+  -f ./docker/dockerfile \
+  --push .; then
+  echo "Error: Failed to build and push ${SOL_IMAGE_NAME}:${TAG} and ${SOL_IMAGE_NAME}:${LATEST_TAG}"
+  exit 1
+fi
 
-# Build the Docker image
-docker build \
+# Build multi-platform images for Frontend
+echo "Building Frontend images..."
+if ! docker buildx build \
+  --platform linux/amd64,linux/arm64 \
   --build-arg ENVIRONMENT=$ENVIRONMENT \
   -t $FRONTEND_IMAGE_NAME:$TAG \
   -t $FRONTEND_IMAGE_NAME:$LATEST_TAG \
-  -f ./docker/dockerfile-frontend .
+  -f ./docker/dockerfile-frontend \
+  --push .; then
+  echo "Error: Failed to build and push ${FRONTEND_IMAGE_NAME}:${TAG} and ${FRONTEND_IMAGE_NAME}:${LATEST_TAG}"
+  exit 1
+fi
 
-# Log in to Docker Hub (consider using a more secure method to handle credentials)
-echo "Logging in to Docker Hub..."
-docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-
-# Push images to Docker Hub
-docker push $SOL_IMAGE_NAME:$TAG
-docker push $SOL_IMAGE_NAME:$LATEST_TAG
-docker push $FRONTEND_IMAGE_NAME:$TAG
-docker push $FRONTEND_IMAGE_NAME:$LATEST_TAG
+docker buildx rm sol-builder > /dev/null 2>&1
 
 echo "Successfully built and pushed ${SOL_IMAGE_NAME}:${TAG} and ${SOL_IMAGE_NAME}:${LATEST_TAG} and ${FRONTEND_IMAGE_NAME}:${TAG} and ${FRONTEND_IMAGE_NAME}:${LATEST_TAG}"

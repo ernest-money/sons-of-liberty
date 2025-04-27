@@ -15,7 +15,7 @@ FROM debian:bookworm-slim
 
 WORKDIR /usr/app
 
-ARG ENVIRONMENT=local
+ARG ENVIRONMENT=development
 ENV ENVIRONMENT=${ENVIRONMENT}
 
 RUN apt-get update && apt-get install -y \
@@ -32,4 +32,4 @@ COPY --from=builder /usr/src/target/release/sons_of_liberty-cli /usr/app/sons_of
 EXPOSE 5150
 RUN chmod +x /usr/app/sons_of_liberty-cli
 
-ENTRYPOINT ["/usr/app/sons_of_liberty-cli", "start", "--environment", "${ENVIRONMENT:-development}"]
+ENTRYPOINT /usr/app/sons_of_liberty-cli start --environment ${ENVIRONMENT}
