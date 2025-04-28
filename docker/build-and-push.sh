@@ -16,6 +16,12 @@ GIT_COMMIT=$(git rev-parse --short HEAD)  # Get short commit hash
 TAG="${ENVIRONMENT}-${GIT_COMMIT}"
 LATEST_TAG="${ENVIRONMENT}"
 
+# Login to Docker Hub
+if ! docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD; then
+  echo "Error: Failed to login to Docker Hub"
+  exit 1
+fi
+
 # Create and use a new builder instance if it doesn't exist, otherwise use existing one
 if ! docker buildx inspect sol-builder > /dev/null 2>&1; then
   if ! docker buildx create --name sol-builder; then
