@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { Navigate, useNavigate } from '@tanstack/react-router';
+import React from 'react';
+import { Navigate } from '@tanstack/react-router';
 import { useAuth } from '@/hooks';
-import { LoadingSpinner } from '@/components/ui/loading';
 import { ProtectedLayout } from '@/layouts/layout';
 
 interface AuthenticatedRouteProps {
@@ -13,39 +12,18 @@ export const AuthenticatedRoute: React.FC<AuthenticatedRouteProps> = ({
   children,
   redirectTo = '/login'
 }) => {
-  const [loading, setLoading] = useState<boolean>(true);
-  const { isAuthenticated, isLoading: authLoading, user } = useAuth();
-  const navigate = useNavigate();
+  const { user } = useAuth();
 
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        // If the auth context says we're not authenticated, redirect to login
-        if (!isAuthenticated) {
-          // Simply redirect to login page without any parameters
-          navigate({ to: redirectTo });
-          return;
-        }
+  // If no user, redirect to login
+  if (!user) {
+    return <Navigate to={redirectTo} />;
+  }
 
-        // If user is authenticated but doesn't have a Nostr profile, redirect to finish profile page
-        if (user && !user.nostr_profile) {
-          navigate({ to: '/account/finish' });
-        }
+  // If user exists but doesn't have a Nostr profile, redirect to finish profile
+  if (!user.nostr_profile) {
+    return <Navigate to="/account/finish" />;
+  }
 
-        // Set loading to false when we've confirmed authentication
-        setLoading(false);
-      } catch (error) {
-        console.error('Authentication check failed:', error);
-        navigate({ to: redirectTo });
-      }
-    };
-
-    // Only check auth when the auth context loading is complete
-    if (!authLoading) {
-      checkAuth();
-    }
-  }, [navigate, isAuthenticated, redirectTo, authLoading]);
-
-  // Render children if authenticated
-  return isAuthenticated ? <ProtectedLayout>{children}</ProtectedLayout> : <Navigate to={redirectTo} />;
+  // User is authenticated and has completed profile
+  return <ProtectedLayout>{children}</ProtectedLayout>;
 }; 

@@ -3,8 +3,6 @@ import { useSol } from './useSol';
 import { LoginParams, RegisterParams } from '@/lib/sol/auth';
 
 interface AuthContextType {
-  isAuthenticated: boolean;
-  isLoading: boolean;
   user: { id: string; email: string, name: string, nostr_profile: string | null } | null;
   login: (params: LoginParams) => Promise<void>;
   register: (params: RegisterParams) => Promise<void>;
@@ -17,33 +15,20 @@ export const AuthProvider: React.FC<{
   children: React.ReactNode;
 }> = ({ children }) => {
   const [user, setUser] = useState<{ id: string; email: string, name: string, nostr_profile: string | null } | null>(null);
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
-  const [isLoading, setIsLoading] = useState(true);
   const sol = useSol();
 
-  const checkAuth = async () => {
-    setIsLoading(true);
-    try {
-      const currentUser = await sol.current();
-      setUser(currentUser);
-      setIsAuthenticated(!!currentUser);
-    } catch (error) {
-      setUser(null);
-      setIsAuthenticated(false);
-      console.error('Error checking authentication:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    checkAuth();
+    // Initial user fetch
+    sol.current()
+      .then(setUser)
+      .catch(() => setUser(null));
   }, []);
 
   const login = async (params: LoginParams) => {
     try {
       await sol.login(params);
-      await checkAuth();
+      const currentUser = await sol.current();
+      setUser(currentUser);
     } catch (error) {
       console.error('Error logging in:', error);
       throw error;
@@ -57,13 +42,7 @@ export const AuthProvider: React.FC<{
   const logout = async () => {
     try {
       await sol.logout();
-
-      // Clear frontend state
       setUser(null);
-      setIsAuthenticated(false);
-
-      // Force refresh of auth state
-      await checkAuth();
     } catch (error) {
       console.error('Error during logout:', error);
       throw error;
@@ -73,8 +52,6 @@ export const AuthProvider: React.FC<{
   return (
     <AuthContext.Provider
       value={{
-        isAuthenticated,
-        isLoading,
         user,
         login,
         register,
