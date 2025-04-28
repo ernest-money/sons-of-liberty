@@ -51,9 +51,11 @@ impl Hooks for App {
     }
 
     async fn initializers(_ctx: &AppContext) -> Result<Vec<Box<dyn Initializer>>> {
-        Ok(vec![Box::new(
-            initializers::view_engine::ViewEngineInitializer,
-        )])
+        // Since we are using a react frontend, we don't need to load the view engine
+        // Ok(vec![Box::new(
+        //     initializers::view_engine::ViewEngineInitializer,
+        // )])
+        Ok(vec![])
     }
 
     fn routes(_ctx: &AppContext) -> AppRoutes {
@@ -111,11 +113,15 @@ impl Hooks for App {
             .layer(CookieManagerLayer::new()))
     }
 
-    async fn on_shutdown(_ctx: &AppContext) {
+    async fn on_shutdown(ctx: &AppContext) {
         if let Some(state) = SONS_OF_LIBERTY.get() {
-            tracing::info!("Stopping DDK");
+            tracing::info!("Shutting down ddk runtime.");
             state.dlcdevkit.stop().unwrap();
         }
+
+        tracing::info!("Shutting down database connection pool.");
+        let pool = ctx.db.get_postgres_connection_pool();
+        pool.close().await;
     }
 
     async fn connect_workers(ctx: &AppContext, queue: &Queue) -> Result<()> {
