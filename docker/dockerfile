@@ -21,6 +21,7 @@ ENV ENVIRONMENT=${ENVIRONMENT}
 RUN apt-get update && apt-get install -y \
     libssl3 \
     ca-certificates \
+    supervisor \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=builder /usr/src/assets/static /usr/app/assets/static
@@ -29,7 +30,10 @@ COPY --from=builder /usr/src/config /usr/app/config
 COPY --from=builder /usr/src/assets/views /usr/app/assets/views
 COPY --from=builder /usr/src/target/release/sons_of_liberty-cli /usr/app/sons_of_liberty-cli
 
+RUN mkdir -p /var/log/supervisor
+COPY ./docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
 EXPOSE 5150
 RUN chmod +x /usr/app/sons_of_liberty-cli
 
-ENTRYPOINT /usr/app/sons_of_liberty-cli start --environment ${ENVIRONMENT}
+ENTRYPOINT ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

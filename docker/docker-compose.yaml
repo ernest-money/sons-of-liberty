@@ -105,7 +105,7 @@ services:
     hostname: sol-frontend
     build:
       context: ..
-      dockerfile: docker/dockerfile-frontend
+      dockerfile: docker/dockerfile.frontend
     environment:
       - NODE_ENV=${NODE_ENV:-development}
       - ENVIRONMENT=${ENVIRONMENT:-development}

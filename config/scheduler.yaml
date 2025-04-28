@@ -4,7 +4,7 @@ jobs:
     run: "balance_updater"
     schedule: run every 5 seconds
     output: stdout
-    tags: ["wallet", "dlcdevkit"]
+    tags: ["wallet", "sol"]
   # write_content:
   #   shell: true
   #   run: "echo loco >> ./scheduler.txt"

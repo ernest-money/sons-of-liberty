@@ -50,7 +50,7 @@ if ! docker buildx build \
   --build-arg ENVIRONMENT=$ENVIRONMENT \
   -t $FRONTEND_IMAGE_NAME:$TAG \
   -t $FRONTEND_IMAGE_NAME:$LATEST_TAG \
-  -f ./docker/dockerfile-frontend \
+  -f ./docker/dockerfile.frontend \
   --push .; then
   echo "Error: Failed to build and push ${FRONTEND_IMAGE_NAME}:${TAG} and ${FRONTEND_IMAGE_NAME}:${LATEST_TAG}"
   exit 1
