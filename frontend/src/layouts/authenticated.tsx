@@ -46,11 +46,6 @@ export const AuthenticatedRoute: React.FC<AuthenticatedRouteProps> = ({
     }
   }, [navigate, isAuthenticated, redirectTo, authLoading]);
 
-  // Show loading state while checking authentication
-  if (loading || authLoading) {
-    return <LoadingSpinner />;
-  }
-
   // Render children if authenticated
   return isAuthenticated ? <ProtectedLayout>{children}</ProtectedLayout> : <Navigate to={redirectTo} />;
 }; 
