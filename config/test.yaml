@@ -94,3 +94,17 @@ auth:
     secret: gcVaqhbVbV1Wva5b9aC1
     # Token expiration time in seconds
     expiration: 604800 # 7 days
+
+settings:
+  # oracle implementation (default is kormir.dlcdevkit.com)
+  kormir_host: {{ get_env(name="KORMIR_HOST", default="https://kormir.dlcdevkit.com")}}
+  # esplora implementation (default is localhost:30000)
+  esplora_host: {{ get_env(name="ESPLORA_HOST", default="https://mutinynet.com/api") }}
+  # bitcoin network (default is regtest)
+  network: {{ get_env(name="NETWORK", default="signet")}}
+  # wallet name (default is sons-of-liberty)
+  name: {{ get_env(name="NAME", default="sons-of-liberty")}}
+  # nostr relay (default is nostr.dlcdevkit.com)
+  nostr_relay: {{ get_env(name="NOSTR_RELAY", default="wss://nostr.dlcdevkit.com")}}
+  # data directory (default is ~/.sons-of-liberty)
+  data_dir: {{ get_env(name="DATA_DIR", default="home") }}

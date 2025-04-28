@@ -179,11 +179,10 @@ mod tests {
 
     #[tokio::test]
     async fn test_counterparty_profile() {
+        let nostr_relay = std::env::var("NOSTR_RELAY_URL").expect("NOSTR_RELAY is not set");
         let mut bytes = [0; 32];
         bytes.try_fill(&mut thread_rng()).unwrap();
-        let nostr = Nostr::new(&bytes, vec!["ws://localhost:8080".to_string()])
-            .await
-            .unwrap();
+        let nostr = Nostr::new(&bytes, vec![nostr_relay]).await.unwrap();
 
         let profiles = nostr.get_trade_counterparties().await;
         assert!(profiles.is_ok());
@@ -191,11 +190,10 @@ mod tests {
 
     #[tokio::test]
     async fn test_counterparty_profile_does_not_exist() {
+        let nostr_relay = std::env::var("NOSTR_RELAY_URL").expect("NOSTR_RELAY is not set");
         let mut bytes = [0; 32];
         bytes.try_fill(&mut thread_rng()).unwrap();
-        let nostr = Nostr::new(&bytes, vec!["ws://localhost:8080".to_string()])
-            .await
-            .unwrap();
+        let nostr = Nostr::new(&bytes, vec![nostr_relay]).await.unwrap();
 
         nostr
             .create_or_update_dlc_profile("test".to_string(), "test".to_string())
