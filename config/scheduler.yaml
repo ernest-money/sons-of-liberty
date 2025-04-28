@@ -2,7 +2,7 @@ output: stdout
 jobs:
   balance_updater:
     run: "balance_updater"
-    schedule: run every 5 seconds
+    schedule: run at the top of every hour
     output: stdout
     tags: ["wallet", "sol"]
   # write_content:

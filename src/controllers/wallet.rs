@@ -28,7 +28,7 @@ pub async fn get_wallet_transactions(
     State(ctx): State<AppContext>,
 ) -> Result<Response> {
     users::Model::find_by_pid(&ctx.db, &cookie.user.pid).await?;
-    let transactions = dlcdevkit::get_transactions(ddk)?;
+    let transactions = dlcdevkit::get_transactions(&ddk)?;
     format::json(transactions)
 }
 
@@ -39,7 +39,7 @@ pub async fn get_utxos(
     State(ctx): State<AppContext>,
 ) -> Result<Response> {
     users::Model::find_by_pid(&ctx.db, &cookie.user.pid).await?;
-    let utxos = dlcdevkit::get_utxos(ddk)?;
+    let utxos = dlcdevkit::get_utxos(&ddk)?;
     format::json(utxos)
 }
 

@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - master
-  # pull_request:
-  #   branches:
-  #     - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   determine-environment:
@@ -22,29 +22,29 @@ jobs:
             echo "environment=development" >> $GITHUB_OUTPUT
           fi
 
-  build-and-push:
-    needs: determine-environment
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # Fetches all history for all tags and branches
+  # build-and-push:
+  #   needs: determine-environment
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0 # Fetches all history for all tags and branches
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-        id: buildx
+  #     - name: Set up Docker Buildx
+  #       uses: docker/setup-buildx-action@v2
+  #       id: buildx
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+  #     - name: Login to Docker Hub
+  #       uses: docker/login-action@v2
+  #       with:
+  #         username: ${{ secrets.DOCKERHUB_USERNAME }}
+  #         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Make build script executable
-        run: chmod +x ./docker/build-and-push.sh
+  #     - name: Make build script executable
+  #       run: chmod +x ./docker/build-and-push.sh
 
-      - name: Build and push Docker images
-        env:
-          ENVIRONMENT: ${{ needs.determine-environment.outputs.environment }}
-        run: ./docker/build-and-push.sh $ENVIRONMENT
+  #     - name: Build and push Docker images
+  #       env:
+  #         ENVIRONMENT: ${{ needs.determine-environment.outputs.environment }}
+  #       run: ./docker/build-and-push.sh $ENVIRONMENT

@@ -74,7 +74,7 @@ impl Hooks for App {
     async fn after_routes(router: AxumRouter, ctx: &AppContext) -> Result<AxumRouter> {
         let settings = match &ctx.config.settings {
             Some(settings) => {
-                let settings = Settings::from_json(&settings)?;
+                let settings = Settings::from_json(settings)?;
                 tracing::info!("Settings: {:?}", settings);
                 settings
             }
@@ -85,7 +85,7 @@ impl Hooks for App {
             .get_or_init(|| async {
                 tracing::warn!("Initializing DDK");
 
-                let ddk = SonsOfLiberty::new(settings.clone(), ctx)
+                let ddk = SonsOfLiberty::new(settings, ctx)
                     .await
                     .map_err(|e| {
                         tracing::error!("{}", e.to_string());

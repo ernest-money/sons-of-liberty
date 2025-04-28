@@ -370,6 +370,9 @@ impl ActiveModel {
     ///
     /// # Arguments
     ///
+    /// # Errors
+    ///
+    /// when has DB query error
     pub async fn update_nostr_profile(
         mut self,
         db: &DatabaseConnection,

@@ -27,29 +27,28 @@ pub async fn get_offers(storage: Arc<PostgresStore>) -> Result<Vec<ContractRowNo
 }
 
 pub async fn get_new_addresses(ddk: Arc<SonsOfLiberty>) -> Result<Address> {
-    Ok(ddk
+    let address = ddk
         .dlcdevkit
         .wallet
         .new_external_address()
         .await
-        .map_err(wallet_error_to_http_error)?
-        .address)
+        .map_err(wallet_error_to_http_error)?;
+
+    Ok(address.address)
 }
 
-pub fn get_transactions(ddk: Arc<SonsOfLiberty>) -> Result<Vec<Arc<Transaction>>> {
-    Ok(ddk
-        .dlcdevkit
+pub fn get_transactions(ddk: &Arc<SonsOfLiberty>) -> Result<Vec<Arc<Transaction>>> {
+    ddk.dlcdevkit
         .wallet
         .get_transactions()
-        .map_err(wallet_error_to_http_error)?)
+        .map_err(wallet_error_to_http_error)
 }
 
-pub fn get_utxos(ddk: Arc<SonsOfLiberty>) -> Result<Vec<LocalOutput>> {
-    Ok(ddk
-        .dlcdevkit
+pub fn get_utxos(ddk: &Arc<SonsOfLiberty>) -> Result<Vec<LocalOutput>> {
+    ddk.dlcdevkit
         .wallet
         .list_utxos()
-        .map_err(wallet_error_to_http_error)?)
+        .map_err(wallet_error_to_http_error)
 }
 
 pub async fn get_filtered_contracts(
@@ -99,6 +98,7 @@ pub async fn get_filtered_contracts(
     }
 }
 
+#[allow(clippy::needless_pass_by_value)]
 fn sqlx_error_to_http_error(e: ddk::storage::sqlx::SqlxError) -> Error {
     Error::CustomError(
         StatusCode::NOT_FOUND,
@@ -106,6 +106,7 @@ fn sqlx_error_to_http_error(e: ddk::storage::sqlx::SqlxError) -> Error {
     )
 }
 
+#[allow(clippy::needless_pass_by_value)]
 fn wallet_error_to_http_error(e: ddk::error::WalletError) -> Error {
     Error::CustomError(
         StatusCode::BAD_REQUEST,

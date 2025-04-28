@@ -23,7 +23,7 @@ impl Task for BalanceUpdater {
         let price = get_bitcoin_price().await?;
         let settings = match &app_context.config.settings {
             Some(settings) => {
-                let settings = Settings::from_json(&settings)?;
+                let settings = Settings::from_json(settings)?;
                 tracing::info!("Settings: {:?}", settings);
                 settings
             }

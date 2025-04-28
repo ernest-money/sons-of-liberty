@@ -7,6 +7,7 @@ use axum::extract::Query;
 use axum::http::StatusCode;
 use axum::{debug_handler, Extension};
 use bitcoin::secp256k1::PublicKey as BitcoinPublicKey;
+use ddk::nostr::bitcoin_to_nostr_pubkey;
 use loco_rs::controller::ErrorDetail;
 use loco_rs::prelude::*;
 use nostr::key::PublicKey;
@@ -14,6 +15,7 @@ use serde::Deserialize;
 use std::str::FromStr;
 use std::sync::Arc;
 
+#[allow(clippy::needless_pass_by_value)]
 fn nostr_err_to_http(e: TradeCounterpartyError) -> Error {
     Error::CustomError(
         StatusCode::BAD_REQUEST,
@@ -41,18 +43,36 @@ pub async fn contract_counterparties(
 
     if let Some(pubkey) = query.pubkey {
         let nostr_pubkey = {
-            if !query.nostr_key.unwrap_or(true) {
-                let bitcoin_pubkey = BitcoinPublicKey::from_str(&pubkey).unwrap();
-                ddk::nostr::bitcoin_to_nostr_pubkey(&bitcoin_pubkey)
+            if query.nostr_key.unwrap_or(true) {
+                PublicKey::from_str(&pubkey).map_err(|e| {
+                    Error::CustomError(
+                        StatusCode::BAD_REQUEST,
+                        ErrorDetail {
+                            error: Some(e.to_string()),
+                            description: Some("Error getting trade counterparty".to_string()),
+                        },
+                    )
+                })?
             } else {
-                PublicKey::from_str(&pubkey).unwrap()
+                let bitcoin_pubkey = BitcoinPublicKey::from_str(&pubkey).map_err(|e| {
+                    Error::CustomError(
+                        StatusCode::BAD_REQUEST,
+                        ErrorDetail {
+                            error: Some(e.to_string()),
+                            description: Some("Error getting trade counterparty".to_string()),
+                        },
+                    )
+                })?;
+                bitcoin_to_nostr_pubkey(&bitcoin_pubkey)
             }
         };
+
         let counterparty = sol
             .nostr
             .get_trade_counterparty(nostr_pubkey)
             .await
             .map_err(nostr_err_to_http)?;
+
         return format::json(counterparty);
     }
 

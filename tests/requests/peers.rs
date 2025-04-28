@@ -1,6 +1,6 @@
-use sons_of_liberty::app::App;
 use loco_rs::testing::prelude::*;
 use serial_test::serial;
+use sons_of_liberty::app::App;
 
 #[tokio::test]
 #[serial]
@@ -14,4 +14,3 @@ async fn can_get_peers() {
     })
     .await;
 }
-

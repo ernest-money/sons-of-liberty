@@ -1,5 +1,5 @@
-use sons_of_liberty::app::App;
 use loco_rs::{task, testing::prelude::*};
+use sons_of_liberty::app::App;
 
 use loco_rs::boot::run_task;
 use serial_test::serial;
@@ -9,9 +9,11 @@ use serial_test::serial;
 async fn test_can_run_balance_updater() {
     let boot = boot_test::<App>().await.unwrap();
 
-    assert!(
-        run_task::<App>(&boot.app_context, Some(&"balance_updater".to_string()), &task::Vars::default())
-            .await
-            .is_ok()
-    );
+    assert!(run_task::<App>(
+        &boot.app_context,
+        Some(&"balance_updater".to_string()),
+        &task::Vars::default()
+    )
+    .await
+    .is_ok());
 }

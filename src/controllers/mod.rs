@@ -16,7 +16,7 @@ pub mod wallet;
 //         .to_vec()
 // }
 
-pub mod home;
-pub mod hashrate;
 pub mod create;
+pub mod hashrate;
+pub mod home;
 pub mod nostr;

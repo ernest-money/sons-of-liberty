@@ -43,10 +43,10 @@ impl FromRequestParts<AppContext> for CookieAuth {
 
         let jwt_config = state.config.get_jwt_config()?;
         let user = JWT::new(&jwt_config.secret)
-            .validate(&cookie.value().to_string())
+            .validate(cookie.value())
             .map_err(|e| Error::Unauthorized(e.to_string()))?;
 
-        Ok(CookieAuth { user: user.claims })
+        Ok(Self { user: user.claims })
     }
 }
 
@@ -195,7 +195,11 @@ async fn login(
     }
     cookie.set_http_only(true);
     cookie.set_path("/");
-    cookie.set_max_age(Some(CookieDuration::seconds(jwt_secret.expiration as i64)));
+    if let Ok(expiration) = i64::try_from(jwt_secret.expiration) {
+        cookie.set_max_age(Some(CookieDuration::seconds(expiration)));
+    } else {
+        cookie.set_max_age(Some(CookieDuration::seconds(i64::MAX)));
+    }
     cookies.add(cookie);
 
     format::json(LoginResponse::new(&user, &token))

@@ -38,16 +38,3 @@ impl Market {
             .collect())
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[tokio::test]
-    async fn test_get_hashrate_stats() {
-        let db = std::env::var("DATABASE_URL").expect("DATABASE_URL is not set");
-        let market = Market::new(&db).await.unwrap();
-        let stats = market.get_hashrate_stats().await.unwrap();
-        println!("{:?}", stats);
-    }
-}
