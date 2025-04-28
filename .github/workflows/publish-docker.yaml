@@ -42,9 +42,9 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Make build script executable
-        run: chmod +x ./build-and-push.sh
+        run: chmod +x ./docker/build-and-push.sh
 
       - name: Build and push Docker images
         env:
           ENVIRONMENT: ${{ needs.determine-environment.outputs.environment }}
-        run: ./build-and-push.sh $ENVIRONMENT
+        run: ./docker/build-and-push.sh $ENVIRONMENT
