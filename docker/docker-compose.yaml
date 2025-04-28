@@ -93,7 +93,7 @@ services:
       # Where the config is stored locally on the host machine
       - ../config:/app/config
       # Where the seed is stored locally on the host machine
-      - ../seed:${DATA_DIR:-/sol}
+      # - ../seed:${DATA_DIR:-/sol}
     environment:
       - RUST_LOG=info
       - ENVIRONMENT=${ENVIRONMENT:-development}
