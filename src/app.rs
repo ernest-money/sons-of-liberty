@@ -61,7 +61,6 @@ impl Hooks for App {
             .add_route(controllers::nostr::routes())
             .add_route(controllers::create::routes())
             // .add_route(controllers::hashrate::routes())
-            .add_route(controllers::home::routes())
             .add_route(controllers::wallet::routes())
             .add_route(controllers::peers::routes())
             .add_route(controllers::contracts::routes())
