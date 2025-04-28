@@ -17,6 +17,7 @@ use std::sync::Arc;
 
 use crate::common::nostr::Nostr;
 use crate::common::settings::Settings;
+use crate::models::_entities::seeds;
 
 type SonsOfLiberyDdk = DlcDevKit<NostrDlc, PostgresStore, KormirOracleClient>;
 
@@ -28,60 +29,62 @@ pub struct SonsOfLiberty {
 
 impl SonsOfLiberty {
     pub async fn new(settings: Settings, ctx: &AppContext) -> loco_rs::Result<Self> {
-        let liberty_dir = match settings.data_dir.as_str() {
-            "home" => homedir::my_home()
-                .map_err(|e| loco_rs::Error::string(e.to_string().as_str()))?
-                .ok_or_else(|| loco_rs::Error::string("Failed to get home directory"))?
-                .join(".sons-of-liberty"),
-            _ => PathBuf::from(&settings.data_dir),
-        };
+        let network = Network::from_str(&settings.network).map_err(|_| {
+            loco_rs::Error::string(format!("Invalid network: {}", settings.network).as_str())
+        })?;
 
-        let network = Network::from_str(&settings.network)
-            .map_err(|_| loco_rs::Error::string("Invalid network"))?;
-
-        let seed_bytes = xprv_from_path(&liberty_dir, network)?;
+        let (entropy, _) = seeds::Model::create_or_load_seed(&ctx.db, &settings.name, network)
+            .await
+            .map_err(|e| {
+                loco_rs::Error::string(format!("Failed to create or load seed: {e}").as_str())
+            })?;
 
         let storage = Arc::new(
             PostgresStore::new(&ctx.config.database.uri, true, settings.name.clone())
                 .await
-                .map_err(|e| loco_rs::Error::string(e.to_string().as_str()))?,
+                .map_err(|e| {
+                    loco_rs::Error::string(
+                        format!("Failed to create postgres storage: {e}").as_str(),
+                    )
+                })?,
         );
 
         let transport = Arc::new(
-            NostrDlc::new(
-                &seed_bytes.private_key.secret_bytes(),
-                &settings.nostr_relay,
-                network,
-            )
-            .await
-            .map_err(|e| loco_rs::Error::string(e.to_string().as_str()))?,
+            NostrDlc::new(&entropy, &settings.nostr_relay, network)
+                .await
+                .map_err(|e| {
+                    loco_rs::Error::string(
+                        format!("Failed to create nostr transport: {e}").as_str(),
+                    )
+                })?,
         );
         let oracle = Arc::new(
             KormirOracleClient::new(&settings.kormir_host, None)
                 .await
-                .map_err(|e| loco_rs::Error::string(e.to_string().as_str()))?,
+                .map_err(|e| {
+                    loco_rs::Error::string(format!("Failed to create kormir oracle: {e}").as_str())
+                })?,
         );
+
+        let nostr = Nostr::new(&entropy, vec![settings.nostr_relay.clone()])
+            .await
+            .map_err(|e| loco_rs::Error::string(format!("Failed to create nostr: {e}").as_str()))?;
 
         let dlcdevkit = Arc::new(
             Builder::new()
                 .set_esplora_host(settings.esplora_host)
                 .set_network(network)
                 .set_name(&settings.name)
-                .set_seed_bytes(seed_bytes.private_key.secret_bytes())
+                .set_seed_bytes(entropy)
                 .set_storage(storage.clone())
                 .set_transport(transport.clone())
                 .set_oracle(oracle.clone())
                 .finish()
                 .await
-                .map_err(|e| loco_rs::Error::string(e.to_string().as_str()))?,
+                .map_err(|e| {
+                    loco_rs::Error::string(format!("Failed to create dlcdevkit: {e}").as_str())
+                })?,
         );
-
-        let nostr = Nostr::new(
-            &seed_bytes.private_key.secret_bytes(),
-            vec![settings.nostr_relay.clone()],
-        )
-        .await
-        .map_err(|e| loco_rs::Error::string(e.to_string().as_str()))?;
 
         Ok(Self { dlcdevkit, nostr })
     }
@@ -89,7 +92,8 @@ impl SonsOfLiberty {
 
 /// Helper function that reads `[bitcoin::bip32::Xpriv]` bytes from a file.
 /// If the file does not exist then it will create a file `seed.ddk` in the specified path.
-pub fn xprv_from_path(path: &PathBuf, network: Network) -> loco_rs::Result<Xpriv> {
+#[allow(dead_code)]
+fn xprv_from_path(path: &PathBuf, network: Network) -> loco_rs::Result<Xpriv> {
     if !path.exists() {
         create_dir_all(path).map_err(|e| {
             loco_rs::Error::CustomError(

@@ -131,4 +131,4 @@ settings:
   # nostr relay (default is nostr.dlcdevkit.com)
   nostr_relay: {{ get_env(name="NOSTR_RELAY", default="wss://nostr.dlcdevkit.com")}}
   # data directory (default is ~/.sons-of-liberty)
-  data_dir: {{ get_env(name="DATA_DIR", default="home") }}
+  # data_dir: {{ get_env(name="DATA_DIR", default="home") }}

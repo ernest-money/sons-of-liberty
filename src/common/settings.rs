@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Default, Debug, Clone)]
 pub struct Settings {
-    pub data_dir: String,
+    // pub data_dir: String,
     pub kormir_host: String,
     pub esplora_host: String,
     #[serde(default = "default_network")]
