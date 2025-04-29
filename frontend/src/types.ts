@@ -130,3 +130,8 @@ export interface NostrCounterparty {
   picture: string;
   website: string;
 }
+
+export interface ApiErrorResponse {
+  error: string;
+  description: string;
+}

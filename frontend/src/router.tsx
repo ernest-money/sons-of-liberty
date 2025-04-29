@@ -1,13 +1,13 @@
 import {
-  createRootRoute,
+  createRootRouteWithContext,
   createRoute,
   createRouter,
   RouterProvider as TanStackRouterProvider,
-  Outlet
+  Outlet,
+  redirect
 } from '@tanstack/react-router';
 import { RootLayout } from '@/layouts/root';
 import AuthPage from './app/auth/page';
-import { AuthenticatedRoute } from '@/layouts/authenticated';
 import { Dashboard } from './app/dashboard/page';
 import { WalletSection } from './app/wallet/page';
 import { CreateContractType } from './app/create/contract-type';
@@ -24,9 +24,17 @@ import { CreateContract } from './app/create/page';
 import { MarketPage } from './app/market/page';
 import { CounterpartiesPage } from './app/counterparties/page';
 import { FinishProfilePage } from './app/account/finish';
+import type { AuthContextType } from '@/hooks/useAuth';
+import { ProtectedLayout } from '@/layouts/layout';
+import { LoadingSpinner } from '@/components/ui/loading';
 
-// Create the root route
-const rootRoute = createRootRoute({
+// Define Router Context
+interface RouterContext {
+  auth: AuthContextType;
+}
+
+// Create the root route with context
+const rootRoute = createRootRouteWithContext<RouterContext>()({
   component: () => (
     <RootLayout>
       <Outlet />
@@ -47,14 +55,41 @@ const registerRoute = createRoute({
   component: AuthPage,
 });
 
-// Create a parent route for authenticated routes
+// Pending component to show while checking auth
+const PendingAuthentication = () => (
+  <ProtectedLayout>
+    <div className="flex h-full w-full items-center justify-center">
+      <LoadingSpinner />
+    </div>
+  </ProtectedLayout>
+);
+
+// Create a parent route for authenticated routes using beforeLoad
 const authenticatedParentRoute = createRoute({
   getParentRoute: () => rootRoute,
   id: 'authenticated',
+  beforeLoad: ({ context, location }) => {
+    if (!context.auth.isAuthenticated) {
+      throw redirect({
+        to: '/login',
+        search: {
+          redirect: location.href,
+        },
+        replace: true
+      });
+    }
+    if (context.auth.isAuthenticated && context.auth.user && !context.auth.user.nostr_profile && location.pathname !== '/account/finish') {
+      throw redirect({
+        to: '/account/finish',
+        replace: true
+      })
+    }
+  },
+  pendingComponent: PendingAuthentication,
   component: () => (
-    <AuthenticatedRoute>
+    <ProtectedLayout>
       <Outlet />
-    </AuthenticatedRoute>
+    </ProtectedLayout>
   )
 });
 
@@ -196,19 +231,36 @@ const routeTree = rootRoute.addChildren([
   notFoundRoute,
 ]);
 
-// Create the router
-const router = createRouter({ routeTree });
+// Create the router, initialize context (auth will be populated by RouterProvider)
+const router = createRouter({
+  routeTree,
+  context: {
+    auth: undefined!,
+  }
+});
 
 // Register the router for type safety
 declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router;
+    routerContext: RouterContext;
   }
 }
 
-// Export the RouterProvider component
-export function RouterProvider() {
+// Export the RouterProvider component - NOTE: Context should be passed where this is USED
+// This export might be removed if RouterProvider is only used in main.tsx/App.tsx
+export function RouterProvider({ auth }: { auth: AuthContextType }) {
+  // Create a router instance with the provided auth context
+  const router = createRouter({
+    routeTree,
+    context: {
+      auth,
+    },
+    defaultPreload: 'intent',
+  });
+
   return <TanStackRouterProvider router={router} />;
 }
 
+// Keep the router export for type registration
 export default router; 

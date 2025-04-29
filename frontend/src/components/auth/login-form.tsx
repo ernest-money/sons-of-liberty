@@ -10,8 +10,11 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
-import { useAuth } from "@/hooks"
+import { useAuth, useToast } from "@/hooks"
 import { useNavigate } from "@tanstack/react-router"
+import { Loader2 } from "lucide-react"
+import { ApiErrorResponse } from "@/types"
+import axios from "axios"
 
 export function LoginForm({
   className,
@@ -19,21 +22,72 @@ export function LoginForm({
 }: React.ComponentPropsWithoutRef<"div">) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [emailError, setEmailError] = useState(false);
+  const [passwordError, setPasswordError] = useState(false);
+  const [emailErrorMessage, setEmailErrorMessage] = useState("Email is not registered.");
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState("Incorrect password.");
   const { login } = useAuth();
+  const { toast } = useToast();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(null);
+    setEmailError(false);
+    setPasswordError(false);
+    setIsLoading(true);
+    let toastMessage = "Failed to login";
 
     try {
-      await login({ email, password });
+      const response = await login({ email, password });
+      console.log("response:", response);
       navigate({ to: '/' });
+      ``
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to login');
-    }
+      console.error("Login error:", err);
+      console.log("axios.isAxiosError(err):", err);
+
+      if (axios.isAxiosError(err) && err.response?.data) {
+        const errorData = err.response.data as ApiErrorResponse;
+        console.log("errorData:", errorData);
+        toastMessage = errorData.description || toastMessage;
+
+        if (errorData.error === "Entity not found" && errorData.description === "Email is not registered") {
+          setEmailError(true);
+          setEmailErrorMessage(errorData.description);
+        } else {
+          setPasswordError(true);
+          setPasswordErrorMessage(errorData.description || "Incorrect password.");
+        }
+      } else if (err instanceof Error) {
+        toastMessage = err.message;
+        setPasswordError(true);
+        setPasswordErrorMessage("Incorrect password or login failed.");
+      } else {
+        setPasswordError(true);
+        setPasswordErrorMessage("An unexpected error occurred.");
+      }
+
+      toast({
+        variant: "destructive",
+        title: "Login Unsuccessful",
+        description: toastMessage,
+      });
+    } finally {
+      setIsLoading(false);
+    } ``
   };
+
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEmail(e.target.value);
+    if (emailError) setEmailError(false);
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPassword(e.target.value);
+    if (passwordError) setPasswordError(false);
+  };
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card>
@@ -53,10 +107,14 @@ export function LoginForm({
                     id="email"
                     type="email"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    onChange={handleEmailChange}
                     placeholder="m@example.com"
                     required
+                    className={cn({ "border-red-500 focus-visible:ring-red-500": emailError })}
                   />
+                  {emailError && (
+                    <p className="text-xs text-red-500">{emailErrorMessage}</p>
+                  )}
                 </div>
                 <div className="grid gap-2">
                   <div className="flex items-center">
@@ -68,9 +126,20 @@ export function LoginForm({
                       Forgot your password?
                     </a>
                   </div>
-                  <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                    required
+                    className={cn({ "border-red-500 focus-visible:ring-red-500": passwordError })}
+                  />
+                  {passwordError && (
+                    <p className="text-xs text-red-500">{passwordErrorMessage}</p>
+                  )}
                 </div>
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                   Login
                 </Button>
               </div>

@@ -10,8 +10,11 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
-import { useAuth } from "@/hooks"
+import { useAuth, useToast } from "@/hooks"
 import { useNavigate } from "@tanstack/react-router"
+import { Loader2 } from "lucide-react"
+import { ApiErrorResponse } from "@/types"
+import axios from "axios"
 
 export function RegisterForm({
   className,
@@ -21,18 +24,41 @@ export function RegisterForm({
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { register } = useAuth();
+  const { toast } = useToast();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setIsLoading(true);
+    let toastMessage = "Failed to register";
 
     try {
       await register({ email, password, name });
       navigate({ to: '/' });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to login');
+      console.error("Registration error:", err);
+
+      if (axios.isAxiosError(err) && err.response?.data) {
+        const errorData = err.response.data as ApiErrorResponse;
+        toastMessage = errorData.description || toastMessage;
+        setError(errorData.description || "Registration failed");
+      } else if (err instanceof Error) {
+        toastMessage = err.message;
+        setError(err.message);
+      } else {
+        setError("An unexpected error occurred");
+      }
+
+      toast({
+        variant: "destructive",
+        title: "Registration Unsuccessful",
+        description: toastMessage,
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
   return (
@@ -76,7 +102,11 @@ export function RegisterForm({
                   </div>
                   <Input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
                 </div>
-                <Button type="submit" className="w-full">
+                {error && (
+                  <p className="text-xs text-red-500">{error}</p>
+                )}
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                   Create Account
                 </Button>
               </div>

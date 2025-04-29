@@ -169,7 +169,16 @@ async fn login(
     State(ctx): State<AppContext>,
     Json(params): Json<LoginParams>,
 ) -> Result<Response> {
-    let user = users::Model::find_by_email(&ctx.db, &params.email).await?;
+    let user = users::Model::find_by_email(&ctx.db, &params.email)
+        .await
+        .map_err(|e| {
+            loco_rs::Error::CustomError(
+                axum::http::StatusCode::UNAUTHORIZED,
+                ErrorDetail::new(e.to_string(), "Email is not registered".to_string()),
+            )
+        })?;
+
+    tracing::info!("user: {:?}", user);
 
     let valid = user.verify_password(&params.password);
 
@@ -207,7 +216,22 @@ async fn login(
 
 #[debug_handler]
 async fn current(cookie: CookieAuth, State(ctx): State<AppContext>) -> Result<Response> {
-    let user = users::Model::find_by_pid(&ctx.db, &cookie.user.pid).await?;
+    let user = users::Model::find_by_pid(&ctx.db, &cookie.user.pid)
+        .await
+        .map_err(|e| match e {
+            ModelError::EntityNotFound => {
+                tracing::error!("user not found");
+                Error::Unauthorized("user not found".to_string())
+            }
+            ModelError::Jwt(j) => {
+                tracing::error!("jwt error: {}", j);
+                Error::Unauthorized("jwt error".to_string())
+            }
+            _ => {
+                tracing::error!("error finding user: {}", e);
+                Error::InternalServerError
+            }
+        })?;
     format::json(CurrentResponse::new(&user))
 }
 
