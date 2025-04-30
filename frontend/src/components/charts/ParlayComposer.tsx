@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Plus, X, HelpCircle } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
@@ -20,31 +20,54 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { PayoutChart } from "./PayoutChart";
-
-interface ContractCondition {
-  type: 'above' | 'below';
-  value: number;
-  transformation: TransformationFunction;
-  weight: number;
-  range: number;
-}
+import { useParlayContext, ParlayParameter } from "@/contexts/ParlayContext";
 
 interface TabItem {
   id: string;
   title: string;
   dataType?: ChartDataType;
-  condition?: ContractCondition;
+  condition?: {
+    type: 'above' | 'below';
+    value: number;
+    transformation: TransformationFunction;
+    weight: number;
+    range: number;
+  };
 }
 
-interface ParlayComposerProps {
-  totalCollateral: number;
-}
+export const ParlayComposer: React.FC = () => {
+  const {
+    parameters,
+    totalCollateral,
+    addParameter,
+    updateParameter,
+    removeParameter,
+  } = useParlayContext();
 
-export const ParlayComposer: React.FC<ParlayComposerProps> = ({ totalCollateral }) => {
   const [tabs, setTabs] = useState<TabItem[]>([]);
   const [activeTab, setActiveTab] = useState<string>("");
   const [tabCounter, setTabCounter] = useState(1);
   const [showDataTypeSelector, setShowDataTypeSelector] = useState(false);
+
+  // Function to sync a tab's data with the context
+  const syncTabWithContext = (tab: TabItem, index?: number) => {
+    if (tab.dataType && tab.condition) {
+      const parameter: ParlayParameter = {
+        dataType: tab.dataType,
+        threshold: tab.condition.value,
+        range: tab.condition.range,
+        isAboveThreshold: tab.condition.type === 'above',
+        transformation: tab.condition.transformation,
+        weight: tab.condition.weight
+      };
+
+      if (index !== undefined) {
+        updateParameter(index, parameter);
+      } else {
+        addParameter(parameter);
+      }
+    }
+  };
 
   // Create a direct add function for the empty state
   const addFirstTab = (dataType: ChartDataType) => {
@@ -65,6 +88,9 @@ export const ParlayComposer: React.FC<ParlayComposerProps> = ({ totalCollateral 
     setActiveTab(newTab.id);
     setTabCounter(tabCounter + 1);
     setShowDataTypeSelector(false);
+
+    // Sync with context
+    syncTabWithContext(newTab);
   };
 
   const addTab = () => {
@@ -96,35 +122,53 @@ export const ParlayComposer: React.FC<ParlayComposerProps> = ({ totalCollateral 
     setActiveTab(newTab.id);
     setTabCounter(tabCounter + 1);
     setShowDataTypeSelector(false);
+
+    // Sync with context
+    syncTabWithContext(newTab);
   };
 
   const updateTabDataType = (tabId: string, dataType: ChartDataType) => {
-    const dataTypeInfo = CHART_DATA_TYPES.find(dt => dt.id === dataType);
-    setTabs(tabs.map(tab =>
+    const updatedTabs = tabs.map(tab =>
       tab.id === tabId
         ? {
           ...tab,
           dataType,
-          title: dataTypeInfo?.label || tab.title,
+          title: CHART_DATA_TYPES.find(dt => dt.id === dataType)?.label || tab.title,
           condition: {
             type: 'above' as const,
-            value: dataTypeInfo?.defaultValue || 0,
+            value: CHART_DATA_TYPES.find(dt => dt.id === dataType)?.defaultValue || 0,
             transformation: tab.condition?.transformation || "linear",
             weight: tab.condition?.weight || 1.0,
-            range: Math.round((dataTypeInfo?.upperBound || 0) - (dataTypeInfo?.lowerBound || 0)) / 2
+            range: Math.round((CHART_DATA_TYPES.find(dt => dt.id === dataType)?.upperBound || 0) - (CHART_DATA_TYPES.find(dt => dt.id === dataType)?.lowerBound || 0)) / 2
           }
         }
         : tab
-    ));
+    );
+
+    setTabs(updatedTabs);
+
+    // Find the index of this tab and sync with context
+    const tabIndex = tabs.findIndex(tab => tab.id === tabId);
+    if (tabIndex !== -1) {
+      syncTabWithContext(updatedTabs[tabIndex], tabIndex);
+    }
   };
 
   const removeTab = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
 
+    // Find the index of this tab for context removal
+    const tabIndex = tabs.findIndex(tab => tab.id === id);
+
     if (tabs.length === 1) {
       // If removing the last tab, clear everything
       setTabs([]);
       setActiveTab("");
+
+      // Remove from context if exists
+      if (tabIndex !== -1) {
+        removeParameter(tabIndex);
+      }
       return;
     }
 
@@ -135,46 +179,91 @@ export const ParlayComposer: React.FC<ParlayComposerProps> = ({ totalCollateral 
     if (activeTab === id) {
       setActiveTab(newTabs[0].id);
     }
+
+    // Remove from context if exists
+    if (tabIndex !== -1) {
+      removeParameter(tabIndex);
+    }
   };
 
   const updateConditionValue = (tabId: string, value: number) => {
-    setTabs(tabs.map(tab =>
+    const updatedTabs = tabs.map(tab =>
       tab.id === tabId && tab.condition
         ? { ...tab, condition: { ...tab.condition, value } }
         : tab
-    ));
+    );
+
+    setTabs(updatedTabs);
+
+    // Find the index of this tab and sync with context
+    const tabIndex = tabs.findIndex(tab => tab.id === tabId);
+    if (tabIndex !== -1) {
+      syncTabWithContext(updatedTabs[tabIndex], tabIndex);
+    }
   };
 
   const updateConditionType = (tabId: string, type: 'above' | 'below') => {
-    setTabs(tabs.map(tab =>
+    const updatedTabs = tabs.map(tab =>
       tab.id === tabId && tab.condition
         ? { ...tab, condition: { ...tab.condition, type } }
         : tab
-    ));
+    );
+
+    setTabs(updatedTabs);
+
+    // Find the index of this tab and sync with context
+    const tabIndex = tabs.findIndex(tab => tab.id === tabId);
+    if (tabIndex !== -1) {
+      syncTabWithContext(updatedTabs[tabIndex], tabIndex);
+    }
   };
 
   const updateTransformationFunction = (tabId: string, transformation: TransformationFunction) => {
-    setTabs(tabs.map(tab =>
+    const updatedTabs = tabs.map(tab =>
       tab.id === tabId && tab.condition
         ? { ...tab, condition: { ...tab.condition, transformation } }
         : tab
-    ));
+    );
+
+    setTabs(updatedTabs);
+
+    // Find the index of this tab and sync with context
+    const tabIndex = tabs.findIndex(tab => tab.id === tabId);
+    if (tabIndex !== -1) {
+      syncTabWithContext(updatedTabs[tabIndex], tabIndex);
+    }
   };
 
   const updateWeight = (tabId: string, weight: number) => {
-    setTabs(tabs.map(tab =>
+    const updatedTabs = tabs.map(tab =>
       tab.id === tabId && tab.condition
         ? { ...tab, condition: { ...tab.condition, weight } }
         : tab
-    ));
+    );
+
+    setTabs(updatedTabs);
+
+    // Find the index of this tab and sync with context
+    const tabIndex = tabs.findIndex(tab => tab.id === tabId);
+    if (tabIndex !== -1) {
+      syncTabWithContext(updatedTabs[tabIndex], tabIndex);
+    }
   };
 
   const updateRange = (tabId: string, range: number) => {
-    setTabs(tabs.map(tab =>
+    const updatedTabs = tabs.map(tab =>
       tab.id === tabId && tab.condition
         ? { ...tab, condition: { ...tab.condition, range } }
         : tab
-    ));
+    );
+
+    setTabs(updatedTabs);
+
+    // Find the index of this tab and sync with context
+    const tabIndex = tabs.findIndex(tab => tab.id === tabId);
+    if (tabIndex !== -1) {
+      syncTabWithContext(updatedTabs[tabIndex], tabIndex);
+    }
   };
 
   const getDataTypeInfo = (dataType?: ChartDataType) => {

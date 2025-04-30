@@ -3,6 +3,7 @@ import { createContractTypeRoute } from '@/router';
 import { Parlay } from './parlay';
 import { PriceFeed } from './price-feed';
 import { Enumeration } from './enumeration';
+import { ParlayProvider } from '@/contexts/ParlayContext';
 
 export const CreateContractType: React.FC = () => {
   const { contractType } = useParams({ from: createContractTypeRoute.id });
@@ -10,7 +11,7 @@ export const CreateContractType: React.FC = () => {
   const payoutComponent = () => {
     switch (contractType) {
       case "parlay":
-        return <Parlay />;
+        return <ParlayProvider><Parlay /></ParlayProvider>;
       case "price-feed":
         return <PriceFeed />;
       case "enumeration":
@@ -19,8 +20,7 @@ export const CreateContractType: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: '20px', width: '100%' }}>
-      <h1 className='text-4xl font-bold'>{contractType?.charAt(0).toUpperCase() + contractType?.slice(1)}</h1>
+    <div className='w-full'>
       {payoutComponent()}
     </div>
   );

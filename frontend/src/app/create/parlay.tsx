@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { HelpCircle } from "lucide-react";
 import { ParlayComposer } from "@/components/charts/ParlayComposer";
+import { ParlayHeatmap } from "@/components/charts/ParlayHeatmap";
+import { ParlayProvider, useParlayContext } from "@/contexts/ParlayContext";
 import {
   CombinationMethod,
   COMBINATION_METHODS
@@ -21,17 +21,19 @@ import {
 } from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { HelpCircle } from "lucide-react";
 
 export const Parlay = () => {
-  const [combinationMethod, setCombinationMethod] = useState<CombinationMethod>("multiply");
-  const [yourCollateral, setYourCollateral] = useState<number>(100000);
-  const [counterpartyCollateral, setCounterpartyCollateral] = useState<number>(100000);
-  const [totalCollateral, setTotalCollateral] = useState<number>(200000);
-
-  // Update total whenever individual collateral amounts change
-  useEffect(() => {
-    setTotalCollateral(yourCollateral + counterpartyCollateral);
-  }, [yourCollateral, counterpartyCollateral]);
+  const {
+    parameters,
+    combinationMethod,
+    totalCollateral,
+    yourCollateral,
+    counterpartyCollateral,
+    setCombinationMethod,
+    setYourCollateral,
+    setCounterpartyCollateral
+  } = useParlayContext();
 
   const handleYourCollateralChange = (value: string) => {
     const numValue = parseInt(value);
@@ -48,14 +50,16 @@ export const Parlay = () => {
   };
 
   return (
-    <div className="container py-8">
+    <div className="container pb-8">
       <h1 className="text-2xl font-bold mb-6">Create Parlay Contract</h1>
 
       <div className="mb-8">
         <h2 className="text-xl font-medium mb-4">Heat Map Overview</h2>
-        <div className="h-48 bg-muted rounded flex items-center justify-center">
-          Heat Map Chart (Coming Soon)
-        </div>
+        <ParlayHeatmap
+          parameters={parameters}
+          combinationMethod={combinationMethod}
+          totalCollateral={totalCollateral}
+        />
       </div>
 
       <div className="mb-8">
@@ -190,7 +194,7 @@ export const Parlay = () => {
 
       <div className="mt-8">
         <h2 className="text-xl font-medium mb-4">Contract Parameters</h2>
-        <ParlayComposer totalCollateral={totalCollateral} />
+        <ParlayComposer />
       </div>
     </div>
   );

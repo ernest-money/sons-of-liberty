@@ -1,6 +1,20 @@
 import { useState } from 'react';
 import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Scatter, ScatterChart, ZAxis } from 'recharts';
 
+// Custom renderer for scatter points with dynamic opacity
+const ScatterPoint = (props: any) => {
+  const { cx, cy, r, fill, payload } = props;
+  return (
+    <circle
+      cx={cx}
+      cy={cy}
+      r={r}
+      fill={fill}
+      fillOpacity={payload.opacity}
+    />
+  );
+};
+
 export const HeatMap = () => {
   // Contract Parameters
   const [hashRateThreshold, setHashRateThreshold] = useState(50000);
@@ -57,8 +71,17 @@ export const HeatMap = () => {
   // Different combination methods
   const [combinationMethod, setCombinationMethod] = useState('multiply');
 
+  // Define the heatmap data point type
+  type HeatmapDataPoint = {
+    hashRate: number;
+    price: number;
+    payout: number;
+    size: number;
+    opacity: number;
+  };
+
   // Generate data for 2D heatmap
-  const heatmapData = [];
+  const heatmapData: HeatmapDataPoint[] = [];
   const steps = 20;
   for (let h = 0; h <= hashRateRange; h += hashRateRange / steps) {
     for (let p = 0; p <= priceRange; p += priceRange / steps) {
@@ -86,12 +109,20 @@ export const HeatMap = () => {
           combinedScore = hScore * pScore;
       }
 
-      heatmapData.push({
-        hashRate: h,
-        price: p,
-        payout: combinedScore * maxPayout,
-        size: 100
-      });
+      const payout = combinedScore * maxPayout;
+
+      // Skip points with zero payout
+      if (payout > 0) {
+        heatmapData.push({
+          hashRate: h,
+          price: p,
+          payout: payout,
+          // Make size proportional to payout (min 20, max 200)
+          size: 20 + (180 * combinedScore),
+          // Set opacity proportional to payout
+          opacity: 0.2 + (0.8 * combinedScore)
+        });
+      }
     }
   }
 
@@ -119,8 +150,8 @@ export const HeatMap = () => {
           />
           <ZAxis
             type="number"
-            dataKey="payout"
-            range={[0, 100]}
+            dataKey="size"
+            range={[20, 200]}
             name="Payout"
           />
           <Tooltip
@@ -132,27 +163,28 @@ export const HeatMap = () => {
           />
           <Scatter
             data={heatmapData}
-            fill="#fff"
-            fillOpacity={0.5}
+            fill="#ffffff"
+            stroke="none"
+            shape={<ScatterPoint />}
           />
           <ReferenceLine
             x={hashRateThreshold}
-            stroke="red"
+            stroke="#666666"
             strokeDasharray="3 3"
           />
           <ReferenceLine
             y={priceThreshold}
-            stroke="red"
+            stroke="#666666"
             strokeDasharray="3 3"
           />
           <ReferenceLine
             x={currentHashRate}
-            stroke="blue"
+            stroke="#999999"
             strokeDasharray="3 3"
           />
           <ReferenceLine
             y={currentPrice}
-            stroke="blue"
+            stroke="#999999"
             strokeDasharray="3 3"
           />
         </ScatterChart>
