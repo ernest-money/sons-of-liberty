@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, X, HelpCircle } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -40,18 +41,13 @@ interface ParlayComposerProps {
 }
 
 export const ParlayComposer: React.FC<ParlayComposerProps> = ({ totalCollateral }) => {
-  const [tabs, setTabs] = useState<TabItem[]>([
-    { id: "chart-1", title: "Chart 1" },
-  ]);
-  const [activeTab, setActiveTab] = useState<string>(tabs[0].id);
-  const [tabCounter, setTabCounter] = useState(2);
+  const [tabs, setTabs] = useState<TabItem[]>([]);
+  const [activeTab, setActiveTab] = useState<string>("");
+  const [tabCounter, setTabCounter] = useState(1);
   const [showDataTypeSelector, setShowDataTypeSelector] = useState(false);
 
-  const addTab = () => {
-    setShowDataTypeSelector(true);
-  };
-
-  const handleSelectDataType = (dataType: ChartDataType) => {
+  // Create a direct add function for the empty state
+  const addFirstTab = (dataType: ChartDataType) => {
     const dataTypeInfo = CHART_DATA_TYPES.find(dt => dt.id === dataType);
     const newTab: TabItem = {
       id: `chart-${tabCounter}`,
@@ -65,7 +61,38 @@ export const ParlayComposer: React.FC<ParlayComposerProps> = ({ totalCollateral 
         range: Math.round((dataTypeInfo?.upperBound || 0) - (dataTypeInfo?.lowerBound || 0)) / 2
       }
     };
-    setTabs([...tabs, newTab]);
+    setTabs([newTab]);
+    setActiveTab(newTab.id);
+    setTabCounter(tabCounter + 1);
+    setShowDataTypeSelector(false);
+  };
+
+  const addTab = () => {
+    setShowDataTypeSelector(true);
+  };
+
+  const handleSelectDataType = (dataType: ChartDataType) => {
+    // If there are no tabs, use the direct method
+    if (tabs.length === 0) {
+      addFirstTab(dataType);
+      return;
+    }
+
+    const dataTypeInfo = CHART_DATA_TYPES.find(dt => dt.id === dataType);
+    const newTab: TabItem = {
+      id: `chart-${tabCounter}`,
+      title: dataTypeInfo?.label || `Chart ${tabCounter}`,
+      dataType,
+      condition: {
+        type: 'above',
+        value: dataTypeInfo?.defaultValue || 0,
+        transformation: "linear",
+        weight: 1.0,
+        range: Math.round((dataTypeInfo?.upperBound || 0) - (dataTypeInfo?.lowerBound || 0)) / 2
+      }
+    };
+    const newTabs = [...tabs, newTab];
+    setTabs(newTabs);
     setActiveTab(newTab.id);
     setTabCounter(tabCounter + 1);
     setShowDataTypeSelector(false);
@@ -94,7 +121,12 @@ export const ParlayComposer: React.FC<ParlayComposerProps> = ({ totalCollateral 
   const removeTab = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
 
-    if (tabs.length === 1) return;
+    if (tabs.length === 1) {
+      // If removing the last tab, clear everything
+      setTabs([]);
+      setActiveTab("");
+      return;
+    }
 
     const newTabs = tabs.filter((tab) => tab.id !== id);
     setTabs(newTabs);
@@ -158,13 +190,64 @@ export const ParlayComposer: React.FC<ParlayComposerProps> = ({ totalCollateral 
     return TRANSFORMATION_FUNCTIONS.find(tf => tf.id === transformation);
   };
 
+  // If there are no tabs, show the empty state
+  if (tabs.length === 0) {
+    return (
+      <div className="w-full">
+        <div className="border rounded-md">
+          <div className="flex flex-col items-center justify-center text-center py-12 px-8">
+            <h3 className="text-xl font-medium mb-2">Add Your First Parameter</h3>
+            <p className="text-muted-foreground mb-6 max-w-md">
+              Begin creating your parlay contract by adding a parameter based on Bitcoin network data
+            </p>
+            <Button onClick={() => setShowDataTypeSelector(true)} className="px-6">
+              <Plus size={16} className="mr-2" />
+              Add Parameter
+            </Button>
+          </div>
+        </div>
+
+        {/* Data type selector modal - placed directly in the same component for empty state */}
+        {showDataTypeSelector && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+            <div className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md">
+              <h3 className="text-lg font-medium mb-4">Select Data Type</h3>
+              <div className="space-y-2">
+                {CHART_DATA_TYPES.map((dataType) => (
+                  <button
+                    key={dataType.id}
+                    className="w-full text-left p-3 hover:bg-muted rounded flex flex-col"
+                    onClick={() => handleSelectDataType(dataType.id)}
+                  >
+                    <span className="font-medium">{dataType.label}</span>
+                    <span className="text-sm text-muted-foreground">{dataType.description}</span>
+                  </button>
+                ))}
+              </div>
+              <button
+                onClick={() => setShowDataTypeSelector(false)}
+                className="mt-4 w-full p-2 bg-secondary text-secondary-foreground hover:bg-secondary/80 rounded"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="w-full">
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <div className="flex items-center">
-          <TabsList className="flex-1">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <div className="rounded-t-md border border-border border-b-0">
+          <TabsList className="justify-start w-full rounded-b-none border-b border-b-border bg-transparent h-auto p-0">
             {tabs.map((tab) => (
-              <TabsTrigger key={tab.id} value={tab.id} className="flex items-center">
+              <TabsTrigger
+                key={tab.id}
+                value={tab.id}
+                className="flex items-center data-[state=active]:bg-muted rounded-none px-4 py-2 border-r border-r-border"
+              >
                 {tab.title}
                 <button
                   onClick={(e) => removeTab(tab.id, e)}
@@ -174,21 +257,21 @@ export const ParlayComposer: React.FC<ParlayComposerProps> = ({ totalCollateral 
                 </button>
               </TabsTrigger>
             ))}
+            <button
+              onClick={addTab}
+              className="p-2 hover:bg-muted/80 transition-colors h-full flex items-center justify-center"
+            >
+              <Plus size={16} />
+            </button>
           </TabsList>
-          <button
-            onClick={addTab}
-            className="ml-2 p-2 rounded-md bg-muted hover:bg-muted/80 transition-colors"
-          >
-            <Plus size={16} />
-          </button>
         </div>
 
         {tabs.map((tab) => {
           const dataTypeInfo = getDataTypeInfo(tab.dataType);
 
           return (
-            <TabsContent key={tab.id} value={tab.id} className="p-4 border rounded-md mt-2">
-              <h3 className="font-medium mb-4">Parameter Settings</h3>
+            <TabsContent key={tab.id} value={tab.id} className="pb-4 px-4 mt-0 border rounded-md rounded-t-none border-t-0">
+              <h3 className="font-medium mb-4 pt-4">Parameter Settings</h3>
               <div className="space-y-6">
                 <div>
                   <Label htmlFor={`data-type-${tab.id}`}>Data Type</Label>
@@ -452,7 +535,7 @@ export const ParlayComposer: React.FC<ParlayComposerProps> = ({ totalCollateral 
         })}
       </Tabs>
 
-      {showDataTypeSelector && (
+      {showDataTypeSelector && tabs.length > 0 && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-background p-6 rounded-lg shadow-lg w-full max-w-md">
             <h3 className="text-lg font-medium mb-4">Select Data Type</h3>
