@@ -190,7 +190,7 @@ export const Parlay = () => {
 
       <div className="mt-8">
         <h2 className="text-xl font-medium mb-4">Contract Parameters</h2>
-        <ParlayComposer />
+        <ParlayComposer totalCollateral={totalCollateral} />
       </div>
     </div>
   );

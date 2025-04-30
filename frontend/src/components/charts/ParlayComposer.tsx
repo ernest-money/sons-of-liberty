@@ -18,6 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { PayoutChart } from "./PayoutChart";
 
 interface ContractCondition {
   type: 'above' | 'below';
@@ -34,7 +35,11 @@ interface TabItem {
   condition?: ContractCondition;
 }
 
-export const ParlayComposer = () => {
+interface ParlayComposerProps {
+  totalCollateral: number;
+}
+
+export const ParlayComposer: React.FC<ParlayComposerProps> = ({ totalCollateral }) => {
   const [tabs, setTabs] = useState<TabItem[]>([
     { id: "chart-1", title: "Chart 1" },
   ]);
@@ -211,6 +216,32 @@ export const ParlayComposer = () => {
 
                 {tab.dataType && tab.condition && dataTypeInfo && (
                   <div className="space-y-6">
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="font-medium">Payout Curve</h4>
+                        <div className="flex items-center text-xs text-muted-foreground">
+                          <span className="inline-block w-3 h-3 bg-primary rounded-sm mr-1"></span>
+                          <span>Payout</span>
+                          <span className="inline-block w-3 h-0.5 border-t border-dashed border-destructive mx-1"></span>
+                          <span>Threshold</span>
+                        </div>
+                      </div>
+                      <Card>
+                        <CardContent className="py-4">
+                          <PayoutChart
+                            dataType={dataTypeInfo}
+                            threshold={tab.condition.value}
+                            range={tab.condition.range}
+                            isAboveThreshold={tab.condition.type === 'above'}
+                            transformation={tab.condition.transformation}
+                            weight={tab.condition.weight}
+                            totalCollateral={totalCollateral}
+                            height="250px"
+                          />
+                        </CardContent>
+                      </Card>
+                    </div>
+
                     <div>
                       <Label className="mb-2 block">Contract Condition</Label>
                       <div className="flex space-x-4">
