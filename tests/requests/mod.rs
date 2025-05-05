@@ -10,3 +10,5 @@ pub mod nostr;
 pub mod offers;
 pub mod peers;
 pub mod wallet;
+
+pub mod sync;

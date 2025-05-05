@@ -19,3 +19,5 @@ pub mod wallet;
 pub mod create;
 pub mod hashrate;
 pub mod nostr;
+
+pub mod sync;
