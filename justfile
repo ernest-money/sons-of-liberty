@@ -1,10 +1,10 @@
-psql: 
+psql:
   - psql -d postgres://loco:loco@localhost:5432/sons-of-liberty_development
 
-dev: 
-  - ESPLORA_HOST=http://electrs:30000 DATABASE_URL=postgres://loco:loco@postgres-sol:5432/sons-of-liberty_development DATA_DIR=/sol docker compose -f docker/docker-compose.yaml --profile development up -d
+dev:
+  - ESPLORA_HOST=http://electrs:30000 DATABASE_URL=postgres://loco:loco@postgres-sol:5432/sons-of-liberty_development docker compose -f docker/docker-compose.yaml --profile development up -d
 
-stop: 
+stop:
   - docker compose -f docker/docker-compose.yaml --profile development down
 
 bc *args:

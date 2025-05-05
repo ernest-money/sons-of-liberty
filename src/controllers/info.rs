@@ -20,12 +20,19 @@ pub async fn index(
     users::Model::find_by_pid(&ctx.db, &cookie.user.pid).await?;
     let transport_public_key = ddk.dlcdevkit.transport.public_key();
     let transport_type = ddk.dlcdevkit.transport.name();
-    let oracle_public_key = ddk.dlcdevkit.oracle.get_pubkey().await.map_err(|e| {
-        Error::CustomError(
-            StatusCode::INTERNAL_SERVER_ERROR,
-            ErrorDetail::with_reason(e.to_string()),
-        )
-    })?;
+    let oracle_public_key = ddk
+        .dlcdevkit
+        .oracle
+        .get_oracle_info()
+        .await
+        .map_err(|e| {
+            Error::CustomError(
+                StatusCode::INTERNAL_SERVER_ERROR,
+                ErrorDetail::with_reason(e.reason),
+            )
+        })?
+        .pubkey
+        .to_string();
     format::json(serde_json::json!({
         "transport_public_key": transport_public_key,
         "transport_type": transport_type,
