@@ -102,7 +102,7 @@ database:
   # Minimum number of connections for a pool.
   min_connections: {{ get_env(name="DB_MIN_CONNECTIONS", default="1") }}
   # Maximum number of connections for a pool.
-  max_connections: {{ get_env(name="DB_MAX_CONNECTIONS", default="1") }}
+  max_connections: {{ get_env(name="DB_MAX_CONNECTIONS", default="10") }}
   # Run migration up when application loaded
   auto_migrate: true
   # Truncate database when application loaded. This is a dangerous operation, make sure that you using this flag only on dev environments or test mode
@@ -121,7 +121,7 @@ auth:
     
 settings:
   # oracle implementation (default is kormir.dlcdevkit.com)
-  kormir_host: {{ get_env(name="KORMIR_HOST", default="https://kormir.dlcdevkit.com")}}
+  oracle_host: {{ get_env(name="ORACLE_HOST", default="https://oracle.ernest.money")}}
   # esplora implementation (default is localhost:30000)
   esplora_host: {{ get_env(name="ESPLORA_HOST", default="http://localhost:30000") }}
   # bitcoin network (default is regtest)

@@ -3,7 +3,7 @@
 #![allow(clippy::unused_async)]
 use std::{str::FromStr, sync::Arc};
 
-use super::auth::CookieAuth;
+use crate::controllers::auth::CookieAuth;
 use crate::{models::users, sol::SonsOfLiberty};
 use axum::{debug_handler, http::StatusCode, Extension, Json};
 use bitcoin::secp256k1::PublicKey;
@@ -12,6 +12,7 @@ use ddk_manager::contract::{
     enum_descriptor::EnumDescriptor,
     ContractDescriptor,
 };
+use ernest_oracle::{events::EventType, routes::CreateEvent};
 use loco_rs::{controller::ErrorDetail, prelude::*};
 use serde::{Deserialize, Serialize};
 
@@ -44,7 +45,7 @@ pub async fn enum_create(
         )
     })?;
 
-    let outcomes = body
+    let _outcomes = body
         .descriptor
         .outcome_payouts
         .iter()
@@ -54,7 +55,11 @@ pub async fn enum_create(
     let announcement = sol
         .dlcdevkit
         .oracle
-        .create_enum_event(outcomes, body.maturity)
+        // .create_enum_event(outcomes, body.maturity)
+        .create_event(CreateEvent::Single {
+            event_type: EventType::Hashrate,
+            maturity: body.maturity,
+        })
         .await
         .map_err(|e| {
             Error::CustomError(
@@ -102,10 +107,4 @@ pub async fn enum_create(
         "id": hex::encode(offer.temporary_contract_id),
         "oracle_event_id": announcement.oracle_event.event_id,
     }))
-}
-
-pub fn routes() -> Routes {
-    Routes::new()
-        .prefix("api/create/")
-        .add("/enum", post(enum_create))
 }

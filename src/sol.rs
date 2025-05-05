@@ -4,10 +4,10 @@ use bitcoin::io::Write;
 use bitcoin::key::rand::Fill;
 use bitcoin::Network;
 use ddk::builder::Builder;
-use ddk::oracle::kormir::KormirOracleClient;
 use ddk::storage::postgres::PostgresStore;
 use ddk::transport::nostr::NostrDlc;
 use ddk::DlcDevKit;
+use ernest_oracle::ErnestOracleClient;
 use loco_rs::app::AppContext;
 use loco_rs::controller::ErrorDetail;
 use std::fs::{create_dir_all, File};
@@ -19,7 +19,7 @@ use crate::common::nostr::Nostr;
 use crate::common::settings::Settings;
 use crate::models::_entities::seeds;
 
-type SonsOfLiberyDdk = DlcDevKit<NostrDlc, PostgresStore, KormirOracleClient>;
+type SonsOfLiberyDdk = DlcDevKit<NostrDlc, PostgresStore, ErnestOracleClient>;
 
 #[derive(Clone)]
 pub struct SonsOfLiberty {
@@ -58,11 +58,12 @@ impl SonsOfLiberty {
                     )
                 })?,
         );
+
         let oracle = Arc::new(
-            KormirOracleClient::new(&settings.kormir_host, None)
+            ErnestOracleClient::new(&settings.oracle_host)
                 .await
                 .map_err(|e| {
-                    loco_rs::Error::string(format!("Failed to create kormir oracle: {e}").as_str())
+                    loco_rs::Error::string(&format!("Failed to create ernest oracle: {}", e.reason))
                 })?,
         );
 
