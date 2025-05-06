@@ -5,11 +5,11 @@ use bitcoin::key::rand::Fill;
 use bitcoin::Network;
 use ddk::builder::Builder;
 use ddk::storage::postgres::PostgresStore;
-use ddk::transport::nostr::NostrDlc;
 use ddk::DlcDevKit;
 use ernest_oracle::ErnestOracleClient;
 use loco_rs::app::AppContext;
 use loco_rs::controller::ErrorDetail;
+use squawkbox::Squawkbox;
 use std::fs::{create_dir_all, File};
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
@@ -19,7 +19,7 @@ use crate::common::nostr::Nostr;
 use crate::common::settings::Settings;
 use crate::models::_entities::seeds;
 
-type SonsOfLiberyDdk = DlcDevKit<NostrDlc, PostgresStore, ErnestOracleClient>;
+type SonsOfLiberyDdk = DlcDevKit<Squawkbox, PostgresStore, ErnestOracleClient>;
 
 #[derive(Clone)]
 pub struct SonsOfLiberty {
@@ -50,11 +50,11 @@ impl SonsOfLiberty {
         );
 
         let transport = Arc::new(
-            NostrDlc::new(&entropy, &settings.nostr_relay, network)
+            Squawkbox::new(&entropy, &settings.nostr_relay, network)
                 .await
                 .map_err(|e| {
                     loco_rs::Error::string(
-                        format!("Failed to create nostr transport: {e}").as_str(),
+                        format!("Failed to create squawkbox transport: {e}").as_str(),
                     )
                 })?,
         );

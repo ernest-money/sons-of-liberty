@@ -165,9 +165,9 @@ dependencies = [
 
 [[package]]
 name = "anyhow"
-version = "1.0.95"
+version = "1.0.98"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "34ac096ce696dc2fcabef30516bb13c0a68a11d30131d3df6f04711467681b04"
+checksum = "e16d2d3311acee920a9eb8d33b8cbc1787ce4a264e85f964c2404b969bdcd487"
 
 [[package]]
 name = "arc-swap"
@@ -5826,6 +5826,7 @@ dependencies = [
  "serde-this-or-that",
  "serde_json",
  "serial_test",
+ "squawkbox",
  "thiserror 2.0.12",
  "tokio",
  "tower-cookies",
@@ -6062,6 +6063,25 @@ dependencies = [
  "tracing",
  "url",
  "uuid",
+]
+
+[[package]]
+name = "squawkbox"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b471a39cd776fbd30103cf4a3b995b8686c0b771ece112e1487a1b96e5e6f9b7"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "bitcoin",
+ "ddk",
+ "ddk-manager",
+ "dlc",
+ "dlc-messages",
+ "nostr",
+ "nostr-sdk",
+ "tokio",
+ "tracing",
 ]
 
 [[package]]
@@ -6418,9 +6438,9 @@ checksum = "1f3ccbac311fea05f86f61904b462b55fb3df8837a366dfc601a0161d0532f20"
 
 [[package]]
 name = "tokio"
-version = "1.43.0"
+version = "1.44.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3d61fa4ffa3de412bfea335c6ecff681de2b609ba3c77ef3e00e521813a9ed9e"
+checksum = "e6b88822cbe49de4185e3a4cbf8321dd487cf5fe0c5c65695fef6346371e9c48"
 dependencies = [
  "backtrace",
  "bytes",
