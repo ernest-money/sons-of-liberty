@@ -133,6 +133,7 @@ impl Hooks for App {
     #[allow(unused_variables)]
     fn register_tasks(tasks: &mut Tasks) {
         tasks.register(tasks::balance_updater::BalanceUpdater);
+        tasks.register(tasks::freshdb::Freshdb);
         // tasks-inject (do not remove)
     }
     async fn truncate(ctx: &AppContext) -> Result<()> {
