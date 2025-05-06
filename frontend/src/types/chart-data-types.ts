@@ -1,4 +1,4 @@
-export type ChartDataType = "price" | "hashRate" | "difficultyAdjustment";
+export type ChartDataType = "price" | "hashrate" | "difficulty";
 
 export interface ChartDataTypeInfo {
   id: ChartDataType;
@@ -21,7 +21,7 @@ export const CHART_DATA_TYPES: ChartDataTypeInfo[] = [
     unit: "USD",
   },
   {
-    id: "hashRate",
+    id: "hashrate",
     label: "Hash Rate",
     description: "Network hash rate measured in exahashes per second (EH/s)",
     lowerBound: 100,
@@ -30,8 +30,8 @@ export const CHART_DATA_TYPES: ChartDataTypeInfo[] = [
     unit: "EH/s",
   },
   {
-    id: "difficultyAdjustment",
-    label: "Difficulty Adjustment",
+    id: "difficulty",
+    label: "Difficulty",
     description: "Bitcoin mining difficulty changes over time",
     lowerBound: 20000000000000,
     upperBound: 60000000000000,

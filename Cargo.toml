@@ -60,7 +60,7 @@ nostr = "0.40.0"
 nostr-sdk = "0.40.0"
 thiserror = "2.0.12"
 # ernest-oracle = { path = "../ernest-oracle/oracle"}
-ernest-oracle = { version = "0.1.0", git = "https://github.com/ernest-money/ernest-oracle" }
+ernest-oracle = { version = "0.1.0", git = "https://github.com/ernest-money/ernest-oracle", rev = "c1bd7d374ef0169089d25e4d671d41114c9142a8" }
 dlc-trie = "0.7.1"
 
 

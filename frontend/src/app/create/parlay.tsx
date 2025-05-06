@@ -1,6 +1,6 @@
 import { ParlayComposer } from "@/components/charts/ParlayComposer";
 import { ParlayHeatmap } from "@/components/charts/ParlayHeatmap";
-import { ParlayProvider, useParlayContext } from "@/contexts/ParlayContext";
+import { useParlayContext } from "@/contexts/ParlayContext";
 import {
   CombinationMethod,
   COMBINATION_METHODS
@@ -22,8 +22,14 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { HelpCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CreateParlayModal } from "@/components/modals/create-parlay-modal";
+import { Modal } from "@/components/modals";
+import { useModal } from "@/hooks/useModal";
 
 export const Parlay = () => {
+  const { isOpen, open, close } = useModal();
+
   const {
     parameters,
     combinationMethod,
@@ -51,7 +57,15 @@ export const Parlay = () => {
 
   return (
     <div className="container pb-8">
-      <h1 className="text-2xl font-bold mb-6">Create Parlay Contract</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Create Parlay Contract</h1>
+        <Button
+          onClick={open}
+          disabled={parameters.length === 0}
+        >
+          Create Contract
+        </Button>
+      </div>
 
       <div className="mb-8">
         <h2 className="text-xl font-medium mb-4">Heat Map Overview</h2>
@@ -196,6 +210,10 @@ export const Parlay = () => {
         <h2 className="text-xl font-medium mb-4">Contract Parameters</h2>
         <ParlayComposer />
       </div>
+
+      <Modal isOpen={isOpen} onClose={close}>
+        <CreateParlayModal />
+      </Modal>
     </div>
   );
 };
