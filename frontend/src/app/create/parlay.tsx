@@ -1,3 +1,219 @@
+import { ParlayComposer } from "@/components/charts/ParlayComposer";
+import { ParlayHeatmap } from "@/components/charts/ParlayHeatmap";
+import { useParlayContext } from "@/contexts/ParlayContext";
+import {
+  CombinationMethod,
+  COMBINATION_METHODS
+} from "@/types/chart-data-types";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from "@/components/ui/tooltip";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { HelpCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CreateParlayModal } from "@/components/modals/create-parlay-modal";
+import { Modal } from "@/components/modals";
+import { useModal } from "@/hooks/useModal";
+
 export const Parlay = () => {
-  return <div>Parlay</div>;
+  const { isOpen, open, close } = useModal();
+
+  const {
+    parameters,
+    combinationMethod,
+    totalCollateral,
+    yourCollateral,
+    counterpartyCollateral,
+    setCombinationMethod,
+    setYourCollateral,
+    setCounterpartyCollateral
+  } = useParlayContext();
+
+  const handleYourCollateralChange = (value: string) => {
+    const numValue = parseInt(value);
+    if (!isNaN(numValue) && numValue >= 0) {
+      setYourCollateral(numValue);
+    }
+  };
+
+  const handleCounterpartyCollateralChange = (value: string) => {
+    const numValue = parseInt(value);
+    if (!isNaN(numValue) && numValue >= 0) {
+      setCounterpartyCollateral(numValue);
+    }
+  };
+
+  return (
+    <div className="container pb-8">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold">Create Parlay Contract</h1>
+        <Button
+          onClick={open}
+          disabled={parameters.length === 0}
+        >
+          Create Contract
+        </Button>
+      </div>
+
+      <div className="mb-8">
+        <h2 className="text-xl font-medium mb-4">Heat Map Overview</h2>
+        <ParlayHeatmap
+          parameters={parameters}
+          combinationMethod={combinationMethod}
+          totalCollateral={totalCollateral}
+        />
+      </div>
+
+      <div className="mb-8">
+        <h2 className="text-xl font-medium mb-4">Contract Settings</h2>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="space-y-6">
+              <div>
+                <div className="flex items-center space-x-2">
+                  <Label htmlFor="combination-method">Combination Method</Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <span className="cursor-help">
+                          <HelpCircle size={14} />
+                        </span>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="max-w-xs">
+                          Determines how individual parameter values are combined into the final payout value.
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+                <Select
+                  value={combinationMethod}
+                  onValueChange={(value) => setCombinationMethod(value as CombinationMethod)}
+                >
+                  <SelectTrigger id="combination-method">
+                    <SelectValue placeholder="Select combination method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {COMBINATION_METHODS.map((method) => (
+                      <SelectItem key={method.id} value={method.id}>
+                        {method.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {COMBINATION_METHODS.find(method => method.id === combinationMethod)?.description}
+                </p>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-3">
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <Label htmlFor="your-collateral">Your Collateral (sats)</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="cursor-help">
+                            <HelpCircle size={14} />
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="max-w-xs">
+                            The amount of collateral you're offering for this contract
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  <Input
+                    id="your-collateral"
+                    type="number"
+                    value={yourCollateral}
+                    onChange={(e) => handleYourCollateralChange(e.target.value)}
+                    min={0}
+                  />
+                </div>
+
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <Label htmlFor="counterparty-collateral">Counterparty Collateral (sats)</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="cursor-help">
+                            <HelpCircle size={14} />
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="max-w-xs">
+                            The amount of collateral the counterparty must provide
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  <Input
+                    id="counterparty-collateral"
+                    type="number"
+                    value={counterpartyCollateral}
+                    onChange={(e) => handleCounterpartyCollateralChange(e.target.value)}
+                    min={0}
+                  />
+                </div>
+
+                <div>
+                  <div className="flex items-center space-x-2">
+                    <Label htmlFor="total-collateral">Total Collateral (sats)</Label>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span className="cursor-help">
+                            <HelpCircle size={14} />
+                          </span>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="max-w-xs">
+                            The total amount of collateral in the contract
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+                  <Input
+                    id="total-collateral"
+                    type="number"
+                    value={totalCollateral}
+                    readOnly
+                    className="bg-muted"
+                  />
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="mt-8">
+        <h2 className="text-xl font-medium mb-4">Contract Parameters</h2>
+        <ParlayComposer />
+      </div>
+
+      <Modal isOpen={isOpen} onClose={close}>
+        <CreateParlayModal />
+      </Modal>
+    </div>
+  );
 };

@@ -65,7 +65,7 @@ export const ProtectedLayout: React.FC<{ children: React.ReactNode }> = ({ child
             </BreadcrumbList>
           </Breadcrumb>
         </header>
-        <div className="w-full md:w-4/5 my-0 pl-6 pt-6">
+        <div className="w-full lg:w-4/5 my-0 px-6 pt-6">
           {children}
         </div>
       </SidebarInset>

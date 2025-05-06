@@ -6,7 +6,10 @@ import { InfoResponse } from '@/lib/sol/info';
 import { MarketStats } from '@/lib/sol/market';
 import { Peer } from '@/lib/sol/peers';
 import { ContractFilter } from '@/lib/sol/contracts';
+import { ParlayParameter } from '@/contexts/ParlayContext';
+import { CombinationMethod } from '@/types/chart-data-types';
 import config from '@/config';
+
 interface SendOfferBody {
   counterparty: string;
   collateral: number;
@@ -16,6 +19,20 @@ interface SendOfferBody {
 
 interface AcceptOfferBody {
   offer_id: string;
+}
+
+interface CreateParlayContractParams {
+  parlayParameters: ParlayParameter[];
+  combinationMethod: CombinationMethod;
+  eventMaturityEpoch: number;
+  counterparty: string;
+  offerCollateral: number;
+  acceptCollateral: number;
+  feeRate: number;
+}
+
+interface CreateParlayContractResponse {
+  id: string;
 }
 
 export interface SolContextType {
@@ -43,7 +60,9 @@ export interface SolContextType {
   createEnumerationContract: (params: EnumerationContractParams) => Promise<CreateEnumerationContractResponse>;
   getCounterparties: () => Promise<NostrCounterparty[]>;
   createProfile: (params: { name: string; about: string }) => Promise<void>;
+  createParlayContract: (params: CreateParlayContractParams) => Promise<CreateParlayContractResponse>;
 }
+
 interface SolProviderProps {
   children: React.ReactNode;
   baseUrl: string;
@@ -171,6 +190,10 @@ export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
     },
     createProfile: async (params: { name: string; about: string }) => {
       await instance.post('/nostr/create-profile', params);
+    },
+    createParlayContract: async (params: CreateParlayContractParams) => {
+      const { data } = await instance.post<CreateParlayContractResponse>('/create/parlay', params);
+      return data;
     },
   }), [instance]);
 

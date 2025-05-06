@@ -1905,7 +1905,7 @@ checksum = "5443807d6dff69373d433ab9ef5378ad8df50ca6298caf15de6e52e24aaf54d5"
 [[package]]
 name = "ernest-oracle"
 version = "0.1.0"
-source = "git+https://github.com/ernest-money/ernest-oracle#6536b3f72f13587d6b735cfa51714083a87ccd30"
+source = "git+https://github.com/ernest-money/ernest-oracle?rev=c1bd7d374ef0169089d25e4d671d41114c9142a8#c1bd7d374ef0169089d25e4d671d41114c9142a8"
 dependencies = [
  "anyhow",
  "async-trait",
