@@ -2,14 +2,7 @@ import { Separator } from "@radix-ui/react-separator";
 import { AppSidebar } from "../components/sidebar/app-sidebar";
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "../components/ui/breadcrumb";
-import { Button } from "../components/ui/button";
-import { Plus } from "lucide-react";
-import { Drawer, DrawerContent, DrawerTrigger } from "../components/ui/drawer";
-import { useMediaQuery } from "@/hooks";
-import { MarketChart, MarketChartType } from "../components/charts/market-chart";
-import { ScrollArea } from "../components/ui/scroll-area";
 import { Fragment } from "react/jsx-runtime";
-import { HashrateChart } from "../components/charts/hashrate";
 import { useLocation } from "@tanstack/react-router";
 
 const formatPathSegment = (segment: string): string => {

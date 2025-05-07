@@ -25,7 +25,7 @@ import { MarketPage } from './app/market/page';
 import { CounterpartiesPage } from './app/counterparties/page';
 import { FinishProfilePage } from './app/account/finish';
 import type { AuthContextType } from '@/hooks/useAuth';
-import { ProtectedLayout } from '@/layouts/layout';
+import { ProtectedLayout } from '@/layouts/protected';
 import { LoadingSpinner } from '@/components/ui/loading';
 
 // Define Router Context

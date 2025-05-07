@@ -1,4 +1,4 @@
-import { LocalOutput } from "@/types"
+import { LocalOutput } from "@/types/sol"
 
 export const UtxoModal = ({ utxo }: { utxo: LocalOutput }) => {
   return (
@@ -7,11 +7,11 @@ export const UtxoModal = ({ utxo }: { utxo: LocalOutput }) => {
       <div className="grid gap-2">
         <div>
           <label className="font-semibold">Transaction ID:</label>
-          <p className="break-all">{utxo.outpoint.txid}</p>
+          <p className="break-all">{utxo.outpoint.split(':')[0]}</p>
         </div>
         <div>
           <label className="font-semibold">Output Index:</label>
-          <p>{utxo.outpoint.vout}</p>
+          <p>{utxo.outpoint.split(':')[1]}</p>
         </div>
         <div>
           <label className="font-semibold">Keychain:</label>

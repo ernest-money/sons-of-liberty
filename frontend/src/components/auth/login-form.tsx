@@ -13,7 +13,7 @@ import { useState } from "react"
 import { useAuth, useToast } from "@/hooks"
 import { useNavigate } from "@tanstack/react-router"
 import { Loader2 } from "lucide-react"
-import { ApiErrorResponse } from "@/types"
+import { ApiErrorResponse } from "@/types/sol"
 import axios from "axios"
 
 export function LoginForm({

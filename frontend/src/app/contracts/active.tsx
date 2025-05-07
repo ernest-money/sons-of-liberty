@@ -1,6 +1,6 @@
 import { ContractList } from "@/components/contract-list"
-import { ContractFilter } from "@/lib/sol/contracts"
+import { ContractFilter } from "@/types/sol"
 
 export function ActiveContracts() {
-  return <ContractList defaultFilter={ContractFilter.Active} showFilter={false} />
+  return <ContractList defaultFilter={ContractFilter.Active} />
 }

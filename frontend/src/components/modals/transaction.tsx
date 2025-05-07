@@ -1,4 +1,4 @@
-import { Transaction } from "@/types"
+import { Transaction } from "@/types/sol"
 
 export const TransactionModal = ({ transaction }: { transaction: Transaction }) => {
   return (

@@ -20,9 +20,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { useSol, useModal } from "@/hooks";
-import { Contract } from "../types";
-import { ContractFilter } from "../lib/sol/contracts";
+import { useSol } from "@/hooks";
+import { StoredContract, ContractFilter } from "@/types/sol";
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { ContractStateBadge } from "./contract-state-badge";
@@ -54,7 +53,7 @@ function TruncatedCell({ value, className = "" }: { value: string | number, clas
 }
 
 export function ContractList({ defaultFilter = ContractFilter.All }: ContractListProps) {
-  const [contracts, setContracts] = useState<Contract[]>([]);
+  const [contracts, setContracts] = useState<StoredContract[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<ContractFilter>(defaultFilter);
   const client = useSol();
@@ -117,7 +116,7 @@ export function ContractList({ defaultFilter = ContractFilter.All }: ContractLis
             >
               <TruncatedCell value={contract.id} className="font-medium" />
               <TruncatedCell value={contract.counter_party} />
-              <TruncatedCell value={contract.total_collateral} />
+              <TruncatedCell value={contract.collateral} />
               <TruncatedCell
                 value={contract.is_offer_party ? contract.offer_collateral : contract.accept_collateral}
               />

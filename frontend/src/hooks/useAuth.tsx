@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useSol } from './useSol';
-import { LoginParams, RegisterParams } from '@/lib/sol/auth';
+import { LoginParams, RegisterParams } from '@/types/auth';
 
 export interface AuthContextType {
   isAuthenticated: boolean;

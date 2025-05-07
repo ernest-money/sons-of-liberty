@@ -14,7 +14,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useSol } from "@/hooks";
-import { Offer } from "../types";
+import { Offer } from "../types/sol";
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { ContractStateBadge } from "./contract-state-badge";
