@@ -34,7 +34,6 @@ export interface StoredContract {
   state: number;
   id: string;
   counter_party: string;
-  collateral: number;
   is_offer_party: boolean;
   offer_collateral: number;
   accept_collateral: number;

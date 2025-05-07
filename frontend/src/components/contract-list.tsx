@@ -25,6 +25,7 @@ import { StoredContract, ContractFilter } from "@/types/sol";
 import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { ContractStateBadge } from "./contract-state-badge";
+import { formatAmount } from "@/lib/utils";
 
 interface ContractListProps {
   defaultFilter?: ContractFilter;
@@ -116,11 +117,11 @@ export function ContractList({ defaultFilter = ContractFilter.All }: ContractLis
             >
               <TruncatedCell value={contract.id} className="font-medium" />
               <TruncatedCell value={contract.counter_party} />
-              <TruncatedCell value={contract.collateral} />
+              <TruncatedCell value={formatAmount(contract.offer_collateral + contract.accept_collateral)} />
               <TruncatedCell
-                value={contract.is_offer_party ? contract.offer_collateral : contract.accept_collateral}
+                value={contract.is_offer_party ? formatAmount(contract.offer_collateral) : formatAmount(contract.accept_collateral)}
               />
-              <TruncatedCell value={contract.pnl !== null ? contract.pnl : '-'} />
+              <TruncatedCell value={contract.pnl !== null ? formatAmount(contract.pnl) : '-'} />
               <TableCell>
                 <ContractStateBadge state={contract.state} />
               </TableCell>
