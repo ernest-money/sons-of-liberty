@@ -23,7 +23,6 @@ import { AccountPage } from './app/account/page';
 import { CreateContract } from './app/create/page';
 import { MarketPage } from './app/market/page';
 import { CounterpartiesPage } from './app/counterparties/page';
-import { FinishProfilePage } from './app/account/finish';
 import type { AuthContextType } from '@/hooks/useAuth';
 import { ProtectedLayout } from '@/layouts/protected';
 import { LoadingSpinner } from '@/components/ui/loading';
@@ -77,12 +76,6 @@ const authenticatedParentRoute = createRoute({
         },
         replace: true
       });
-    }
-    if (context.auth.isAuthenticated && context.auth.user && !context.auth.user.nostr_profile && location.pathname !== '/account/finish') {
-      throw redirect({
-        to: '/account/finish',
-        replace: true
-      })
     }
   },
   pendingComponent: PendingAuthentication,
@@ -188,13 +181,6 @@ export const accountRoute = createRoute({
   component: AccountPage,
 });
 
-// Add the finish profile route
-const finishProfileRoute = createRoute({
-  getParentRoute: () => authenticatedParentRoute,
-  path: '/account/finish',
-  component: FinishProfilePage,
-});
-
 const NotFoundPage = () => {
   return <div>Not Found</div>;
 };
@@ -226,7 +212,6 @@ const routeTree = rootRoute.addChildren([
     transactionsRoute,
     utxosRoute,
     accountRoute,
-    finishProfileRoute,
   ]),
   notFoundRoute,
 ]);

@@ -6,9 +6,11 @@ export interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
   user: { id: string; email: string, name: string, nostr_profile: string | null } | null;
+  hasFinishedProfile: boolean;
   login: (params: LoginParams) => Promise<void>;
   register: (params: RegisterParams) => Promise<void>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -118,15 +120,27 @@ export const AuthProvider: React.FC<{
     }
   };
 
+  // Add a function to refresh the user
+  const refreshUser = async () => {
+    try {
+      const currentUser = await sol.current();
+      setUser(currentUser);
+    } catch (error) {
+      console.error('Error refreshing user data:', error);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
         isAuthenticated,
-        isLoading, // This isLoading state is now crucial
+        isLoading,
         user,
+        hasFinishedProfile: user?.nostr_profile !== null,
         login,
         register,
         logout,
+        refreshUser,
       }}
     >
       {children}

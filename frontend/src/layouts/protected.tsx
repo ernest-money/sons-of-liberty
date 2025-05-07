@@ -4,6 +4,9 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/s
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "../components/ui/breadcrumb";
 import { Fragment } from "react/jsx-runtime";
 import { useLocation } from "@tanstack/react-router";
+import { useAuth } from "@/hooks/useAuth";
+import { useState, useEffect } from "react";
+import { FinishProfileModal } from "@/components/modals";
 
 const formatPathSegment = (segment: string): string => {
   return segment
@@ -26,42 +29,64 @@ const getBreadcrumbItems = (pathname: string) => {
 export const ProtectedLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
   const breadcrumbItems = getBreadcrumbItems(location.pathname);
+  const { hasFinishedProfile } = useAuth();
+  const [showProfileModal, setShowProfileModal] = useState(!hasFinishedProfile);
+
+  // Update modal visibility if auth state changes
+  useEffect(() => {
+    setShowProfileModal(!hasFinishedProfile);
+  }, [hasFinishedProfile]);
+
+  const handleCloseModal = () => {
+    // Allow closing only if profile is finished
+    if (hasFinishedProfile) {
+      setShowProfileModal(false);
+    }
+  };
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-          <SidebarTrigger className="-ml-1" />
-          <Separator orientation="vertical" className="mr-2 h-4" />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem className="hidden md:block">
-                <BreadcrumbLink href="/">
-                  Ernest Money
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              {breadcrumbItems.map((item, index) => (
-                <Fragment key={item.path}>
-                  <BreadcrumbSeparator className="hidden md:block" />
-                  <BreadcrumbItem>
-                    {index === breadcrumbItems.length - 1 ? (
-                      <BreadcrumbPage>{item.text}</BreadcrumbPage>
-                    ) : (
-                      <BreadcrumbLink href={item.path}>
-                        {item.text}
-                      </BreadcrumbLink>
-                    )}
-                  </BreadcrumbItem>
-                </Fragment>
-              ))}
-            </BreadcrumbList>
-          </Breadcrumb>
-        </header>
-        <div className="w-full lg:w-4/5 my-0 px-6 pt-6">
-          {children}
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+    <>
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 h-4" />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink href="/">
+                    Ernest Money
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                {breadcrumbItems.map((item, index) => (
+                  <Fragment key={item.path}>
+                    <BreadcrumbSeparator className="hidden md:block" />
+                    <BreadcrumbItem>
+                      {index === breadcrumbItems.length - 1 ? (
+                        <BreadcrumbPage>{item.text}</BreadcrumbPage>
+                      ) : (
+                        <BreadcrumbLink href={item.path}>
+                          {item.text}
+                        </BreadcrumbLink>
+                      )}
+                    </BreadcrumbItem>
+                  </Fragment>
+                ))}
+              </BreadcrumbList>
+            </Breadcrumb>
+          </header>
+          <div className="w-full lg:w-4/5 my-0 px-6 pt-6">
+            {children}
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+
+      <FinishProfileModal
+        isOpen={showProfileModal}
+        onClose={handleCloseModal}
+        onSuccess={() => setShowProfileModal(false)}
+      />
+    </>
   );
 };
