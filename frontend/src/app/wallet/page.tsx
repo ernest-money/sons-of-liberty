@@ -33,30 +33,14 @@ export function WalletSection() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Wallet Balance History</CardTitle>
+          <CardTitle>Balance History</CardTitle>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="sats">
-            <TabsList>
-              <TabsTrigger value="sats">BTC</TabsTrigger>
-              <TabsTrigger value="usd">USD</TabsTrigger>
-            </TabsList>
-            <TabsContent value="sats">
-              <BalanceChart
-                title="Bitcoin Balance"
-                metricType={BalanceMetricType.WalletBalanceSats}
-                height="350px"
-              />
-            </TabsContent>
-            <TabsContent value="usd">
-              <BalanceChart
-                title="Bitcoin Balance (USD)"
-                metricType={BalanceMetricType.WalletBalanceUsd}
-                height="350px"
-                showUsd={false}
-              />
-            </TabsContent>
-          </Tabs>
+          <BalanceChart
+            title="Balance History"
+            initialMetricType="wallet"
+            height="350px"
+          />
         </CardContent>
       </Card>
 

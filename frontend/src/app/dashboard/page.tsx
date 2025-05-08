@@ -30,7 +30,7 @@ export const Dashboard: React.FC = () => {
             <BalanceCard title="Contract Balance" amount={balance.contract} percentage={10} />
           </div>
         </div>
-        <BalanceChart title='Profit & Loss' metricType={BalanceMetricType.PnlSats} />
+        <BalanceChart title='Profit & Loss' initialMetricType="pnl" />
         <ContractList />
       </div>
     </div>
