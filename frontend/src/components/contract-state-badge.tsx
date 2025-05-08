@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge"
-import { convertState } from "@/types"
+import { convertState } from "@/types/sol"
 
 interface ContractStateBadgeProps {
   state: number;

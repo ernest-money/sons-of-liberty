@@ -1,4 +1,4 @@
-import { SolBalanceType } from "@/types";
+import { SolBalanceType } from "@/types/sol";
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 

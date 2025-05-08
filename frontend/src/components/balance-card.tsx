@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { formatAmount } from "@/lib/utils"
-import { SolBalanceType } from "@/types"
+import { SolBalanceType } from "@/types/sol"
 
 interface RevenueCardProps {
   title: string

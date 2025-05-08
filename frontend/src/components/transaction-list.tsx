@@ -14,7 +14,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useSol, useModal } from "@/hooks";
-import { Transaction } from "@/types";
+import { Transaction } from "@/types/sol";
 import { useEffect, useState } from "react";
 import { Modal, TransactionModal } from "@/components/modals";
 

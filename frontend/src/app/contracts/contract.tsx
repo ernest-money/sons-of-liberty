@@ -2,13 +2,13 @@ import { contractRoute } from "@/router"
 import { useParams } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
 import { useSol } from "@/hooks"
-import { Contract } from "@/types"
+import { StoredContract } from "@/types/sol"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ContractDetails } from "@/components/contract-details"
 
 export function ContractPage() {
   const { contractId } = useParams({ from: contractRoute.id })
-  const [contract, setContract] = useState<Contract | null>(null)
+  const [contract, setContract] = useState<StoredContract | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const client = useSol()

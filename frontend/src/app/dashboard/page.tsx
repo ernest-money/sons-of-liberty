@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth, useSol } from '@/hooks';
 import { BalanceCard } from '@/components/balance-card';
-import { BalanceMetricType, SolBalance, defaultBalance } from '@/types';
+import { SolBalance, defaultBalance } from '@/types/sol';
 import { ContractList } from '@/components/contract-list';
 import { BalanceChart } from '@/components/charts/balance-chart';
 

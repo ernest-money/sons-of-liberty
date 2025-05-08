@@ -1,22 +1,6 @@
 import { createContext, useContext, useReducer, ReactNode } from 'react';
-import { ChartDataType, TransformationFunction, CombinationMethod } from '@/types/chart-data-types';
-
-export interface ParlayParameter {
-  dataType: ChartDataType;
-  threshold: number;
-  range: number;
-  isAboveThreshold: boolean;
-  transformation: TransformationFunction;
-  weight: number;
-}
-
-interface ParlayState {
-  parameters: ParlayParameter[];
-  combinationMethod: CombinationMethod;
-  totalCollateral: number;
-  yourCollateral: number;
-  counterpartyCollateral: number;
-}
+import { CombinationMethod } from '@/types/chart-data-types';
+import { ParlayParameter, ParlayState } from '@/types/sol';
 
 type ParlayAction =
   | { type: 'ADD_PARAMETER'; parameter: ParlayParameter }
@@ -126,10 +110,10 @@ export const ParlayProvider = ({ children }: { children: ReactNode }) => {
   return <ParlayContext.Provider value={value}>{children}</ParlayContext.Provider>;
 };
 
-export const useParlayContext = () => {
+export const useParlay = () => {
   const context = useContext(ParlayContext);
   if (context === undefined) {
-    throw new Error('useParlayContext must be used within a ParlayProvider');
+    throw new Error('useParlay must be used within a ParlayProvider');
   }
   return context;
 }; 

@@ -1,6 +1,6 @@
 import { ParlayComposer } from "@/components/charts/ParlayComposer";
 import { ParlayHeatmap } from "@/components/charts/ParlayHeatmap";
-import { useParlayContext } from "@/contexts/ParlayContext";
+import { useParlay } from "@/hooks/useParlay";
 import {
   CombinationMethod,
   COMBINATION_METHODS
@@ -39,7 +39,7 @@ export const Parlay = () => {
     setCombinationMethod,
     setYourCollateral,
     setCounterpartyCollateral
-  } = useParlayContext();
+  } = useParlay();
 
   const handleYourCollateralChange = (value: string) => {
     const numValue = parseInt(value);

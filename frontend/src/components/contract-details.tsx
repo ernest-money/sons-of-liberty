@@ -1,14 +1,11 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { ContractStateBadge } from "@/components/contract-state-badge"
-import { Contract } from "@/types"
-
-function formatSats(sats: number): string {
-  return sats.toLocaleString() + " sats";
-}
+import { StoredContract } from "@/types/sol"
+import { formatAmount } from "@/lib/utils"
 
 interface ContractDetailsProps {
-  contract: Contract;
+  contract: StoredContract;
   title: string;
   description: string;
 }
@@ -66,18 +63,18 @@ export function ContractDetails({ contract, title, description }: ContractDetail
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 <p className="text-sm font-medium text-muted-foreground">Total Collateral</p>
-                <p className="font-medium">{formatSats(contract.total_collateral)}</p>
+                <p className="font-medium">{formatAmount(contract.accept_collateral + contract.offer_collateral)}</p>
               </div>
               <div className="space-y-2">
                 <p className="text-sm font-medium text-muted-foreground">Your Collateral</p>
                 <p className="font-medium">
-                  {formatSats(contract.is_offer_party ? contract.offer_collateral : contract.accept_collateral)}
+                  {formatAmount(contract.is_offer_party ? contract.offer_collateral : contract.accept_collateral)}
                 </p>
               </div>
               <div className="space-y-2">
                 <p className="text-sm font-medium text-muted-foreground">Counterparty Collateral</p>
                 <p className="font-medium">
-                  {formatSats(contract.is_offer_party ? contract.accept_collateral : contract.offer_collateral)}
+                  {formatAmount(contract.is_offer_party ? contract.accept_collateral : contract.offer_collateral)}
                 </p>
               </div>
             </CardContent>
@@ -116,9 +113,8 @@ export function ContractDetails({ contract, title, description }: ContractDetail
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              <p className="text-sm font-medium text-muted-foreground">Current PnL</p>
               <p className={`font-medium ${contract.pnl !== null ? (contract.pnl >= 0 ? 'text-green-500' : 'text-red-500') : ''}`}>
-                {contract.pnl !== null ? formatSats(contract.pnl) : 'Not available'}
+                {contract.pnl !== null ? formatAmount(contract.pnl) : 'Not available'}
               </p>
             </div>
           </CardContent>

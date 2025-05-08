@@ -1,7 +1,6 @@
 import { BalanceChart } from "@/components/charts/balance-chart"
 import { ContractList } from "@/components/contract-list"
-import { ContractFilter } from "@/lib/sol/contracts"
-import { BalanceMetricType } from "@/types"
+import { ContractFilter } from "@/types/sol"
 
 export function Contracts() {
   return (

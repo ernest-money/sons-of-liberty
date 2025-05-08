@@ -2,7 +2,7 @@ import { useSol } from '@/hooks';
 import { offerRoute, contractRoute } from '@/router';
 import { useParams, useNavigate } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
-import { Offer } from '@/types';
+import { Offer } from '@/types/sol';
 import { Skeleton } from "@/components/ui/skeleton";
 import { ContractDetails } from "@/components/contract-details";
 import { Button } from "@/components/ui/button";
