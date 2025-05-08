@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo, useState, FC, useEffect } from 'react';
 import axios from 'axios';
-import { SolBalance, Contract, EnumerationContractParams, CreateEnumerationContractResponse, NostrCounterparty } from '@/types';
+import { SolBalance, Contract, EnumerationContractParams, CreateEnumerationContractResponse, NostrCounterparty, TimePeriod, BalanceHistory } from '@/types';
 import { ForgotParams, LoginParams, LoginResponse, MagicLinkParams, RegisterParams, ResetParams } from '@/lib/sol/auth';
 import { InfoResponse } from '@/lib/sol/info';
 import { MarketStats } from '@/lib/sol/market';
@@ -54,6 +54,7 @@ export interface SolContextType {
   getTransactions: () => Promise<any>;
   getUtxos: () => Promise<any>;
   getBalance: () => Promise<SolBalance>;
+  getBalanceHistory: (timePeriod: TimePeriod, referenceDate?: Date) => Promise<BalanceHistory[]>;
   getContracts: (filter?: ContractFilter) => Promise<Contract[]>;
   getContract: (id: string) => Promise<Contract>;
   getMarketStats: () => Promise<MarketStats[]>;
@@ -166,6 +167,15 @@ export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
     },
     getBalance: async () => {
       const { data } = await instance.get<SolBalance>('/balance');
+      return data;
+    },
+    getBalanceHistory: async (timePeriod: TimePeriod, referenceDate?: Date) => {
+      const params = new URLSearchParams();
+      params.append('time_period', timePeriod);
+      if (referenceDate) {
+        params.append('reference_date', referenceDate.toISOString());
+      }
+      const { data } = await instance.get<BalanceHistory[]>(`/balance/history?${params.toString()}`);
       return data;
     },
     getContracts: async (filter?: ContractFilter) => {

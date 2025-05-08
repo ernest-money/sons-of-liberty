@@ -135,3 +135,26 @@ export interface ApiErrorResponse {
   error: string;
   description: string;
 }
+
+export enum TimePeriod {
+  Day = "24h",
+  Week = "1w",
+  Month = "1m",
+  Year = "1y",
+}
+
+export interface BalanceHistory {
+  created_at: string;
+  updated_at: string;
+  id: number;
+  bitcoin_balance_sats: number;
+  bitcoin_balance_usd: number;
+  bitcoin_price: number;
+  contract_balance_sats: number;
+  contract_balance_usd: number;
+  pnl_sats: number;
+  pnl_usd: number;
+  num_contracts: number;
+  name: string;
+  network: string;
+}
