@@ -4,6 +4,9 @@ psql:
 freshdb:
   - cargo loco task freshdb all:true
 
+scheduler:
+  - cargo loco scheduler --config config/scheduler.development.yaml -e development --tag sol
+
 dev:
   - ESPLORA_HOST=http://electrs:30000 DATABASE_URL=postgres://loco:loco@postgres-sol:5432/sons-of-liberty_development docker compose -f docker/docker-compose.yaml --profile development up -d
 
