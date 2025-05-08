@@ -143,6 +143,15 @@ export enum TimePeriod {
   Year = "1y",
 }
 
+export enum BalanceMetricType {
+  WalletBalanceSats = "bitcoin_balance_sats",
+  WalletBalanceUsd = "bitcoin_balance_usd",
+  ContractBalanceSats = "contract_balance_sats",
+  ContractBalanceUsd = "contract_balance_usd",
+  PnlSats = "pnl_sats",
+  PnlUsd = "pnl_usd",
+}
+
 export interface BalanceHistory {
   created_at: string;
   updated_at: string;

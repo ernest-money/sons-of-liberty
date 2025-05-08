@@ -7,8 +7,9 @@ import { useSol, useToast } from "@/hooks"
 import { useEffect, useState } from "react"
 import { Copy } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip"
-import { SolBalance, defaultBalance } from "@/types"
+import { BalanceMetricType, SolBalance, defaultBalance } from "@/types"
 import { BalanceCard } from "../../components/balance-card"
+import { BalanceChart } from "@/components/charts/balance-chart"
 
 export function WalletSection() {
   const [balance, setBalance] = useState<SolBalance>(defaultBalance)
@@ -29,6 +30,36 @@ export function WalletSection() {
         <BalanceCard title="Wallet Balance" amount={balance.confirmed} percentage={10} />
         <GenerateAddressCard />
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Wallet Balance History</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="sats">
+            <TabsList>
+              <TabsTrigger value="sats">BTC</TabsTrigger>
+              <TabsTrigger value="usd">USD</TabsTrigger>
+            </TabsList>
+            <TabsContent value="sats">
+              <BalanceChart
+                title="Bitcoin Balance"
+                metricType={BalanceMetricType.WalletBalanceSats}
+                height="350px"
+              />
+            </TabsContent>
+            <TabsContent value="usd">
+              <BalanceChart
+                title="Bitcoin Balance (USD)"
+                metricType={BalanceMetricType.WalletBalanceUsd}
+                height="350px"
+                showUsd={false}
+              />
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle>Wallet Details</CardTitle>

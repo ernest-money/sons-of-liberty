@@ -3,7 +3,7 @@ import { ChartConfig, ChartContainer } from "@/components/ui/chart"
 import { format } from "date-fns"
 import { useState, useEffect, useMemo } from "react"
 import { useSol } from "@/hooks/useSol"
-import { BalanceHistory, SolBalanceType, TimePeriod } from "@/types"
+import { BalanceHistory, BalanceMetricType, SolBalanceType, TimePeriod } from "@/types"
 import { formatAmount } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Calendar } from "@/components/ui/calendar"
@@ -11,14 +11,16 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { CalendarIcon, RefreshCcw } from "lucide-react"
 
-interface PnLProps {
+interface BalanceChartProps {
   title: string
+  metricType: BalanceMetricType
   height?: string
+  showUsd?: boolean
 }
 
 const chartConfig = {
   value: {
-    label: "Profit & Loss",
+    label: "Balance",
     color: "white",
   },
 } satisfies ChartConfig;
@@ -32,13 +34,24 @@ const TIME_PERIOD_LABELS = {
   [TimePeriod.Year]: "1 year",
 };
 
-export function Pnl({ title, height }: PnLProps) {
+// Labels for different metric types
+const METRIC_LABELS = {
+  [BalanceMetricType.WalletBalanceSats]: "Wallet Balance (sats)",
+  [BalanceMetricType.WalletBalanceUsd]: "Wallet Balance (USD)",
+  [BalanceMetricType.ContractBalanceSats]: "Contract Balance (sats)",
+  [BalanceMetricType.ContractBalanceUsd]: "Contract Balance (USD)",
+  [BalanceMetricType.PnlSats]: "Profit & Loss (sats)",
+  [BalanceMetricType.PnlUsd]: "Profit & Loss (USD)",
+};
+
+export function BalanceChart({ title, metricType, height, showUsd = true }: BalanceChartProps) {
   const [timePeriod, setTimePeriod] = useState<TimePeriod>(TimePeriod.Month);
   const [date, setDate] = useState<Date | undefined>(DEFAULT_DATE);
   const [history, setHistory] = useState<BalanceHistory[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [percentage, setPercentage] = useState(0);
-  const [latestPnl, setLatestPnl] = useState<SolBalanceType>({ sats: 0, btc: 0 });
+  const [latestValue, setLatestValue] = useState<number>(0);
+  const [latestBtcValue, setLatestBtcValue] = useState<number>(0);
 
   const sol = useSol();
 
@@ -49,17 +62,22 @@ export function Pnl({ title, height }: PnLProps) {
       setHistory(data);
 
       if (data.length > 0) {
-        // Set the latest PnL from the most recent data point
+        // Set the latest value from the most recent data point
         const latest = data[data.length - 1];
-        setLatestPnl({
-          sats: latest.pnl_sats,
-          btc: latest.pnl_sats / 100000000 // Convert sats to BTC
-        });
+        const value = Number(latest[metricType] as unknown);
+        setLatestValue(value);
+
+        // For sats values, calculate BTC equivalent
+        if (metricType === BalanceMetricType.WalletBalanceSats ||
+          metricType === BalanceMetricType.ContractBalanceSats ||
+          metricType === BalanceMetricType.PnlSats) {
+          setLatestBtcValue(value / 100000000);
+        }
 
         // Calculate percentage change if there are at least 2 data points
         if (data.length > 1) {
-          const firstValue = data[0].pnl_sats;
-          const lastValue = data[data.length - 1].pnl_sats;
+          const firstValue = Number(data[0][metricType] as unknown);
+          const lastValue = Number(data[data.length - 1][metricType] as unknown);
 
           if (firstValue !== 0) {
             const percentChange = ((lastValue - firstValue) / Math.abs(firstValue)) * 100;
@@ -78,31 +96,40 @@ export function Pnl({ title, height }: PnLProps) {
 
   useEffect(() => {
     fetchBalanceHistory();
-  }, [timePeriod, date]);
+  }, [timePeriod, date, metricType]);
 
   const resetToCurrentDate = () => {
     setDate(new Date());
   };
 
-  const chartData = history.map((item) => ({
-    timestamp: item.created_at,
-    value: item.pnl_sats,
-    btcValue: item.pnl_sats / 100000000, // Convert sats to BTC
-    usdValue: parseFloat(item.pnl_usd.toString()),
-    btcPrice: parseFloat(item.bitcoin_price.toString()),
-    bitcoinBalance: {
-      sats: item.bitcoin_balance_sats,
-      btc: item.bitcoin_balance_sats / 100000000,
-      usd: parseFloat(item.bitcoin_balance_usd.toString())
-    },
-    contractBalance: {
-      sats: item.contract_balance_sats,
-      btc: item.contract_balance_sats / 100000000,
-      usd: parseFloat(item.contract_balance_usd.toString())
-    },
-    numContracts: item.num_contracts,
-    networkName: item.name
-  }));
+  const chartData = history.map((item) => {
+    const value = Number(item[metricType] as unknown);
+
+    return {
+      timestamp: item.created_at,
+      value,
+      // Only calculate BTC value for SATS metrics
+      btcValue: metricType.includes('sats') ? value / 100000000 : undefined,
+      btcPrice: Number(item.bitcoin_price),
+      bitcoinBalance: {
+        sats: Number(item.bitcoin_balance_sats),
+        btc: Number(item.bitcoin_balance_sats) / 100000000,
+        usd: Number(item.bitcoin_balance_usd)
+      },
+      contractBalance: {
+        sats: Number(item.contract_balance_sats),
+        btc: Number(item.contract_balance_sats) / 100000000,
+        usd: Number(item.contract_balance_usd)
+      },
+      pnl: {
+        sats: Number(item.pnl_sats),
+        btc: Number(item.pnl_sats) / 100000000,
+        usd: Number(item.pnl_usd)
+      },
+      numContracts: Number(item.num_contracts),
+      networkName: item.name
+    };
+  });
 
   // Determine Y-axis domain based on data values
   const yAxisDomain = useMemo(() => {
@@ -127,6 +154,17 @@ export function Pnl({ title, height }: PnLProps) {
     }
   };
 
+  // Format the latest value for display
+  const formatLatestValue = () => {
+    if (metricType.includes('usd')) {
+      return `$${Number(latestValue).toFixed(2)}`;
+    } else if (metricType.includes('sats')) {
+      const btcAmount = { sats: Number(latestValue), btc: Number(latestBtcValue) };
+      return formatAmount(btcAmount);
+    }
+    return String(latestValue);
+  };
+
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
@@ -134,18 +172,44 @@ export function Pnl({ title, height }: PnLProps) {
         <div className="bg-black border border-gray-800 p-3 rounded">
           <p className="text-sm">{format(new Date(data.timestamp), "PPpp")}</p>
           <p className="text-sm font-bold text-white">
-            {formatAmount({ sats: data.value, btc: data.btcValue })}
+            {metricType.includes('usd')
+              ? `$${Number(data.value).toFixed(2)}`
+              : metricType.includes('sats') && data.btcValue !== undefined
+                ? formatAmount({ sats: Number(data.value), btc: data.btcValue })
+                : String(data.value)
+            }
           </p>
-          <p className="text-xs text-gray-400">${data.usdValue.toFixed(2)} USD</p>
-          <p className="text-xs text-gray-400">BTC: ${data.btcPrice.toFixed(2)}</p>
+          {metricType.includes('sats') && showUsd && (
+            <p className="text-xs text-gray-400">
+              ${Number(metricType === BalanceMetricType.WalletBalanceSats
+                ? data.bitcoinBalance.usd
+                : metricType === BalanceMetricType.ContractBalanceSats
+                  ? data.contractBalance.usd
+                  : data.pnl.usd).toFixed(2)} USD
+            </p>
+          )}
+          <p className="text-xs text-gray-400">BTC: ${Number(data.btcPrice).toFixed(2)}</p>
           <div className="border-t border-gray-800 mt-2 pt-2">
             <p className="text-xs">
-              <span className="text-gray-400">Bitcoin Balance:</span> {formatAmount(data.bitcoinBalance)}
-              <span className="text-gray-400 ml-1">(${data.bitcoinBalance.usd.toFixed(2)})</span>
+              <span className="text-gray-400">Bitcoin Balance:</span> {formatAmount({
+                sats: Number(data.bitcoinBalance.sats),
+                btc: Number(data.bitcoinBalance.btc)
+              })}
+              <span className="text-gray-400 ml-1">(${Number(data.bitcoinBalance.usd).toFixed(2)})</span>
             </p>
             <p className="text-xs">
-              <span className="text-gray-400">Contract Balance:</span> {formatAmount(data.contractBalance)}
-              <span className="text-gray-400 ml-1">(${data.contractBalance.usd.toFixed(2)})</span>
+              <span className="text-gray-400">Contract Balance:</span> {formatAmount({
+                sats: Number(data.contractBalance.sats),
+                btc: Number(data.contractBalance.btc)
+              })}
+              <span className="text-gray-400 ml-1">(${Number(data.contractBalance.usd).toFixed(2)})</span>
+            </p>
+            <p className="text-xs">
+              <span className="text-gray-400">PnL:</span> {formatAmount({
+                sats: Number(data.pnl.sats),
+                btc: Number(data.pnl.btc)
+              })}
+              <span className="text-gray-400 ml-1">(${Number(data.pnl.usd).toFixed(2)})</span>
             </p>
             <p className="text-xs">
               <span className="text-gray-400">Contracts:</span> {data.numContracts}
@@ -165,7 +229,7 @@ export function Pnl({ title, height }: PnLProps) {
       <div className="flex justify-between items-center mb-4">
         <div>
           <p className="text-sm font-medium leading-none">{title}</p>
-          <p className="text-4xl font-bold">{formatAmount(latestPnl)}</p>
+          <p className="text-4xl font-bold">{formatLatestValue()}</p>
           <p className={`text-sm ${percentage >= 0 ? "text-green-500" : "text-red-500"}`}>
             {percentage >= 0 ? "+" : ""}
             {percentage}% from {TIME_PERIOD_LABELS[timePeriod]} ago
@@ -218,7 +282,13 @@ export function Pnl({ title, height }: PnLProps) {
         {isLoading ? (
           <div className="flex items-center justify-center h-full">Loading...</div>
         ) : history.length > 0 ? (
-          <ChartContainer config={chartConfig} className="w-full h-full">
+          <ChartContainer config={{
+            ...chartConfig,
+            value: {
+              ...chartConfig.value,
+              label: METRIC_LABELS[metricType] || "Balance"
+            }
+          }} className="w-full h-full">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
                 <XAxis
@@ -252,5 +322,4 @@ export function Pnl({ title, height }: PnLProps) {
       </div>
     </div>
   )
-}
-
+} 
