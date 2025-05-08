@@ -1,5 +1,5 @@
 import { ContractList } from "@/components/contract-list"
-import { ContractFilter } from "@/lib/sol/contracts"
+import { ContractFilter } from "@/types/sol"
 
 export function Contracts() {
   return <ContractList defaultFilter={ContractFilter.All} />

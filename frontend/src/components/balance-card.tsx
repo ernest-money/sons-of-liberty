@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card"
 import { formatAmount } from "@/lib/utils"
-import { SolBalanceType } from "@/types"
+import { SolBalanceType } from "@/types/sol"
 
 interface RevenueCardProps {
   title: string
@@ -20,7 +20,7 @@ export function BalanceCard({ title, amount, percentage, className }: RevenueCar
       <CardContent className="p-6">
         <div className={`space-y-2`}>
           <p className="text-sm font-medium leading-none">{title}</p>
-          <p className="text-4xl font-bold">{formatAmount(amount)}</p>
+          <p className="text-4xl font-bold">{formatAmount(amount.sats)}</p>
           <p className={`text-sm ${isPositive ? "text-green-500" : "text-red-500"}`}>
             {isPositive ? "+" : ""}
             {percentage}% from last month

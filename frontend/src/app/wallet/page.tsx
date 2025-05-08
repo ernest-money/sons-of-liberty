@@ -7,7 +7,7 @@ import { useSol, useToast } from "@/hooks"
 import { useEffect, useState } from "react"
 import { Copy } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip"
-import { SolBalance, defaultBalance } from "@/types"
+import { SolBalance, defaultBalance } from "@/types/sol"
 import { BalanceCard } from "../../components/balance-card"
 
 export function WalletSection() {

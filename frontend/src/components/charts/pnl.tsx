@@ -1,6 +1,6 @@
 import { Line, LineChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
 import { ChartConfig, ChartContainer } from "@/components/ui/chart"
-import { SolBalanceType } from "@/types"
+import { SolBalanceType } from "@/types/sol"
 import { formatAmount } from "@/lib/utils"
 
 interface RevenueCardProps {
@@ -24,7 +24,7 @@ export function Pnl({ title, amount, percentage, data, height }: RevenueCardProp
     <div className="py-4">
       <div className="mb-2">
         <p className="text-sm font-medium leading-none">{title}</p>
-        <p className="text-4xl font-bold">{formatAmount(amount)}</p>
+        <p className="text-4xl font-bold">{formatAmount(amount.sats)}</p>
         <p className={`text-sm ${percentage >= 0 ? "text-green-500" : "text-red-500"}`}>
           {percentage >= 0 ? "+" : ""}
           {percentage}% from last month

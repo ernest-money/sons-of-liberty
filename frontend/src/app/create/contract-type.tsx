@@ -3,7 +3,7 @@ import { createContractTypeRoute } from '@/router';
 import { Parlay } from './parlay';
 import { PriceFeed } from './price-feed';
 import { Enumeration } from './enumeration';
-import { ParlayProvider } from '@/contexts/ParlayContext';
+import { ParlayProvider } from '@/hooks/useParlay';
 
 export const CreateContractType: React.FC = () => {
   const { contractType } = useParams({ from: createContractTypeRoute.id });

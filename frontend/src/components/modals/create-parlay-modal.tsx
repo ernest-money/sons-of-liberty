@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useSol } from "@/hooks/useSol";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { useParlayContext } from "@/contexts/ParlayContext";
+import { useParlay } from "@/hooks/useParlay";
 import { CounterpartySelect } from "@/components/counterparty-select";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Button } from "@/components/ui/button";
@@ -30,7 +30,7 @@ export const CreateParlayModal = () => {
     totalCollateral,
     yourCollateral,
     counterpartyCollateral,
-  } = useParlayContext();
+  } = useParlay();
 
   const validateForm = (): string | null => {
     if (!counterparty) return "Counterparty is required";

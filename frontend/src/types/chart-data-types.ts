@@ -10,6 +10,7 @@ export interface ChartDataTypeInfo {
   unit: string;
 }
 
+// TODO: figure out correct ranges and defaults
 export const CHART_DATA_TYPES: ChartDataTypeInfo[] = [
   {
     id: "price",

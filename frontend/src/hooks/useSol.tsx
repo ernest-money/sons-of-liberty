@@ -1,39 +1,9 @@
-import React, { createContext, useContext, useMemo, useState, FC, useEffect } from 'react';
+import { createContext, useContext, useMemo, FC } from 'react';
 import axios from 'axios';
-import { SolBalance, Contract, EnumerationContractParams, CreateEnumerationContractResponse, NostrCounterparty } from '@/types';
-import { ForgotParams, LoginParams, LoginResponse, MagicLinkParams, RegisterParams, ResetParams } from '@/lib/sol/auth';
-import { InfoResponse } from '@/lib/sol/info';
-import { MarketStats } from '@/lib/sol/market';
-import { Peer } from '@/lib/sol/peers';
-import { ContractFilter } from '@/lib/sol/contracts';
-import { ParlayParameter } from '@/contexts/ParlayContext';
-import { CombinationMethod } from '@/types/chart-data-types';
-import config from '@/config';
-
-interface SendOfferBody {
-  counterparty: string;
-  collateral: number;
-  offer_amount: number;
-  event_ids: string[];
-}
-
-interface AcceptOfferBody {
-  offer_id: string;
-}
-
-interface CreateParlayContractParams {
-  parlayParameters: ParlayParameter[];
-  combinationMethod: CombinationMethod;
-  eventMaturityEpoch: number;
-  counterparty: string;
-  offerCollateral: number;
-  acceptCollateral: number;
-  feeRate: number;
-}
-
-interface CreateParlayContractResponse {
-  id: string;
-}
+import { SolBalance, StoredContract, EnumerationContractParams, CreateEnumerationContractResponse, NostrCounterparty, CreateParlayContractResponse, InfoResponse, MarketStats, Peer, Transaction, LocalOutput } from '@/types/sol';
+import { ForgotParams, LoginParams, LoginResponse, MagicLinkParams, RegisterParams, ResetParams } from '@/types/auth';
+import config from '@/lib/config';
+import { SendOfferBody, AcceptOfferBody, CreateParlayContractParams, ContractFilter } from '@/types/sol';
 
 export interface SolContextType {
   register: (params: RegisterParams) => Promise<void>;
@@ -51,11 +21,11 @@ export interface SolContextType {
   sendOffer: (body: SendOfferBody) => Promise<any>;
   acceptOffer: (body: AcceptOfferBody) => Promise<any>;
   getNewAddress: () => Promise<{ address: string }>;
-  getTransactions: () => Promise<any>;
-  getUtxos: () => Promise<any>;
+  getTransactions: () => Promise<Transaction[]>;
+  getUtxos: () => Promise<LocalOutput[]>;
   getBalance: () => Promise<SolBalance>;
-  getContracts: (filter?: ContractFilter) => Promise<Contract[]>;
-  getContract: (id: string) => Promise<Contract>;
+  getContracts: (filter?: ContractFilter) => Promise<StoredContract[]>;
+  getContract: (id: string) => Promise<StoredContract>;
   getMarketStats: () => Promise<MarketStats[]>;
   createEnumerationContract: (params: EnumerationContractParams) => Promise<CreateEnumerationContractResponse>;
   getCounterparties: () => Promise<NostrCounterparty[]>;
@@ -65,7 +35,6 @@ export interface SolContextType {
 
 interface SolProviderProps {
   children: React.ReactNode;
-  baseUrl: string;
 }
 
 const SolContext = createContext<SolContextType | null>(null);
@@ -78,7 +47,7 @@ export const useSol = () => {
   return context;
 };
 
-export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
+export const SolProvider: FC<SolProviderProps> = ({ children }) => {
   const instance = useMemo(() => {
     const axiosInstance = axios.create({
       baseURL: config.apiBaseUrl,
@@ -96,7 +65,7 @@ export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
     );
 
     return axiosInstance;
-  }, [baseUrl]);
+  }, []);
 
 
   const value: SolContextType = useMemo(() => ({
@@ -169,11 +138,11 @@ export const SolProvider: FC<SolProviderProps> = ({ children, baseUrl }) => {
       return data;
     },
     getContracts: async (filter?: ContractFilter) => {
-      const { data } = await instance.get<Contract[]>(`/contracts?filter=${filter}`);
+      const { data } = await instance.get<StoredContract[]>(`/contracts?filter=${filter}`);
       return data;
     },
     getContract: async (id: string) => {
-      const { data } = await instance.get<Contract>(`/contracts?id=${id}`);
+      const { data } = await instance.get<StoredContract>(`/contracts?id=${id}`);
       return data;
     },
     getMarketStats: async () => {

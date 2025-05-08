@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSol } from "@/hooks/useSol";
-import { NostrCounterparty } from "@/types";
+import { NostrCounterparty } from "@/types/sol";
 import {
   Command,
   CommandEmpty,

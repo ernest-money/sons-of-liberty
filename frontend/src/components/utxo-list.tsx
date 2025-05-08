@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useSol, useModal } from "@/hooks";
-import { LocalOutput } from "../types";
+import { LocalOutput } from "../types/sol";
 import { useEffect, useState } from "react";
 import { Modal, UtxoModal } from "@/components/modals";
 
@@ -53,15 +53,15 @@ export function UtxoList() {
         <TableBody>
           {utxos.map((utxo, index) => (
             <TableRow
-              key={`${utxo.outpoint.txid}-${utxo.outpoint.vout}`}
+              key={utxo.outpoint}
               onClick={() => {
                 setSelectedUtxo(index);
                 open();
               }}
               className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
             >
-              <TableCell className="font-medium">{utxo.outpoint.txid}</TableCell>
-              <TableCell>{utxo.outpoint.vout}</TableCell>
+              <TableCell className="font-medium">{utxo.outpoint.split(':')[0]}</TableCell>
+              <TableCell>{utxo.outpoint.split(':')[1]}</TableCell>
               <TableCell>{utxo.keychain}</TableCell>
               <TableCell>{utxo.is_spent ? 'Spent' : 'Unspent'}</TableCell>
               <TableCell>{utxo.derivation_index}</TableCell>

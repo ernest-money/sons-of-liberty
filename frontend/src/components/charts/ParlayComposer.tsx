@@ -20,7 +20,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { PayoutChart } from "./PayoutChart";
-import { useParlayContext, ParlayParameter } from "@/contexts/ParlayContext";
+import { useParlay } from "@/hooks/useParlay";
+import { ParlayParameter } from "@/types/sol";
 
 interface TabItem {
   id: string;
@@ -42,7 +43,7 @@ export const ParlayComposer: React.FC = () => {
     addParameter,
     updateParameter,
     removeParameter,
-  } = useParlayContext();
+  } = useParlay();
 
   const [tabs, setTabs] = useState<TabItem[]>([]);
   const [activeTab, setActiveTab] = useState<string>("");

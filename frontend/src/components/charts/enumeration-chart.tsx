@@ -1,5 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
-import { OutcomePayout } from "@/types";
+import { OutcomePayout } from "@/types/sol";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
 
 interface EnumerationChartProps {

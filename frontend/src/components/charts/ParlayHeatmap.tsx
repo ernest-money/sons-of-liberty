@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { ParlayParameter } from '@/contexts/ParlayContext';
+import { ParlayParameter } from '@/types/sol';
 import { CombinationMethod, CHART_DATA_TYPES } from '@/types/chart-data-types';
 import { Scatter, ScatterChart, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceDot } from 'recharts';
 import { Input } from '@/components/ui/input';
