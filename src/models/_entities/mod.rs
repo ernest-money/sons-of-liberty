@@ -3,6 +3,7 @@
 pub mod prelude;
 
 pub mod anchor_tx;
+pub mod balances;
 pub mod block;
 pub mod contracts;
 pub mod keychain;

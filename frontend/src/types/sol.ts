@@ -6,7 +6,7 @@ import {
 
 export interface SolBalanceType {
   sats: number;
-  btc?: number;
+  btc: number;
 }
 
 export interface SolBalance {
@@ -224,4 +224,36 @@ export interface Peer {
   id: string;
   address: string;
   connected: boolean;
+}
+
+export enum TimePeriod {
+  Day = "24h",
+  Week = "1w",
+  Month = "1m",
+  Year = "1y",
+}
+
+export enum BalanceMetricType {
+  WalletBalanceSats = "bitcoin_balance_sats",
+  WalletBalanceUsd = "bitcoin_balance_usd",
+  ContractBalanceSats = "contract_balance_sats",
+  ContractBalanceUsd = "contract_balance_usd",
+  PnlSats = "pnl_sats",
+  PnlUsd = "pnl_usd",
+}
+
+export interface BalanceHistory {
+  created_at: string;
+  updated_at: string;
+  id: number;
+  bitcoin_balance_sats: number;
+  bitcoin_balance_usd: number;
+  bitcoin_price: number;
+  contract_balance_sats: number;
+  contract_balance_usd: number;
+  pnl_sats: number;
+  pnl_usd: number;
+  num_contracts: number;
+  name: string;
+  network: string;
 }

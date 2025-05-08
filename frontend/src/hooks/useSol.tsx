@@ -1,6 +1,6 @@
 import { createContext, useContext, useMemo, FC } from 'react';
 import axios from 'axios';
-import { SolBalance, StoredContract, EnumerationContractParams, CreateEnumerationContractResponse, NostrCounterparty, CreateParlayContractResponse, InfoResponse, MarketStats, Peer, Transaction, LocalOutput } from '@/types/sol';
+import { SolBalance, StoredContract, EnumerationContractParams, CreateEnumerationContractResponse, NostrCounterparty, CreateParlayContractResponse, InfoResponse, MarketStats, Peer, Transaction, LocalOutput, BalanceHistory, TimePeriod } from '@/types/sol';
 import { ForgotParams, LoginParams, LoginResponse, MagicLinkParams, RegisterParams, ResetParams } from '@/types/auth';
 import config from '@/lib/config';
 import { SendOfferBody, AcceptOfferBody, CreateParlayContractParams, ContractFilter } from '@/types/sol';
@@ -27,6 +27,7 @@ export interface SolContextType {
   getContracts: (filter?: ContractFilter) => Promise<StoredContract[]>;
   getContract: (id: string) => Promise<StoredContract>;
   getMarketStats: () => Promise<MarketStats[]>;
+  getBalanceHistory: (timePeriod: TimePeriod, referenceDate?: Date) => Promise<BalanceHistory[]>;
   createEnumerationContract: (params: EnumerationContractParams) => Promise<CreateEnumerationContractResponse>;
   getCounterparties: () => Promise<NostrCounterparty[]>;
   createProfile: (params: { name: string; about: string }) => Promise<void>;
@@ -135,6 +136,15 @@ export const SolProvider: FC<SolProviderProps> = ({ children }) => {
     },
     getBalance: async () => {
       const { data } = await instance.get<SolBalance>('/balance');
+      return data;
+    },
+    getBalanceHistory: async (timePeriod: TimePeriod, referenceDate?: Date) => {
+      const params = new URLSearchParams();
+      params.append('time_period', timePeriod);
+      if (referenceDate) {
+        params.append('reference_date', referenceDate.toISOString());
+      }
+      const { data } = await instance.get<BalanceHistory[]>(`/balance/history?${params.toString()}`);
       return data;
     },
     getContracts: async (filter?: ContractFilter) => {

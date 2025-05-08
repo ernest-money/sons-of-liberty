@@ -28,7 +28,7 @@ pub struct SonsOfLiberty {
 }
 
 impl SonsOfLiberty {
-    pub async fn new(settings: Settings, ctx: &AppContext) -> loco_rs::Result<Self> {
+    pub async fn new(settings: &Settings, ctx: &AppContext) -> loco_rs::Result<Self> {
         let network = Network::from_str(&settings.network).map_err(|_| {
             loco_rs::Error::string(format!("Invalid network: {}", settings.network).as_str())
         })?;
@@ -73,7 +73,7 @@ impl SonsOfLiberty {
 
         let dlcdevkit = Arc::new(
             Builder::new()
-                .set_esplora_host(settings.esplora_host)
+                .set_esplora_host(settings.esplora_host.clone())
                 .set_network(network)
                 .set_name(&settings.name)
                 .set_seed_bytes(entropy)

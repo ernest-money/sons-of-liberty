@@ -87,7 +87,7 @@ impl Hooks for App {
             .get_or_init(|| async {
                 tracing::warn!("Initializing DDK");
 
-                let ddk = SonsOfLiberty::new(settings, ctx)
+                let ddk = SonsOfLiberty::new(&settings, ctx)
                     .await
                     .map_err(|e| {
                         tracing::error!("{}", e.to_string());

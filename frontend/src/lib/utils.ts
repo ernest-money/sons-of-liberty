@@ -6,14 +6,8 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatAmount(satAmount: number) {
-  let amount = {
-    sats: satAmount,
-    btc: satAmount / 100_000_000,
-  };
-
-  console.log(amount);
-  return amount.sats > 10_000_000
-    ? amount.btc.toLocaleString() + " BTC"
-    : amount.sats.toLocaleString() + " sats";
+export function formatAmount(balance: SolBalanceType) {
+  return balance.sats > 10_000_000
+    ? balance.btc.toLocaleString() + " BTC"
+    : balance.sats.toLocaleString() + " sats";
 }

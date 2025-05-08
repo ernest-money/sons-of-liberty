@@ -9,6 +9,7 @@ import { Copy } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@radix-ui/react-tooltip"
 import { SolBalance, defaultBalance } from "@/types/sol"
 import { BalanceCard } from "../../components/balance-card"
+import { BalanceChart } from "@/components/charts/balance-chart"
 
 export function WalletSection() {
   const [balance, setBalance] = useState<SolBalance>(defaultBalance)
@@ -29,6 +30,20 @@ export function WalletSection() {
         <BalanceCard title="Wallet Balance" amount={balance.confirmed} percentage={10} />
         <GenerateAddressCard />
       </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Balance History</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <BalanceChart
+            title="Balance History"
+            initialMetricType="wallet"
+            height="350px"
+          />
+        </CardContent>
+      </Card>
+
       <Card>
         <CardHeader>
           <CardTitle>Wallet Details</CardTitle>

@@ -2,20 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useAuth, useSol } from '@/hooks';
 import { BalanceCard } from '@/components/balance-card';
 import { SolBalance, defaultBalance } from '@/types/sol';
-import { Pnl } from '@/components/charts/pnl';
 import { ContractList } from '@/components/contract-list';
-import { formatAmount } from '@/lib/utils';
-
-const data = [
-  { value: 100 },
-  { value: 120 },
-  { value: 110 },
-  { value: 105 },
-  { value: 100 },
-  { value: 110 },
-  { value: 115 },
-  { value: 150 },
-]
+import { BalanceChart } from '@/components/charts/balance-chart';
 
 export const Dashboard: React.FC = () => {
   const { user } = useAuth()
@@ -42,7 +30,7 @@ export const Dashboard: React.FC = () => {
             <BalanceCard title="Contract Balance" amount={balance.contract} percentage={10} />
           </div>
         </div>
-        <Pnl title="Profit & Loss" amount={balance.contractPnl} height='300px' percentage={10} data={data} />
+        <BalanceChart title='Profit & Loss' initialMetricType="pnl" />
         <ContractList />
       </div>
     </div>
