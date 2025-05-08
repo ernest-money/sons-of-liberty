@@ -9,3 +9,4 @@ pub mod tx;
 pub mod txout;
 pub mod users;
 pub mod version;
+pub mod balances;

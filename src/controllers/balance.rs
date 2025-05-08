@@ -1,8 +1,13 @@
 #![allow(clippy::missing_errors_doc)]
 #![allow(clippy::unnecessary_struct_initialization)]
 #![allow(clippy::unused_async)]
-use crate::{common::dlcdevkit, models::users, sol::SonsOfLiberty};
-use axum::{debug_handler, Extension};
+use crate::{
+    common::dlcdevkit,
+    models::{_entities::balances, users},
+    sol::SonsOfLiberty,
+    views::balances::BalanceHistoryRequest,
+};
+use axum::{debug_handler, extract::Query, Extension};
 use bitcoin::SignedAmount;
 use loco_rs::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -62,6 +67,21 @@ pub async fn index(
     format::json(sol_balance)
 }
 
+#[debug_handler]
+pub async fn history(
+    cookie: CookieAuth,
+    State(ctx): State<AppContext>,
+    req: Query<BalanceHistoryRequest>,
+) -> Result<Response> {
+    users::Model::find_by_pid(&ctx.db, &cookie.user.pid).await?;
+    let history =
+        balances::Model::get_history(&ctx.db, req.time_period, req.reference_date).await?;
+    format::json(history)
+}
+
 pub fn routes() -> Routes {
-    Routes::new().prefix("api/balance/").add("/", get(index))
+    Routes::new()
+        .prefix("api/balance/")
+        .add("/", get(index))
+        .add("/history", get(history))
 }
